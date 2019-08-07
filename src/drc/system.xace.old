@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+
+<system name="drc">
+  <description>
+    system: "Doctor C"
+    copyright: "Copyright (c) 2002, Andreas Leitner and others"
+    license: "Eiffel Forum License v2 (see forum.txt)"
+    date: "$Date: 2008-05-14 22:48:16 +0900 (Wed, 14 May 2008) $"
+    revision: "$Revision: 3 $"
+  </description>
+  <root class="DRC" creation="make"/>
+  <option unless="${DEBUG}">
+    <option name="assertion" value="none"/>
+    <option name="garbage_collector" value="internal"/>
+    <option name="finalize" value="true" unless="${GOBO_EIFFEL}=ve"/>
+  </option>
+  <option if="${DEBUG}">
+    <option name="assertion" value="require"/>
+    <option name="garbage_collector" value="internal"/>
+    <option name="finalize" value="false"/>
+    <!-- option name="debug_tag" value="GELEX"/ -->
+    <!-- option name="debug_tag" value="GEYACC"/ -->
+    <!-- option name="debug_tag" value="EWG_TYPE_IDENTIFIER"/ -->
+    <!-- option name="debug_tag" value="EWG_EXPENSIVE_PHASE_2_ASSERTIONS"/ -->
+  </option>
+  <option if="${GOBO_EIFFEL}=se">
+    <option name="warning" value="none"/>
+  </option>
+  <option name="dynamic_runtime" value="false" if="${GOBO_EIFFEL}=ve"/>
+
+  <cluster name="drc_ve" location="." if="${GOBO_EIFFEL}=ve"/>
+  <cluster name="drc" location="${EWG}/src/drc"/>
+  <cluster name="gexace" location="${GOBO}/src/gexace"/>
+
+  <mount location="${EWG}/library/library.xace"/>
+  <mount location="${GOBO}/library/library.xace"/>
+  <mount location="${GOBO}/library/kernel.xace"/>
+  <mount location="${EPOSIX}/src/library.xace"/>
+
+</system>

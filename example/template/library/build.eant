@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+
+<project name="simple_library" default="help">
+
+  <description>
+    description: "ewg template library: simple template library"
+    copyright: "Copyright (c) 2002, Andreas Leitner and others"
+    license: "Eiffel Forum License v2 (see forum.txt)"
+    date: "$Date: 2008-05-14 22:48:16 +0900 (Wed, 14 May 2008) $"
+    revision: "$Revision: 3 $"
+  </description>
+
+  <inherit>
+    <parent location="${WRAP_C}/misc/wrap_c_library.eant">
+      <redefine target="init_wrap_c"/>
+    </parent>
+  </inherit>
+
+  <!-- Implementation -->
+
+  <target name="init_wrap_c">
+    <set name="system_dir" value="${WRAP_C}/example/template/library"/>
+    <set name="wrap_c.library_name" value="template"/>
+    <set name="wrap_c.full_header_name" value="$WRAP_C/example/simple/library/manual_wrapper/c/include/template_header.h"/>
+    <set name="wrap_c.short_header_name" value="template_header.h"/>
+    <set name="wrap_c.use_config_file" value="True"/>
+  </target>
+
+</project>

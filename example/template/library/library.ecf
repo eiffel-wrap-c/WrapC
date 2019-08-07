@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<system xmlns="http://www.eiffel.com/developers/xml/configuration-1-20-0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.eiffel.com/developers/xml/configuration-1-20-0 http://www.eiffel.com/developers/xml/configuration-1-20-0.xsd" name="template_library" uuid="" library_target="template_library">
+	<target name="template_library">
+		<root all_classes="true"/>
+		<file_rule>
+			<exclude>/CVS$</exclude>
+			<exclude>/EIFGENs$</exclude>
+			<exclude>/\.git$</exclude>
+			<exclude>/\.svn$</exclude>
+			<exclude>/c$</exclude>
+		</file_rule>
+		<option full_class_checking="false" is_attached_by_default="True" manifest_array_type="mismatch_warning">
+			<assertions precondition="true"/>
+		</option>
+		<setting name="inlining_size" value="0"/>
+		<setting name="dead_code_removal" value="feature"/>
+		<library name="base" location="$ISE_LIBRARY/library/base/base.ecf"/>
+
+		<external_include location="$ECF_CONFIG_PATH/generated_wrapper/c/include">
+			<condition>
+				<platform value="windows"/>
+			</condition>
+		</external_include>
+		
+		<external_object location="$ECF_CONFIG_PATH/template_c_eiffel_glue_library_ise_$(GOBO_CC).lib">
+			<condition>
+				<platform value="windows"/>
+			</condition>
+		</external_object>
+
+		<external_object location="$ECF_CONFIG_PATH/template_c_eiffel_glue_library_ise_$(GOBO_CC).a">
+			<condition>
+				<platform excluded_value="windows"/>
+			</condition>
+		</external_object>
+
+
+		
+		<cluster name="src" location="." recursive="true"/>
+	</target>
+</system>

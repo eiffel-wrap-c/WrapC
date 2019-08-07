@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+
+<project name="simple_hello_world" default="help">
+
+	<description>
+		description: "Eiffel Ant file for 'simple_library'"
+		system: "Eiffel Wrapper Generator Test with simple test cases"
+		copyright: "Copyright (c) 2001-2002, Andreas Leitner and others"
+		license: "Eiffel Forum License v2 (see forum.txt)"
+		date: "$Date: 2008-05-14 22:48:16 +0900 (Wed, 14 May 2008) $"
+		revision: "$Revision: 3 $"
+	</description>
+
+  <inherit>
+    <parent location="${GOBO}/library/common/config/eiffel.eant">
+      <redefine target="init_system"/>
+    </parent>
+  </inherit>
+
+<!-- Implementation -->
+
+	<target name="init_system">
+		<set name="system" value="simple_hello_world"/>
+		<set name="system_dir" value="${WRAP_C}/example/simple/example/hello_world"/>
+	</target>
+
+</project>

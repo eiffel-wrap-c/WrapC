@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+
+<project name="runtime" default="help">
+
+	<description>
+		description: "Eiffel Ant file for the EWG Runtime Library"
+		library: "EWG Runtime library"
+		copyright: "Copyright (c) 2001-2002, Andreas Leitner and others"
+		license: "Eiffel Forum License v2 (see forum.txt)"
+		date: "$Date: 2008-05-14 22:48:16 +0900 (Wed, 14 May 2008) $"
+		revision: "$Revision: 3 $"
+	</description>
+
+	<target name="help">
+		<echo message="usage:"/>
+		<echo message="   geant install"/>
+		<echo message="   geant clean"/>
+		<echo message="   geant clobber"/>
+	</target>
+
+	<target name="install">
+		<description>
+			Install the EWG Runtime Library.
+			Generate Eiffel files from .ge files.
+		</description>
+	</target>	
+
+	<target name="clean">
+		<description>
+			Remove intermediary generated files.
+		</description>
+
+	</target>
+
+	<target name="clobber">
+		<description>
+			Remove all generated files.
+		</description>
+
+		<geant target="clean"/>
+	</target>
+
+<!-- Implementation -->
+
+</project>

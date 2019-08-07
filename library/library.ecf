@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<system xmlns="http://www.eiffel.com/developers/xml/configuration-1-20-0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.eiffel.com/developers/xml/configuration-1-20-0 http://www.eiffel.com/developers/xml/configuration-1-20-0.xsd" name="ewg_library" uuid="D1BDA31A-2E5A-452D-B160-7E7F5E7F113E" library_target="ewg_library">
+	<target name="ewg_library">
+		<root all_classes="true"/>
+		<option warning="true" full_class_checking="false" is_attached_by_default="false" manifest_array_type="mismatch_warning">
+			<assertions precondition="true"/>
+		</option>
+		<setting name="console_application" value="true"/>
+		<setting name="inlining_size" value="0"/>
+		<setting name="msil_classes_per_module" value="5"/>
+		<setting name="dead_code_removal" value="feature"/>
+		<capability>
+			<concurrency support="none" use="none"/>
+			<void_safety support="none" use="none"/>
+		</capability>
+		<library name="base" location="$ISE_LIBRARY\library\base\base.ecf"/>
+		<library name="kernel" location="$ISE_LIBRARY\\contrib\library\gobo\library\kernel\src\library.ecf"/>
+		<library name="lexical" location="$ISE_LIBRARY\contrib\library\gobo\library\lexical\src\library.ecf"/>
+		<library name="lexical_skl" location="$ISE_LIBRARY\contrib\library\gobo\library\lexical\src\library_skl.ecf"/>
+		<library name="parse" location="$ISE_LIBRARY\contrib\library\gobo\library\parse\src\library.ecf"/>
+		<library name="parse_skl" location="$ISE_LIBRARY\contrib\library\gobo\library\parse\src\library_skl.ecf"/>
+		<library name="regexp" location="$ISE_LIBRARY\contrib\library\gobo\library\regexp\src\library.ecf"/>
+		<library name="structure" location="$ISE_LIBRARY\contrib\library\gobo\library\structure\src\library.ecf"/>
+		<library name="time" location="$ISE_LIBRARY\contrib\library\gobo\library\time\src\library.ecf"/>
+		<library name="tools" location="$ISE_LIBRARY\contrib\library\gobo\library\tools\src\library.ecf"/>
+		<library name="utility" location="$ISE_LIBRARY\contrib\library\gobo\library\utility\src\library.ecf"/>
+		<library name="xml" location="$ISE_LIBRARY\contrib\library\gobo\library\xml\src\library.ecf"/>
+		<cluster name="ewg_library" location="." recursive="True">
+			<file_rule>
+				<exclude>/\.svn$</exclude>
+				<exclude>/\.git$</exclude>
+				<exclude>/\ge$</exclude>
+				<exclude>/runtime$</exclude>
+				<exclude>/EIFGENs$</exclude>
+			</file_rule>
+		</cluster>
+	</target>
+</system>
