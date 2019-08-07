@@ -43,7 +43,7 @@ feature
 	make
 			-- Create new EWG command line tool
 		do
-			Arguments.set_program_name ("ewg")
+			Arguments.set_program_name ("wrap_c")
 			create error_handler.make
 			make_ewg_command_line_parser
 
