@@ -94,6 +94,61 @@ The following will use the Gobo geant tool to setup and install the source code.
 	 geant compile
 
 Another approach is to use the corresponding ecf’s and open them with EiffelStudio, (To be completed)
+
+<h2>Examples</h2>
+ EWG comes with the following examples
+
+    simple  -- A minimal example. This is a very good example to start with
+    callback -- Demonstrates the use of C callbacks from within Eiffel
+    template -- Template concept wrapper to start wrapping new libraries.
+    
+<h4>Note</h4>    
+In the future we will provide a little tool to create an empty project to help to create new wrappers.
+
+For an up-to-date list of Wrap_C based wrapper libraries please visit the [Wrap_C Homepage organization](https://github.com/eiffel-wrap-c). 
+
+<h3>Building and Running the examples</h3>
+
+This step requires that you already have compiled the wrap_c tool. If you have downloaded a release package for you platform, you are lucky, since these packages already come with the wrap_c tool pre-compiled.
+
+You can find examples on how to use WRAP_C to create wrappers for C libraries in the directory ${WRAP_C}/example. These examples are fully functional, in that they include the necessary build automation to build the examples using Eiffel and C compilercombinations.
+
+<h4>Build Automation Explained</h4>
+
+Wrap_C uses Geant a build tool specifically tailored for the Eiffel programming language. 
+To learn more about Geant check the following links
+* 	[Overview of Geant](http://www.gobosoft.com/eiffel/gobo/geant/overview.html)
+*  	[Geant Exaples](http://www.gobosoft.com/eiffel/gobo/geant/examples.html)
+
+Available targets for Wrap_C libraries.
+
+	geant
+	usage:
+	   geant install                -- Execute pre_process, install, post_process, c_build_library_ise
+	   geant c_build_library_ise    -- Build C code
+	   geant pre_process		-- User defined post process script. By default do nothing.	
+	   geant process_wrap_c         -- Generate wrap_c wrappers for the target C library.
+	   geant post_process		-- User defined post process script. By default do nothing.
+	   geant clean   		-- remove intermediary generated files
+	   geant clobber 		-- remove all generated files
+
+Most examples wrap a 3rd party C library. If you want to build such an example please read the Readme.md file in the examples directory. It is usually necessary for you to install certain development versions of the libraries to wrap. The Readme.md file gives details on what is necessary.
+
+To generate the Eiffel wrapper for a given example go into the library subdirectory of the examples directory. The examples usually have two subdirectories. library contains the files necessary to build the wrapper and hello_world contains the source code for an actual Eiffel application that uses the wrapper. For example to generate the wrappers for the simple-example do:
+
+	  cd ${WRAP_C}/example/simple/library
+	  geant install
+	
+This will use the wrap_c tool to generate Eiffel and C files that make the c library accessible from within Eiffel. It may sound weird that C files are generated too, but it is unfortunately necessary. The generated C files will be compiled and put into a static link library.
+
+To compile and run an example application go into the example applications directory. For example to build the hello_world application of the simple example do:
+
+	  cd ${WRAP_C}/example/simple/example/hello_world
+	  geant install
+	  geant compile
+	  ./simple_hello_world
+	
+
 <h2>**How to create your own Wrapper**</h2>
 
 To generate a new Eiffel wrapper, the simplest way is to start from the template wrapping example located at {WRAP_C}/example/template
