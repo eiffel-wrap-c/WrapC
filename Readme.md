@@ -26,27 +26,29 @@ It was updated to use the latest Eiffel version. `Wrap_C` generates Eiffel wrapp
 
 *   **Macros are not supported for now.**
 
+*	Works with ISE Eiffel.
+*	Includes framework to automate building libraries and applications that use Wrap_C 
+
 <h2>Installation</h2>
 
-
-<h3>**Getting Wrap C**</h3>
+<h3>**Getting Wrap_C**</h3>
 https://github.com/eiffel-wrap-c/wrap_c
 
 <h3>**Requirements**</h3>
 
 Library
 
-*   Gobo 19.03 or newer.
+*   [GOBO](https://github.com/gobo-eiffel/gobo). 19.03 or newer.
 
 Compiler
 
-*   EiffelStudio 19.05 or newer
+*   [EiffelStudio](https://www.eiffel.org/downloads) 19.05 or newer
 
 Platform
 
 *   Everything supported by above requirements (At the moment only tested on Windows)
 
-<h3>**Setting Wrap_c**</h3>
+<h3>**Setting Wrap_C**</h3>
 
 The following describes actions that should be taken to properly setup `Wrap_c`.
 
@@ -60,11 +62,29 @@ Once you have `Wrap_c`tool installed , you should define the following environme
 
 The following example shows a possible setup for windows:
 
-	 set WRAP_C=C:\ewg
+	 set WRAP_C=C:\wrap_c
 	 set PATH=%PATH%;%WRAP_C%\bin
 	 set GOBO_EIFFEL=ise
 	 set GOBO_CC=msc     
 
+The following example shows a possible setup for linux:
+
+    	 export WRAP_C=/home/aleitner/wrap_c
+    	 export PATH=$PATH:$WRAP_C\bin
+    	 export GOBO_EIFFEL=ise
+    	 export GOBO_CC=gcc
+      
+
+<h4>Note</h4>
+You have to make sure that Eiffel compiler or C compiler gets used can be located via the PATH environment variable.
+
+<h2>Building the tools</h2>
+ Wrap_C (the package) contains two tools:
+
+    WRAP_C -- The Eiffel Wrapper Generator command line tool.
+    escript -- An Eiffel application that helps to post process the generated code.
+
+The source to those tools is located in ${WRAP_C}/src. When using a binary distribution (i.e. not the source distribution) there is no need to compile the tools, as they come already precompiled for your platform. 
 
 <h3>**Compiling the Tools**</h3>
 The following will use the Gobo geant tool to setup and install the source code.
