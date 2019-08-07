@@ -148,6 +148,38 @@ To compile and run an example application go into the example applications direc
 	geant compile
 	./simple_hello_world
 	
+<h2>**Understanding Wrap_C**</h2>
+
+This section describes what code Wrap_C generates and how to integrate that code into a automated build system.
+
+Command Line Options
+
+The wrap_c tool is a command line application and takes the following command line parameters:
+
+	wrap_c: You must specify '--cpp-full-header=<...>'
+	usage: wrap_c   [--version] [--verbose]
+		[--enable-msc-extensions | --disable-msc-extension] [--output-dir=<...>]
+                --cpp-full-header=<...> [--include-header=<...>] [--config=<...>]
+	
+
+	options:
+		--version ... Output EWG version number
+		--verbose ... Output progress information on STDOUT
+		--enable-msc-extensions ... Enable Visual C++ extensions (default on Windows)
+		--disable-msc-extensions ... Disable Visual C++ extensions (default everywhere else :)
+    
+	arguments:
+		--output-dir ... Directory where generated files will be placed
+		--cpp-full-header ... File name (including path name) to the already c preprocessed C header
+		--include-header ... Name of header file, that should be used in eiffel external clauses
+		--config ... Name of config file to use. A config file allows to customize the wrapping process
+
+You can use `wrap_c` directly to see what it produces on a header of your own without setting up a complete project, or use your own build process. Most of the time you will not use the `wrap_c` tool directly, but use it indirectly through geant.
+
+<h3>The Generated Code</h3>
+
+As shown in the next figure, `WRAP_C` takes an already preprocessed C header file and generates Eiffel classes and a C glue code library. The generation of the C glue code library, is needed for C callbacks, it might seem a little counter productive at first, since we really want to use Eiffel not C. But first of all this generated C code makes accessing the C library from Eiffel possible (at least for C callbacks) and second of all this generated C code is wrapped by the generated Eiffel classes as well, eliminating the need to deal with it directly.
+
 
 <h2>**How to create your own Wrapper**</h2>
 
