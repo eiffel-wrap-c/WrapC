@@ -11,7 +11,7 @@
   </description>
 
   <inherit>
-    <parent location="${WRAP_C}/misc/wrap_c_library.eant">
+    <parent location="../../../misc/wrap_c_library.eant">
       <redefine target="init_wrap_c"/>
     </parent>
   </inherit>
@@ -19,9 +19,9 @@
   <!-- Implementation -->
 
   <target name="init_wrap_c">
-    <set name="system_dir" value="${WRAP_C}/example/simple/library"/>
+    <set name="system_dir" value="${cwd}"/>
     <set name="wrap_c.library_name" value="simple"/>
-    <set name="wrap_c.full_header_name" value="$WRAP_C/example/simple/library/manual_wrapper/c/include/simple_header.h"/>
+    <set name="wrap_c.full_header_name" value="${cwd}/manual_wrapper/c/include/simple_header.h"/>
     <set name="wrap_c.short_header_name" value="simple_header.h"/>
     <set name="wrap_c.use_config_file" value="True"/>
   </target>

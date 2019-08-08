@@ -121,8 +121,10 @@
 			in all subdirectories.
 		</description>
 
-		<geant file="${WRAP_C}/src/ewg/build.eant" target="${target}" dir="${WRAP_C}/src/ewg"/>
-		<!--geant file="${WRAP_C}/src/drc/build.eant" target="${target}" dir="${WRAP_C}/src/drc" if="${EPOSIX}"/>-->
+		<geant file="${cwd}/ewg/build.eant" target="${target}" dir="${cwd}/ewg"/>
+		<!--
+			geant file="${WRAP_C}/src/drc/build.eant" target="${target}" dir="${WRAP_C}/src/drc" if="${EPOSIX}"/>
+		-->
 	</target>
 
 </project>

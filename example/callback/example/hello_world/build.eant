@@ -12,19 +12,17 @@
 	</description>
 
 	<inherit>
-   		<parent location="${GOBO}/library/common/config/eiffel.eant">
+   		<parent location="$ISE_EIFFEL/contrib/library/gobo/library/common/config/eiffel.eant">
       		<redefine target="init_system"/>
     	</parent>
   	</inherit>
-
-
 
 
 <!-- Implementation -->
 
 	<target name="init_system">
 		<set name="system" value="callback_hello_world"/>
-		<set name="system_dir" value="${WRAP_C}/example/callback/example/hello_world"/>
+		<set name="system_dir" value="${cwd}"/>
 	</target>
 
 </project>

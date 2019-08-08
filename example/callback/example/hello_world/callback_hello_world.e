@@ -23,7 +23,7 @@ create
 
 feature
 
-	make is
+	make 
 		local
 			function_table: FUNCTION_TABLE_STRUCT_API
 			i: INTEGER

@@ -12,7 +12,7 @@
   </description>
 
   <inherit>
-    <parent location="${GOBO}/library/common/config/eiffel.eant">
+    <parent location="$ISE_EIFFEL/contrib/library/gobo/library/common/config/eiffel.eant">
       <redefine target="init_system"/>
       <redefine target="clean"/>
     </parent>
@@ -23,7 +23,7 @@
 
   <target name="init_system">
     <set name="system" value="wrap_c"/>
-    <set name="system_dir" value="${WRAP_C}/src/ewg"/>
+    <set name="system_dir" value="${cwd}"/>
   </target>
 
   <target name="clean" depend="init">
