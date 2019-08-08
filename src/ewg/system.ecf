@@ -19,7 +19,6 @@
 			<concurrency support="none" use="none"/>
 			<void_safety support="none" use="none"/>
 		</capability>
-		<variable name="GOBO_CC" value="msc"/>
 		<library name="base" location="${ISE_LIBRARY}\library\base\base.ecf" readonly="true"/>
 		<library name="ewg_library" location="..\..\library\library.ecf" readonly="true"/>
 		<library name="kernel" location="$ISE_LIBRARY\contrib\library\gobo\library\kernel\src\library.ecf" readonly="true"/>
