@@ -152,7 +152,7 @@ To compile and run an example application go into the example applications direc
 
 This section describes what code Wrap_C generates and how to integrate that code into a automated build system.
 
-Command Line Options
+<h4>Command Line Options</h4>
 
 The wrap_c tool is a command line application and takes the following command line parameters:
 
@@ -180,6 +180,7 @@ You can use `wrap_c` directly to see what it produces on a header of your own wi
 
 As shown in the next figure, `WRAP_C` takes an already preprocessed C header file and generates Eiffel classes and a C glue code library. The generation of the C glue code library, is needed for C callbacks, it might seem a little counter productive at first, since we really want to use Eiffel not C. But first of all this generated C code makes accessing the C library from Eiffel possible (at least for C callbacks) and second of all this generated C code is wrapped by the generated Eiffel classes as well, eliminating the need to deal with it directly.
 
+![Wrap C flow](images/wrap_c_flow.png "WrapC flow")
 
 <h2>**How to create your own Wrapper**</h2>
 
