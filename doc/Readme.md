@@ -9,7 +9,7 @@
 # Installation
 
 ## Getting WrapC
-https://github.com/eiffel-wrap-c/wrap_c
+Clone or Download from https://github.com/eiffel-wrap-c/WrapC
 
 ## Requirements
 
