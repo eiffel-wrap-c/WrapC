@@ -55,11 +55,11 @@ The source code of `WrapC` is structured using the following defined structure.
 The basic layout looks like this:
 
 	WrapC
-		bin        --
-		doc 	   -- Wrap C documentation
+		bin        -- wrap_c executable 
+		doc 	   -- WrapC documentation
 		examples   -- Set of examples that comes with WrapC 
 		library    -- kernel of WrapC (Parse the config file, Parse C header, AST and code Generation)
-		misc       -- Set of configuration files used for the geant automation scripts.
+		config     -- Set of configuration files used for the geant automation scripts.
 		src        -- WrapC application source code
 		tools      -- Generic tools for pre-post processing *
 
@@ -78,7 +78,14 @@ The source to those tools is located in ${WRAP_C}/src. When using a binary distr
 
 <a name="ecf"></a>
 ## Compiling the Tools using ECF's
-	
+The following will use the EiffelStudio gui and commandline to compile the tools
+
+Open EiffelStudio 
+Open the project under 	`${WRAP_C}/src/ewg/system.ecf`
+Click Finalize
+
+Copy `wrap_c` executable under bin or put it under your PATH.
+
 	cd ${WRAP_C}/src/
 	
 
