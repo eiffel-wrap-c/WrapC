@@ -48,12 +48,17 @@
 
 	<target name="compile" depend="init">
 		<description>
-			Compile WRAP_C tools into ${WRAP_C}/bin.
+			Compile WRAP_C tools into /bin.
 		</description>
-		<geant file="${WRAP_C}/src/ewg/build.eant" target="compile" dir="bin"/>
-		<geant file="${WRAP_C}/src/ewg/build.eant" target="clean" dir="bin"/>
-		<!--geant file="${WRAP_C}/src/drc/build.eant" target="compile" dir="bin" if="${EPOSIX}"/>
-		<geant file="${WRAP_C}/src/drc/build.eant" target="clean" dir="bin" if="${EPOSIX}"/> -->
+		<!--copy file="${cwd}/src/ewg/system.ecf" to_file="${cwd}/bin/system.ecf"/>-->
+		<geant file="${cwd}/src/ewg/build.eant" target="compile" dir="src/ewg"/>
+		<geant file="${cwd}/src/ewg/build.eant" target="clean" dir="src/ewg"/>
+		<copy file="${cwd}/src/ewg/wrap_c.exe" to_file="${cwd}/bin/wrap_c.exe"/>
+		<!--delete file="${cwd}/bin/system.ecf"/>-->
+		<!--
+			geant file="${WRAP_C}/src/drc/build.eant" target="compile" dir="bin" if="${EPOSIX}"/>
+			<geant file="${WRAP_C}/src/drc/build.eant" target="clean" dir="bin" if="${EPOSIX}"/> 
+		-->
 		<geant file="build.eant" target="install" dir="src"/>
 	</target>
 
@@ -63,10 +68,11 @@
 		</description>
 
 		<geant target="remove_backup_files"/>
-		<geant file="${WRAP_C}/src/build.eant" target="clobber" dir="src"/>
-		<geant file="${WRAP_C}/src/build.eant" target="clobber" dir="bin"/>
+		<geant file="${cwd}/src/build.eant" target="clobber" dir="src"/>
+		<geant file="${cwd}/src/ewg/build.eant" target="clobber" dir="bin"/>
+		<delete file="${cwd}/bin/wrap_c.exe"/>
 		<!--geant file="${WRAP_C}/test/build.eant" target="clobber" dir="test"/>-->
-		<geant file="${WRAP_C}/library/build.eant" target="clobber" dir="library"/>
+		<geant file="${cwd}/library/build.eant" target="clobber" dir="library"/>
 		<!--geant file="${WRAP_C}/example/build.eant" target="clobber" dir="example"/>-->
 		<!--geant file="${WRAP_C}/doc/build.eant" target="clobber" dir="doc"/>-->
 	</target>
@@ -87,7 +93,7 @@
 
 		<geant target="clobber"/>
 		<geant target="install"/>
-		<geant file="build.eant" target="install" dir="doc"/>
+		<!--geant file="build.eant" target="install" dir="doc"/-->
 		<geant target="clean"/>
 		<geant target="install"/>
 		<delete>
@@ -104,8 +110,9 @@
 		<geant target="init_gobo_eiffel"/>
 	</target>
 
-	<target name="init_gobo_eiffel" unless="${GOBO_EIFFEL}">
+	<target name="init_gobo_eiffel">
 		<set name="GOBO_EIFFEL" value="ise"/>
+		<setenv name="GOBO_EIFFEL" value="ise"/>
 	</target>
 
 </project>

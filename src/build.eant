@@ -15,10 +15,8 @@
 		<echo message="   geant install"/>
 		<echo message="   geant compile"/>
 		<echo message="   geant compile_ise"/>
-		<echo message="   geant compile_ge"/>
 		<echo message="   geant compile_debug"/>
 		<echo message="   geant compile_debug_ise"/>
-		<echo message="   geant compile_debug_ge"/>
 		<echo message="   geant clean"/>
 		<echo message="   geant clobber"/>
 	</target>
@@ -52,15 +50,6 @@
 		<geant target="do_all"/>
 	</target>
 
-	<target name="compile_ge" depend="init">
-		<description>
-			Compile WRAP_C tools with GEC.
-		</description>
-
-		<set name="target" value="compile_ge"/>
-		<geant target="do_all"/>
-	</target>
-
 	<target name="compile_debug" depend="init">
 		<description>
 			Compile WRAP_C tools in debug mode.
@@ -78,15 +67,6 @@
 		</description>
 
 		<set name="target" value="compile_debug_ise"/>
-		<geant target="do_all"/>
-	</target>
-
-	<target name="compile_debug_ge" depend="init">
-		<description>
-			Compile WRAP_C tools with GEC in debug mode.
-		</description>
-
-		<set name="target" value="compile_debug_se"/>
 		<geant target="do_all"/>
 	</target>
 
@@ -112,7 +92,8 @@
 <!-- Implementation -->
 
 	<target name="init">
-		<!-- do nothing -->
+			<!-- do nothing -->
+		<set name="GOBO_EIFFEL" value="ise"/>	
 	</target>
 
 	<target name="do_all" depend="init">
@@ -121,8 +102,10 @@
 			in all subdirectories.
 		</description>
 
-		<geant file="${WRAP_C}/src/ewg/build.eant" target="${target}" dir="${WRAP_C}/src/ewg"/>
-		<!--geant file="${WRAP_C}/src/drc/build.eant" target="${target}" dir="${WRAP_C}/src/drc" if="${EPOSIX}"/>-->
+		<geant file="${cwd}/ewg/build.eant" target="${target}" dir="${cwd}/ewg"/>
+		<!--
+			geant file="${WRAP_C}/src/drc/build.eant" target="${target}" dir="${WRAP_C}/src/drc" if="${EPOSIX}"/>
+		-->
 	</target>
 
 </project>

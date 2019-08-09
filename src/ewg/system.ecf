@@ -3,7 +3,7 @@
 	xmlns="http://www.eiffel.com/developers/xml/configuration-1-20-0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.eiffel.com/developers/xml/configuration-1-20-0 http://www.eiffel.com/developers/xml/configuration-1-20-0.xsd"
-	name="wrap_C"
+	name="wrap_c"
 	uuid="2F7D69D7-4063-45FC-B5BD-698E010904AD"
 >
 	<target name="wrap_c">
@@ -19,12 +19,11 @@
 			<concurrency support="none" use="none"/>
 			<void_safety support="none" use="none"/>
 		</capability>
-		<variable name="GOBO_CC" value="msc"/>
 		<library name="base" location="${ISE_LIBRARY}\library\base\base.ecf" readonly="true"/>
-		<library name="ewg_library" location="${WRAP_C}\library\library.ecf" readonly="true"/>
+		<library name="ewg_library" location="..\..\library\library.ecf" readonly="true"/>
 		<library name="kernel" location="$ISE_LIBRARY\contrib\library\gobo\library\kernel\src\library.ecf" readonly="true"/>
 		<library name="regexp" location="$ISE_LIBRARY\contrib\library\gobo\library\regexp\src\library.ecf" readonly="true"/>
 		<library name="time" location="${ISE_LIBRARY}\library\time\time.ecf" readonly="true"/>
-		<cluster name="ewg" location="${WRAP_C}\src\ewg\"/>
+		<cluster name="ewg" location="."/>
 	</target>
 </system>

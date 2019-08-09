@@ -11,7 +11,7 @@
   </description>
 
   <inherit>
-    <parent location="${WRAP_C}/misc/wrap_c_c_compilation.eant">
+    <parent location="./wrap_c_c_compilation.eant">
       <redefine target="init"/>
       <redefine target="set_default_options_windows"/>
       <redefine target="set_default_options_unix"/>

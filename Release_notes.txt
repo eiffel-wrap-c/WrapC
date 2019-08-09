@@ -1,4 +1,0 @@
-
-* Due to a bug in lcclib.exe (Version from April 2003) the opengl-hello-world, 
-  sdl-timer-demo and gtk-* examples do not work with lcc-win32
-  
