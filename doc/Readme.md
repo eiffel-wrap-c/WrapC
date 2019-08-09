@@ -13,10 +13,6 @@ https://github.com/eiffel-wrap-c/wrap_c
 
 ## Requirements
 
-Library
-
-*   [GOBO](https://github.com/gobo-eiffel/gobo). 19.03 or newer. (optional since it comes with EiffelStudio)
-
 Compiler
 
 *   [EiffelStudio](https://www.eiffel.org/downloads) 19.05 or newer
@@ -25,32 +21,24 @@ Platform
 
 *   Everything supported by above requirements (At the moment only tested on Windows)
 
-### Setting WrapC
+### Setting WrapC (Optional)
 
-The following describes actions that should be taken to properly setup `WrapC`.
-
-Once you have `WrapC`tool installed , you should define the following environment variables in order to run `WrapC` wrapper generator
-
-
+Once you have `WrapC`tool installed , you should define the following environment variable in order to run `WrapC` wrapper generator or
+put the binary under the PATH
 
 *   Set WRAP_C to the directory where you unpacked WrapC code.
-*   Set GOBO_EIFFEL to ISE Eiffel compiler (ise).
 *   Put ${WRAP_C}/bin into your ${PATH} environment variable
 
 The following example shows a possible setup for windows:
 
 	set WRAP_C=C:\wrap_c
 	set PATH=%PATH%;%WRAP_C%\bin
-	set GOBO_EIFFEL=ise
-	set GOBO_CC=msc     
 
 The following example shows a possible setup for linux:
 
 	export WRAP_C=/home/aleitner/wrap_c
 	export PATH=$PATH:$WRAP_C\bin
-	export GOBO_EIFFEL=ise
-	export GOBO_CC=gcc
-      
+    
 
 #### Note
 	You have to make sure that Eiffel compiler or C compiler gets used can be located via the PATH environment variable.
@@ -58,7 +46,7 @@ The following example shows a possible setup for linux:
 ## Building the tools
  WrapC (the package) contains two tools:
 
-    WRAP_C -- The Eiffel Wrapper Generator command line tool.
+    wrap_C -- The Eiffel Wrapper Generator command line tool.
     escript -- An Eiffel application that helps to post process the generated code.
 
 The source to those tools is located in ${WRAP_C}/src. When using a binary distribution (i.e. not the source distribution) there is no need to compile the tools, as they come already precompiled for your platform. 
