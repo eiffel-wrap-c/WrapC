@@ -1,8 +1,13 @@
 # Getting Started with WrapC
 
 ##### Table of Contents  
-* [Installation](#installation)  
-
+* [Installation](#installation)
+	* [Requirements](#req) 
+		* [Setting WrapC](#setwrapc)
+* [Directory Structure](#layout)		
+* [Building the tools](#build)
+	* [Using ecf's](#ecf)
+	* [Using geant](#geant)
 
 <a name="installation"></a>
 
@@ -11,6 +16,7 @@
 ## Getting WrapC
 Clone or Download from https://github.com/eiffel-wrap-c/WrapC
 
+<a name="req"></a>
 ## Requirements
 
 Compiler
@@ -21,6 +27,7 @@ Platform
 
 *   Everything supported by above requirements (At the moment only tested on Windows)
 
+<a name="setwrapc"></a>
 ### Setting WrapC (Optional)
 
 Once you have `WrapC`tool installed , you should define the following environment variable in order to run `WrapC` wrapper generator or
@@ -38,20 +45,52 @@ The following example shows a possible setup for linux:
 
 	export WRAP_C=/home/aleitner/wrap_c
 	export PATH=$PATH:$WRAP_C\bin
-    
-
+   
 #### Note
 	You have to make sure that Eiffel compiler or C compiler gets used can be located via the PATH environment variable.
 
-## Building the tools
+<a name="layout"></a>
+# Layout Structure
+The source code of `WrapC` is structured using the following defined structure. 
+The basic layout looks like this:
+
+	WrapC
+		bin        -- wrap_c executable 
+		doc 	   -- WrapC documentation
+		examples   -- Set of examples that comes with WrapC 
+		library    -- kernel of WrapC (Parse the config file, Parse C header, AST and code Generation)
+		config     -- Set of configuration files used for the geant automation scripts.
+		src        -- WrapC application source code
+		tools      -- Generic tools for pre-post processing *
+
+The previous layour shows how `WrapC` is structured on the file system.
+
+<a name="build"></a>
+# Building the tools
+In this section we will describe how to build WrapC tool using ecf's and the other using geant `a build tool specifically tailored for the Eiffel programming language.`
+ 
  WrapC (the package) contains two tools:
 
-    wrap_C -- The Eiffel Wrapper Generator command line tool.
+    wrap_c -- The Eiffel Wrapper Generator command line tool.
     escript -- An Eiffel application that helps to post process the generated code.
 
 The source to those tools is located in ${WRAP_C}/src. When using a binary distribution (i.e. not the source distribution) there is no need to compile the tools, as they come already precompiled for your platform. 
 
-### Compiling the Tools
+<a name="ecf"></a>
+## Compiling the Tools using ECF's
+The following will use the EiffelStudio gui and commandline to compile the tools
+
+Open EiffelStudio 
+Open the project under 	`${WRAP_C}/src/ewg/system.ecf`
+Click Finalize
+
+Copy `wrap_c` executable under bin or put it under your PATH.
+
+	cd ${WRAP_C}/src/
+	
+
+<a name="ecf"></a>
+## Compiling the Tools using Geant
 The following will use the Gobo geant tool to setup and install the source code.
 
 	cd ${WRAP_C}
