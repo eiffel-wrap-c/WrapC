@@ -1,10 +1,15 @@
 # Getting Started with WrapC
 
 ##### Table of Contents  
+* [Install WrapC](#installation)
 * [Understanding WrapC](#understanding_wrapc)
 	*  [Command Line Options](#commands)
 	*  [The Generated Code](#gencode)
 	
+
+<a name="installation"></a>
+# Install WrapC
+If you didn't install the tool, check the install section [here](./developer/Readme.md#installation)
 	
 <a name="understanding_wrapc"></a>
 # Understanding WrapC
