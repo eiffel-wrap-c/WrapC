@@ -23,8 +23,9 @@ It was updated to use the latest Eiffel version. `WrapC` generates Eiffel wrappe
 
 	*   **Macros are not supported for now.**
 
-*	_Works with ISE Eiffel.
-*	_Includes a framework to automate building libraries and applications that use `WrapC`. 
+*	Works with ISE Eiffel.
+*	Includes a framework to automate building libraries and applications that use `WrapC`. 
 
 
 The [Getting started](./doc/Readme.md) lets you discover the `WrapC` tool.
+The [Developer guide](./doc/developer/Readme.md) lets you know how to build `WrapC` tool.

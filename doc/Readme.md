@@ -8,6 +8,12 @@
 * [Building the tools](#build)
 	* [Using ecf's](#ecf)
 	* [Using geant](#geant)
+* [Examples](#examples)	
+	*  [Building and Running the examples](#build_examples)
+	*  [Build Automation Explained](#build_automation)
+* [Understanding WrapC](#understanding_wrapc)
+	*  [Command Line Options](#commands)
+	*  [The Generated Code](#gencode)
 
 <a name="installation"></a>
 
@@ -15,6 +21,8 @@
 
 ## Getting WrapC
 Clone or Download from https://github.com/eiffel-wrap-c/WrapC
+
+	git clone https://github.com/eiffel-wrap-c/WrapC
 
 <a name="req"></a>
 ## Requirements
@@ -67,62 +75,69 @@ The previous layour shows how `WrapC` is structured on the file system.
 
 <a name="build"></a>
 # Building the tools
-In this section we will describe how to build WrapC tool using ecf's and the other using geant `a build tool specifically tailored for the Eiffel programming language.`
+In this section we will describe how to build WrapC tool using ecf's and using geant `a build tool specifically tailored for the Eiffel programming language.`
  
- WrapC (the package) contains two tools:
+ WrapC (the package) contains the wrap_c tool:
 
     wrap_c -- The Eiffel Wrapper Generator command line tool.
-    escript -- An Eiffel application that helps to post process the generated code.
+   
+The source to those tools is located in `${WRAP_C}/src`. When using a binary distribution (i.e. not the source distribution) there is no need to compile the tools, as they come already precompiled for your platform. 
 
-The source to those tools is located in ${WRAP_C}/src. When using a binary distribution (i.e. not the source distribution) there is no need to compile the tools, as they come already precompiled for your platform. 
+Optional tools are located in ``${WRAP_C}/tools`.
 
 <a name="ecf"></a>
 ## Compiling the Tools using ECF's
-The following will use the EiffelStudio gui and commandline to compile the tools
+The following will use the EiffelStudio gui and command line to compile the tools
 
-Open EiffelStudio 
-Open the project under 	`${WRAP_C}/src/ewg/system.ecf`
-Click Finalize
-
-Copy `wrap_c` executable under bin or put it under your PATH.
-
-	cd ${WRAP_C}/src/
+### EiffelStudio IDE
+	Open EiffelStudio 
+	Open the project under 	`${WRAP_C}/src/ewg/system.ecf`
+	Click Finalize
 	
+### Eiffel command line
 
-<a name="ecf"></a>
+	cd ${WRAP_C}/src/ewg
+	ec -config system.ecf -target wrap_c -finalize -c_compile -project_path .
+	
+Finally 	
+	 Copy `wrap_c` executable under bin or put it under your PATH.	
+
+<a name="geant"></a>
 ## Compiling the Tools using Geant
 The following will use the Gobo geant tool to setup and install the source code.
 
 	cd ${WRAP_C}
-	geant install
+	geant install -- Optional only if you need to regenerate the the Lexer and Yacc files.
 	geant compile
 
-Another approach is to use the corresponding ecf’s and open them with EiffelStudio, (To be completed)
-
-## Examples
+<a name="examples"></a>
+# Examples
  EWG comes with the following examples
 
-	simple  -- A minimal example. This is a very good example to start with
+	simple   -- A minimal example. This is a very good example to start with
 	callback -- Demonstrates the use of C callbacks from within Eiffel
 	template -- Template concept wrapper to start wrapping new libraries.
-    
+
+
 #### Note
 In the future we will provide a little tool to create an empty project to help to create new wrappers.
 
 For an up-to-date list of WrapC based wrapper libraries please visit the [WrapC Homepage organization](https://github.com/eiffel-wrap-c). 
 
-### Building and Running the examples
+<a name="build_examples"></a>
+## Building and Running the examples
 
 This step requires that you already have compiled the wrap_c tool. If you have downloaded a release package for you platform, you are lucky, since these packages already come with the wrap_c tool pre-compiled.
 
-You can find examples on how to use WRAP_C to create wrappers for C libraries in the directory ${WRAP_C}/example. These examples are fully functional, in that they include the necessary build automation to build the examples using Eiffel and C compilercombinations.
+You can find examples on how to use `WrapC` to create wrappers for C libraries in the directory `${WRAP_C}/examples`. These examples are fully functional, in that they include the necessary build automation to build the examples using Eiffel and C compiler combinations.
 
-#### Build Automation Explained
+<a name="build_automation"></a>
+### Build Automation Explained
 
 `WrapC` uses Geant a build tool specifically tailored for the Eiffel programming language. 
 To learn more about Geant check the following links
 * 	[Overview of Geant](http://www.gobosoft.com/eiffel/gobo/geant/overview.html)
-*  	[Geant Exaples](http://www.gobosoft.com/eiffel/gobo/geant/examples.html)
+*  	[Geant Examples](http://www.gobosoft.com/eiffel/gobo/geant/examples.html)
 
 Available targets for `WrapC` libraries.
 
@@ -140,23 +155,25 @@ Most examples wrap a 3rd party C library. If you want to build such an example p
 
 To generate the Eiffel wrapper for a given example go into the library subdirectory of the examples directory. The examples usually have two subdirectories. library contains the files necessary to build the wrapper and hello_world contains the source code for an actual Eiffel application that uses the wrapper. For example to generate the wrappers for the simple-example do:
 
-	cd ${WRAP_C}/example/simple/library
+	cd ${WRAP_C}/examples/simple/library
 	geant install
 	
 This will use the wrap_c tool to generate Eiffel and C files that make the c library accessible from within Eiffel. It may sound weird that C files are generated too, but it is unfortunately necessary. The generated C files will be compiled and put into a static link library.
 
 To compile and run an example application go into the example applications directory. For example to build the hello_world application of the simple example do:
 
-	cd ${WRAP_C}/example/simple/example/hello_world
+	cd ${WRAP_C}/examples/simple/example/hello_world
 	geant install
 	geant compile
 	./simple_hello_world
 	
-## Understanding WrapC
+<a name="understanding_wrapc"></a>
+# Understanding WrapC
 
 This section describes what code `WrapC` generates and how to integrate that code into a automated build system.
 
-#### Command Line Options
+<a name="commands"></a>
+## Command Line Options
 
 The wrap_c tool is a command line application and takes the following command line parameters:
 
@@ -178,11 +195,14 @@ The wrap_c tool is a command line application and takes the following command li
 		--include-header ... Name of header file, that should be used in eiffel external clauses
 		--config ... Name of config file to use. A config file allows to customize the wrapping process
 
-You can use `wrap_c` directly to see what it produces on a header of your own without setting up a complete project, or use your own build process. Most of the time you will not use the `wrap_c` tool directly, but use it indirectly through geant.
+You can use `wrap_c` directly to see what it produces on a header (`_already c preprocessed C header_`) of your own without setting up a complete project, or use your own build process. Most of the time you will not use the `wrap_c` tool directly, but use it indirectly through geant.
 
-<h3>The Generated Code</h3>
+TODO: add an example of C preprocess with gcc and msc.
 
-As shown in the next figure, `WRAP_C` takes an already preprocessed C header file and generates Eiffel classes and a C glue code library. The generation of the C glue code library, is needed for C callbacks, it might seem a little counter productive at first, since we really want to use Eiffel not C. But first of all this generated C code makes accessing the C library from Eiffel possible (at least for C callbacks) and second of all this generated C code is wrapped by the generated Eiffel classes as well, eliminating the need to deal with it directly.
+<a name="gencode"></a>
+## The Generated Code
+
+As shown in the next figure, `wrap_C` takes an already `preprocessed` C header file and generates Eiffel classes and a C glue code library. The generation of the C glue code library, is needed for C callbacks, it might seem a little counter productive at first, since we really want to use Eiffel not C. But first of all this generated C code makes accessing the C library from Eiffel possible (at least for C callbacks) and second of all this generated C code is wrapped by the generated Eiffel classes as well, eliminating the need to deal with it directly.
 
 ![Wrap C flow](./wrap_c_flow.png "WrapC flow")
 
@@ -191,7 +211,6 @@ As shown in the next figure, `WRAP_C` takes an already preprocessed C header fil
 To generate a new Eiffel wrapper, the simplest way is to start from the template wrapping example located at {WRAP_C}/example/template
 
 <h3>**Directory Structure**</h3>
-
 
 	template	
 		example        -- examples using the library 
