@@ -60,15 +60,13 @@ The source code of `WrapC` is structured using the following defined structure.
 The basic layout looks like this:
 
 	WrapC
-		bin        -- wrap_c executable 
-		doc 	   -- WrapC documentation
-		examples   -- Set of examples that comes with WrapC 
-		config     -- Set of configuration files used for the geant automation scripts.
-		src        -- WrapC application source code
-			library    
-				-- kernel of WrapC (Parse the config file, Parse C header, AST and code Generation)
-			ewg
-				-- wrap_c tool
+		bin        	-- wrap_c executable 
+		doc 	  	-- WrapC documentation
+		examples   	-- Set of examples that comes with WrapC 
+		config    	-- Set of configuration files used for the geant automation scripts.
+		src        	-- WrapC application source code
+		|-----	library -- kernel of WrapC (Parse the config file, Parse C header, AST and code Generation)
+		|-----	ewg	-- wrap_c tool
 
 The previous layour shows how `WrapC` is structured on the file system.
 
