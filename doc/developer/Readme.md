@@ -63,10 +63,12 @@ The basic layout looks like this:
 		bin        -- wrap_c executable 
 		doc 	   -- WrapC documentation
 		examples   -- Set of examples that comes with WrapC 
-		library    -- kernel of WrapC (Parse the config file, Parse C header, AST and code Generation)
 		config     -- Set of configuration files used for the geant automation scripts.
 		src        -- WrapC application source code
-		tools      -- Generic tools for pre-post processing *
+			library    
+				-- kernel of WrapC (Parse the config file, Parse C header, AST and code Generation)
+			ewg
+				-- wrap_c tool
 
 The previous layour shows how `WrapC` is structured on the file system.
 
