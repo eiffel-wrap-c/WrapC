@@ -26,7 +26,7 @@
 			Preprocesses header files for test cluster
 		</description>
 		<geant file="build.eant" target="install" dir="src"/>
-		<geant file="build.eant" target="install" dir="library"/>
+		<geant file="build.eant" target="install" dir="src/library"/>
 		<!--geant file="build.eant" target="install" dir="test"/>-->
 	</target>
 
@@ -42,7 +42,7 @@
 		<geant target="remove_backup_files"/>
 		<geant file="build.eant" target="clean" dir="src"/>
 		<!--geant file="build.eant" target="clean" dir="test"/>-->
-		<geant file="build.eant" target="clean" dir="library"/>
+		<geant file="build.eant" target="clean" dir="src/library"/>
 		<!--geant file="build.eant" target="clean" dir="example"/>-->
 	</target>
 
@@ -72,7 +72,7 @@
 		<geant file="${cwd}/src/ewg/build.eant" target="clobber" dir="bin"/>
 		<delete file="${cwd}/bin/wrap_c.exe"/>
 		<!--geant file="${WRAP_C}/test/build.eant" target="clobber" dir="test"/>-->
-		<geant file="${cwd}/library/build.eant" target="clobber" dir="library"/>
+		<geant file="${cwd}/src/library/build.eant" target="clobber" dir="src/library"/>
 		<!--geant file="${WRAP_C}/example/build.eant" target="clobber" dir="example"/>-->
 		<!--geant file="${WRAP_C}/doc/build.eant" target="clobber" dir="doc"/>-->
 	</target>
@@ -93,7 +93,6 @@
 
 		<geant target="clobber"/>
 		<geant target="install"/>
-		<!--geant file="build.eant" target="install" dir="doc"/-->
 		<geant target="clean"/>
 		<geant target="install"/>
 		<delete>
