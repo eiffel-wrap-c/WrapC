@@ -98,7 +98,7 @@ feature {ANY}
 								shallow_wrapped_type_table.item (a_type) = True
 		end
 
-feature {ANY}
+feature {ANY} -- Change Element
 
 	set_output_directory_name (a_output_directory_name: STRING)
 		require
@@ -115,6 +115,14 @@ feature {ANY}
 			a_name_not_empty: a_name.count > 0
 		do
 			name := a_name
+		end
+
+	set_header_file_name (a_name: STRING)
+		require
+			a_name_not_void: a_name /= Void
+			a_name_not_empty: a_name.count > 0
+		do
+			header_file_name := a_name
 		end
 
 feature {ANY} -- Operations

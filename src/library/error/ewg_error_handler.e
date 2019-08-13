@@ -536,8 +536,9 @@ feature
 		once
 			create Result.make
 			("%T[--version] [--verbose]%N" +
-			 "%T%T[--enable-msc-extensions | --disable-msc-extension] [--output-dir=<...>]%N" +
-			 "%T%T--cpp-full-header=<...> [--include-header=<...>] [--config=<...>]%N")
+			 "%T%T[--enable-msc-extensions | --disable-msc-extension] [--c_compile_options=<...>]%N" +
+			 "%T%T[--script_pre_process=<...>] [--script_post_process=<...>][--output-dir=<...>]%N" +
+			 "%T%T--full-header=<...> [--include-header=<...>] [--config=<...>]%N")
 		ensure
 			usage_message_not_void: Result /= Void
 		end
@@ -568,7 +569,7 @@ feature
 			version_message_not_void: Version_message /= Void
 		end
 
-	Version_number: STRING = "0.9.0"
+	Version_number: STRING = "1.0.0"
 			-- Current version number of EWG
 
 invariant

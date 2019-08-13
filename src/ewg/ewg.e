@@ -34,6 +34,8 @@ inherit
 	KL_SHARED_OPERATING_SYSTEM
 		export {NONE} all end
 
+	SHARED_PROCESS_MISC
+
 create
 
 	make
@@ -165,6 +167,8 @@ feature
 			process_msc_extension_options
 
 			process_other_arguments
+
+			preprocess_c_header
 		end
 
 	process_msc_extension_options
@@ -191,12 +195,51 @@ feature
 			end
 		end
 
+	process_c_compiler_options
+		do
+			if match_long_option ("c_compile_options") then
+				if is_next_option_long_option and then has_next_option_value then
+					compiler_options := next_option_value
+					consume_option
+				else
+					error_handler.report_missing_command_line_parameter_value_error ("--c_compile_options=<...>")
+					error_handler.report_usage_error
+					Exceptions.die (1)
+				end
+			end
+		end
+
+	process_extension_scripts_options
+		local
+			script_pre_process: STRING
+			script_post_process: STRING
+		do
+			if match_long_option ("script_pre_process") then
+				if is_next_option_long_option and then has_next_option_value then
+					script_pre_process := next_option_value
+					consume_option
+				else
+					error_handler.report_missing_command_line_parameter_value_error ("--script_pre_process=<...>")
+					error_handler.report_usage_error
+					Exceptions.die (1)
+				end
+			end
+			if match_long_option ("script_post_process") then
+				if is_next_option_long_option and then has_next_option_value then
+					script_post_process := next_option_value
+					consume_option
+				else
+					error_handler.report_missing_command_line_parameter_value_error ("--script_post_process=<...>")
+					error_handler.report_usage_error
+					Exceptions.die (1)
+				end
+			end
+		end
+
 	process_other_arguments
 			-- Process arguments (using the obsolete syntax)
 		local
 			header_file_name: STRING
-			full_header_file_name: STRING
-			output_directory_name: STRING
 		do
 			if match_long_option ("output-dir") then
 				if is_next_option_long_option and then has_next_option_value then
@@ -205,25 +248,25 @@ feature
 				end
 			end
 
-			if not match_long_option ("cpp-full-header")  then
-				error_handler.report_missing_command_line_parameter_error ("--cpp-full-header=<...>")
+			if not match_long_option ("full-header")  then
+				error_handler.report_missing_command_line_parameter_error ("--full-header=<...>")
 				error_handler.report_usage_error
 				Exceptions.die (1)
 			end
 
 			if not has_next_option_value then
-				error_handler.report_missing_command_line_parameter_value_error ("--cpp-full-header=<...>")
+				error_handler.report_missing_command_line_parameter_value_error ("--full-header=<...>")
 				error_handler.report_usage_error
 				Exceptions.die (1)
 			end
 
-			cpp_header_file_name := next_option_value
-			header_file_name := cpp_header_file_name.twin
+			full_header_file_name := next_option_value
+			header_file_name := full_header_file_name.twin
 			consume_option
 
 			if match_long_option ("full-header")  then
 				if not has_next_option_value then
-					error_handler.report_missing_command_line_parameter_value_error ("--cpp-full-header=<...>")
+					error_handler.report_missing_command_line_parameter_value_error ("--full-header=<...>")
 					error_handler.report_usage_error
 					Exceptions.die (1)
 				end
@@ -253,16 +296,65 @@ feature
 					Exceptions.die (1)
 				end
 			end
+		end
+
+	preprocess_c_header
+	    local
+	    	l_cmd: STRING
+	    	l_path: PATH
+	    	l_name: STRING
+	    	l_index: INTEGER
+	    	l_file: RAW_FILE
+	    	l_directory_name: STRING
+		do
+			if attached full_header_file_name as l_full_header_file_name  then
+				-- gcc -E ${wrap_c.c_compile.options.default} ${wrap_c.c_compile.options} ${wrap_c.full_header_name} &gt; ${wrap_c.cpp_header_name}
+				-- cl /nologo /E ${wrap_c.c_compile.options.default} ${wrap_c.c_compile.options} ${wrap_c.full_header_name} &gt; ${wrap_c.cpp_header_name}
+				create config_system.make (full_header_file_name)
+				if output_directory_name /= Void then
+					l_directory_name := output_directory_name
+				else
+					l_directory_name := output_directory_name
+					config_system.set_output_directory_name (config_system.directory_structure.default_output_directory)
+				end
 
 
-			create config_system.make (header_file_name)
+				create l_path.make_from_string (l_directory_name)
+				if {PLATFORM}.is_windows then
+					create l_cmd.make_from_string ("cl /nologo /E ")
+				else
+					create l_cmd.make_from_string ("gcc -E ")
+				end
+				l_cmd.append_string (default_c_compile_options)
+				l_cmd.append (" ")
+				if attached compiler_options as l_compiler_options then
+					l_cmd.append_string (l_compiler_options)
+				end
+				l_cmd.append (" ")
+				l_cmd.append_string (l_full_header_file_name)
 
-			if output_directory_name /= Void then
-				config_system.set_output_directory_name (output_directory_name)
-			else
-				config_system.set_output_directory_name (config_system.directory_structure.default_output_directory)
+				if attached process_misc.output_of_command (l_cmd, l_path) as l_result then
+					if l_result.exit_code = 0 then
+						error_handler.report_info_message ("[Preprocess C header]")
+						error_handler.report_info_message (l_cmd)
+							-- To be updated.
+						l_index := l_result.error_output.index_of ('.', 1) - 1
+						l_name := l_result.error_output.substring (1, l_index)
+						l_name.append_string ("_cpp.h")
+						cpp_header_file_name := l_name.twin
+						create l_file.make_create_read_write (l_name)
+						l_file.put_string (l_result.output)
+						l_file.flush
+						l_file.close
+						config_system.set_header_file_name (l_name)
+					else
+							-- Error
+						error_handler.report_info_message (l_result.error_output)
+					end
+				else
+					error_handler.report_info_message ("Command not found " + l_cmd )
+				end
 			end
-
 		end
 
 	print_eiffel_wrapper_summary
@@ -279,7 +371,9 @@ feature
 			error_handler.report_info_message ("    . " + eiffel_wrapper_set.callback_wrapper_count.out + " callback wrappers")
 		end
 
-feature
+
+
+feature -- Access
 
 	error_handler: EWG_ERROR_HANDLER
 			-- Error handler
@@ -310,5 +404,28 @@ feature
 			-- options you use to compile an application that uses this
 			-- header.  Note: "cpp" does not stand for C++, it stands for
 			-- "C-Pre-Processed".
+
+	full_header_file_name: STRING
+			-- C header file (with full path name)
+			-- This is the file that will be preprocessed and
+			-- saved as `cpp_header_file_name`.
+
+
+	compiler_options: STRING
+			-- Optional compiler options to apply during C headerp
+			-- preprocessing.
+
+
+	output_directory_name: STRING
+
+	default_c_compile_options: STRING
+		once
+			if {PLATFORM}.is_windows then
+				Result := "/I${ISE_EIFFEL}\studio\spec\$ISE_PLATFORM\include"
+			else
+				Result := "-I${ISE_EIFFEL}/studio/spec/$ISE_PLATFORM/include"  -- Linux
+			end
+		end
+
 
 end
