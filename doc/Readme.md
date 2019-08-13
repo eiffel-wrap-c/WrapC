@@ -21,27 +21,38 @@ This section describes what code `WrapC` generates and how to integrate that cod
 
 The wrap_c tool is a command line application and takes the following command line parameters:
 
-	wrap_c: You must specify '--cpp-full-header=<...>'
+	wrap_c: You must specify '--full-header=<...>'
 	usage: wrap_c   [--version] [--verbose]
-		[--enable-msc-extensions | --disable-msc-extension] [--output-dir=<...>]
-                --cpp-full-header=<...> [--include-header=<...>] [--config=<...>]
-	
+                [--enable-msc-extensions | --disable-msc-extension] [--c_compile_options=<...>]
+                [--script_pre_process=<...>] [--script_post_process=<...>][--output-dir=<...>]
+                --full-header=<...> [--include-header=<...>] [--config=<...>]
 
 	options:
 		--version ... Output EWG version number
 		--verbose ... Output progress information on STDOUT
 		--enable-msc-extensions ... Enable Visual C++ extensions (default on Windows)
 		--disable-msc-extensions ... Disable Visual C++ extensions (default everywhere else :)
-    
+		--c_compile_options: Optional c compile options
+		--script_pre_process: Optional pre-processing script, to be executed before C header preprocessing
+		--scrtip_post_process: Optional post-processing script, to be executed after Eiffel code wrapping.
+
 	arguments:
 		--output-dir ... Directory where generated files will be placed
-		--cpp-full-header ... File name (including path name) to the already c preprocessed C header
+		--full-header ... Filename (including pathname) to the C header to be preprocessed 
 		--include-header ... Name of header file, that should be used in eiffel external clauses
 		--config ... Name of config file to use. A config file allows to customize the wrapping process
 
 You can use `wrap_c` directly to see what it produces on a header (`_already c preprocessed C header_`) of your own without setting up a complete project, or use your own build process. Most of the time you will not use the `wrap_c` tool directly, but use it indirectly through geant.
 
-TODO: add an example of C preprocess with gcc and msc.
+. Example of use
+
+### Simple example
+	wrap_c --verbose --enable-msc-extensions  --output-dir=C:/home/test/ewg/example/simple/library    full-header=C:/home/test/ewg	/example/simple/library/manual_wrapper/c/include/simple_header.h  
+	--include-header=simple_header.h  --config=C:/home/test/ewg/example/simple/library/config.ewg
+
+### Simple example with Post Processing Script
+	wrap_c --verbose --enable-msc-extensions  --output-dir=C:/home/test/ewg/example/simple/library    --script_post_process= C:/home/test/ewg/example/simple/library/postscript.py   --full-header=C:/home/test/ewg/example/simple/library/manual_wrapper/c/include/simple_header.h  
+	--include-header=simple_header.h  --config=C:/home/test/ewg/example/simple/library/config.ewg
 
 <a name="gencode"></a>
 ## The Generated Code
