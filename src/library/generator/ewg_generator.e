@@ -139,9 +139,22 @@ feature {NONE} -- Implementation
 
 			create eiffel_abstraction_dispatcher_generator.make (error_handler, directory_structure)
 			eiffel_abstraction_dispatcher_generator.generate (eiffel_wrapper_set)
+
+			create_wrap_c_header
 		end
 
 feature {NONE} -- Implementation
+
+	create_wrap_c_header
+		local
+			l_raw_file: RAW_FILE
+		do
+			create l_raw_file.make_create_read_write ((create {PATH}.make_from_string (directory_structure.c_include_directory_name)).extended ("ewg_eiffel.h").name)
+			l_raw_file.open_read_write
+			l_raw_file.put_string (ewg_eiffel_header)
+			l_raw_file.flush
+			l_raw_file.close
+		end
 
 	raw_header_file_name: STRING
 			-- Name of the raw header file name
@@ -154,6 +167,22 @@ feature {NONE} -- Implementation
 
 	eiffel_wrapper_set: EWG_EIFFEL_WRAPPER_SET
 			-- Wrapper set
+
+
+	ewg_eiffel_header: STRING = "[
+#ifndef eif_h
+#define eif_h
+
+#include <eif_portable.h>
+#include <eif_hector.h>
+#include <eif_macros.h>
+
+#ifndef NULL
+#define NULL ((void*)0)
+#endif
+
+#endif
+	]"
 
 invariant
 

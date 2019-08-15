@@ -122,6 +122,9 @@ feature
 
 			-- generating
 			ewg_generator.generate
+
+			-- Copy build files to generated folder
+			move_build_files
 		end
 
 
@@ -173,25 +176,10 @@ feature
 
 	process_msc_extension_options
 		do
-			if operating_system.is_windows then
+			if operating_system.is_windows and then attached {EXECUTION_ENVIRONMENT}.item ("ISE_C_COMPILER") as l_compiler
+				and then l_compiler.has_substring ("msc")
+			then
 				is_msc_extension_enabled := True
-			end
-
-			if match_long_option ("msc-extensions") then
-				is_msc_extension_enabled := True
-				consume_option
-				error_handler.report_obsolete_syntax_is_used_message
-				error_handler.report_usage_message
-			end
-
-			if match_long_option ("enable-msc-extensions") then
-				is_msc_extension_enabled := True
-				consume_option
-			end
-
-			if match_long_option ("disable-msc-extensions") then
-				is_msc_extension_enabled := False
-				consume_option
 			end
 		end
 
@@ -240,6 +228,7 @@ feature
 			-- Process arguments (using the obsolete syntax)
 		local
 			header_file_name: STRING
+			index: INTEGER
 		do
 			if match_long_option ("output-dir") then
 				if is_next_option_long_option and then has_next_option_value then
@@ -275,16 +264,21 @@ feature
 				consume_option
 			end
 
-			if match_long_option ("include-header") then
-				if is_next_option_long_option and then has_next_option_value then
-					header_file_name := next_option_value
-					consume_option
+			index := header_file_name.last_index_of (windows_separator, header_file_name.count)
+			if index > 0 then
+				header_file_name := header_file_name.substring (index + 1, header_file_name.count)
+			else
+				index := header_file_name.last_index_of (unix_separator, header_file_name.count)
+				if index > 0 then
+					header_file_name := header_file_name.substring (index + 1, header_file_name.count)
 				else
-					error_handler.report_missing_command_line_parameter_value_error ("--include-header=<...>")
+					error_handler.report_error_message (header_file_name + " is not a valid --full-header=<...>")
 					error_handler.report_usage_error
 					Exceptions.die (1)
 				end
 			end
+
+
 
 			if match_long_option ("config") then
 				if is_next_option_long_option and then has_next_option_value then
@@ -296,6 +290,8 @@ feature
 					Exceptions.die (1)
 				end
 			end
+
+			create config_system.make (header_file_name)
 		end
 
 	preprocess_c_header
@@ -306,26 +302,31 @@ feature
 	    	l_index: INTEGER
 	    	l_file: RAW_FILE
 	    	l_directory_name: STRING
+	    	l_directory: DIRECTORY
 		do
 			if attached full_header_file_name as l_full_header_file_name  then
 				-- gcc -E ${wrap_c.c_compile.options.default} ${wrap_c.c_compile.options} ${wrap_c.full_header_name} &gt; ${wrap_c.cpp_header_name}
 				-- cl /nologo /E ${wrap_c.c_compile.options.default} ${wrap_c.c_compile.options} ${wrap_c.full_header_name} &gt; ${wrap_c.cpp_header_name}
-				create config_system.make (full_header_file_name)
 				if output_directory_name /= Void then
 					l_directory_name := output_directory_name
+					config_system.set_output_directory_name (output_directory_name)
 				else
-					l_directory_name := output_directory_name
 					config_system.set_output_directory_name (config_system.directory_structure.default_output_directory)
 				end
 
+				create l_directory.make_with_name (config_system.output_directory_name)
+				if not l_directory.exists then
+					l_directory.create_dir
+				end
 
 				create l_path.make_from_string (l_directory_name)
-				if {PLATFORM}.is_windows then
+				if {PLATFORM}.is_windows and then attached {EXECUTION_ENVIRONMENT}.item ("ISE_C_COMPILER") as l_platform and then
+					l_platform.has_substring ("msc")
+				then
 					create l_cmd.make_from_string ("cl /nologo /E ")
 				else
 					create l_cmd.make_from_string ("gcc -E ")
 				end
-				l_cmd.append_string (default_c_compile_options)
 				l_cmd.append (" ")
 				if attached compiler_options as l_compiler_options then
 					l_cmd.append_string (l_compiler_options)
@@ -346,7 +347,6 @@ feature
 						l_file.put_string (l_result.output)
 						l_file.flush
 						l_file.close
-						config_system.set_header_file_name (l_name)
 					else
 							-- Error
 						error_handler.report_info_message (l_result.error_output)
@@ -371,6 +371,86 @@ feature
 			error_handler.report_info_message ("    . " + eiffel_wrapper_set.callback_wrapper_count.out + " callback wrappers")
 		end
 
+
+	move_build_files
+		local
+			l_src_file: RAW_FILE
+			l_dest_file: RAW_FILE
+			l_name: STRING
+			l_path: PATH
+			l_copy_cmd: STRING
+		do
+				-- TODO check if we can use BASE PROCESS
+			create l_path.make_from_string (config_system.output_directory_name)
+			l_path := l_path.parent
+			if {PLATFORM}.is_windows then
+					--Copy	Makefile-win.SH iff exist
+				create l_src_file.make_with_path (l_path.extended (makefilename_win))
+				if l_src_file.exists then
+					l_src_file.open_read
+					create l_dest_file.make_create_read_write (config_system.output_directory_name + "/c/src/" + makefilename_win)
+					l_src_file.read_stream (l_src_file.count)
+					l_dest_file.put_string (l_src_file.last_string)
+					l_src_file.close
+					l_dest_file.close
+				end
+
+					--Copy	finish_freezing.eant iff exist
+				create l_src_file.make_with_path (l_path.extended (finish_freezing))
+				if l_src_file.exists then
+					l_src_file.open_read
+					create l_dest_file.make_create_read_write (config_system.output_directory_name + "/c/src/geant.eant")
+					l_src_file.read_stream (l_src_file.count)
+					l_dest_file.put_string (l_src_file.last_string)
+					l_src_file.close
+					l_dest_file.close
+				end
+
+					-- xcopy manual_wrapper\c\src\*.c generated_wrapper\c\src
+				create l_copy_cmd.make_from_string ("xcopy")
+				l_copy_cmd.append_string (" ")
+				l_copy_cmd.append_string_general (l_path.name)
+				l_copy_cmd.append_string_general ("\manual_wrapper\c\src\*.c ")
+				l_copy_cmd.append_string_general ((create {PATH}.make_from_string (config_system.output_directory_name)).name)
+				l_copy_cmd.append_string_general ("\c\src")
+				if attached process_misc.output_of_command (l_copy_cmd, l_path) as l_result then
+					if l_result.exit_code = 0 then
+						error_handler.report_info_message ("[Copy C files]")
+						error_handler.report_info_message (l_copy_cmd)
+					else
+						-- Error
+						error_handler.report_info_message (l_result.error_output)
+					end
+				else
+					error_handler.report_info_message ("Command not found " + l_copy_cmd )
+				end
+			else
+				-- Linux
+				-- Copy Makefile.SH
+				create l_src_file.make_with_path (l_path.extended (makefilename))
+				if l_src_file.exists then
+					l_src_file.open_read
+					create l_dest_file.make_create_read_write (config_system.output_directory_name + "\c\src\" + makefilename)
+					l_src_file.read_stream (l_src_file.count)
+					l_dest_file.put_string (l_src_file.last_string)
+					l_src_file.close
+					l_dest_file.close
+				end
+
+					--Copy	finish_freezing.eant iff exist
+				create l_src_file.make_with_path (l_path.extended (finish_freezing))
+				if l_src_file.exists then
+					l_src_file.open_read
+					create l_dest_file.make_create_read_write (config_system.output_directory_name + "\c\src\geant.eant" )
+					l_src_file.read_stream (l_src_file.count)
+					l_dest_file.put_string (l_src_file.last_string)
+					l_src_file.close
+					l_dest_file.close
+				end
+
+			end
+
+		end
 
 
 feature -- Access
@@ -418,12 +498,25 @@ feature -- Access
 
 	output_directory_name: STRING
 
-	default_c_compile_options: STRING
-		once
+
+	makefilename: STRING = "Makefile.SH"
+	makefilename_win: STRING = "Makefile-win.SH"
+	finish_freezing: STRING ="finish_freezing.eant"
+
+
+feature -- Platform directory Separator.
+
+	unix_separator: CHARACTER = '/'
+	windows_separator: CHARACTER = '\'
+			-- Platform specific directory separator.
+
+	directory_separator: CHARACTER
+			-- Default directory separator for the current platform.
+		do
 			if {PLATFORM}.is_windows then
-				Result := "/I${ISE_EIFFEL}\studio\spec\$ISE_PLATFORM\include"
+				Result := windows_separator
 			else
-				Result := "-I${ISE_EIFFEL}/studio/spec/$ISE_PLATFORM/include"  -- Linux
+				Result := unix_separator
 			end
 		end
 

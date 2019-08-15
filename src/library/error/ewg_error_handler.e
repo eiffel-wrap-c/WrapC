@@ -536,9 +536,9 @@ feature
 		once
 			create Result.make
 			("%T[--version] [--verbose]%N" +
-			 "%T%T[--enable-msc-extensions | --disable-msc-extension] [--c_compile_options=<...>]%N" +
-			 "%T%T[--script_pre_process=<...>] [--script_post_process=<...>][--output-dir=<...>]%N" +
-			 "%T%T--full-header=<...> [--include-header=<...>] [--config=<...>]%N")
+			 "%T%T[--c_compile_options=<...>] [--script_pre_process=<...>] [--script_post_process=<...>]%N" +
+			 "%T%T[--output-dir=<...>] --full-header=<...>%N" +
+			 "%T%T[--config=<...>]%N")
 		ensure
 			usage_message_not_void: Result /= Void
 		end
