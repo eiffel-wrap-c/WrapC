@@ -9,6 +9,8 @@
 	<target name="help">
 		<echo message="usage:"/>
 		<echo message=" geant wrap_c"/>
+		<echo message=" geant wrap_c_pre_script"/>
+		<echo message=" geant wrap_c_post_script"/>
 		<echo message=" geant compile"/>
 		<echo message=" geant clean"/>
 		<echo message=" geant clobber"/>
@@ -32,12 +34,31 @@
    		 <description>
      		 Generate wrapper files
     		</description>
+    	<set name="wrap_c.config_file_option" value=""/>
+    	<set name="wrap_c.config_file_option" value="--config=config.xml" if="${wrap_c.use_config_file}=True"/>	
+    	<exec executable="wrap_c ${wrap_c.verbose} --output-dir=${wrap_c.wrapper_dir} --full-header=${wrap_c.full_header_name} ${wrap_c.config_file_option}"/>
+  	</target>
+
+  	<target name="wrap_c_pre_script" depend="init_wrap_c">
+   		 <description>
+     		 Generate wrapper files
+    		</description>
+    	<set name="wrap_c.config_file_option" value=""/>
+    	<set name="wrap_c.config_file_option" value="--config=config.xml" if="${wrap_c.use_config_file}=True"/>	
+    	<exec executable="wrap_c ${wrap_c.verbose} --script_pre_process=${cwd}/pre_script.bat --output-dir=${wrap_c.wrapper_dir} --full-header=${wrap_c.full_header_name} ${wrap_c.config_file_option}"/>
+  	</target>
+
+  	 <target name="wrap_c_post_script" depend="init_wrap_c">
+   		 <description>
+     		 Generate wrapper files
+    		</description>
     	<set name="msc_extensions_flag" value=""/>
  		<set name="msc_extensions_flag" value="--enable-msc-extensions" if="${is_windows}"/>
     	<set name="wrap_c.config_file_option" value=""/>
     	<set name="wrap_c.config_file_option" value="--config=config.xml" if="${wrap_c.use_config_file}=True"/>	
-    	<exec executable="wrap_c ${wrap_c.verbose} ${msc_extensions_flag} --output-dir=${wrap_c.wrapper_dir} --full-header=${wrap_c.full_header_name} --include-header=${wrap_c.short_header_name} ${wrap_c.config_file_option}"/>
+    	<exec executable="wrap_c ${wrap_c.verbose} --script_post_process=${cwd}/post_script.bat --output-dir=${wrap_c.wrapper_dir} --full-header=${wrap_c.full_header_name} ${wrap_c.config_file_option}"/>
   	</target>
+
 
 	<target name="clean">
 		<echo message="- Clean [EiffelCallback]" />

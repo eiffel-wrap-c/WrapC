@@ -113,19 +113,19 @@ feature
 			c_parser := Void
 
 
-			-- post process C AST
+				-- post process C AST
 			post_parser_processor.post_process
 
-			-- build Eiffel AST from post processed C AST
+				-- build Eiffel AST from post processed C AST
 			eiffel_wrapper_builder.build
 			print_eiffel_wrapper_summary
 
-			-- generating
+				-- generating
 			ewg_generator.generate
 
-			-- Copy build files to generated folder
-			move_build_files
-		end
+				-- Post processing
+			execute_post_process
+	end
 
 
 	preprocess_file
@@ -169,7 +169,13 @@ feature
 
 			process_msc_extension_options
 
+			process_c_compiler_options
+
+			process_extension_scripts_options
+
 			process_other_arguments
+
+			execute_pre_process
 
 			preprocess_c_header
 		end
@@ -198,9 +204,6 @@ feature
 		end
 
 	process_extension_scripts_options
-		local
-			script_pre_process: STRING
-			script_post_process: STRING
 		do
 			if match_long_option ("script_pre_process") then
 				if is_next_option_long_option and then has_next_option_value then
@@ -277,8 +280,6 @@ feature
 					Exceptions.die (1)
 				end
 			end
-
-
 
 			if match_long_option ("config") then
 				if is_next_option_long_option and then has_next_option_value then
@@ -372,86 +373,48 @@ feature
 		end
 
 
-	move_build_files
-		local
-			l_src_file: RAW_FILE
-			l_dest_file: RAW_FILE
-			l_name: STRING
-			l_path: PATH
-			l_copy_cmd: STRING
+
+feature -- Execute Plugin scripts
+
+	execute_pre_process
+			-- Execute pre process script, if any.
 		do
-				-- TODO check if we can use BASE PROCESS
-			create l_path.make_from_string (config_system.output_directory_name)
-			l_path := l_path.parent
-			if {PLATFORM}.is_windows then
-					--Copy	Makefile-win.SH iff exist
-				create l_src_file.make_with_path (l_path.extended (makefilename_win))
-				if l_src_file.exists then
-					l_src_file.open_read
-					create l_dest_file.make_create_read_write (config_system.output_directory_name + "/c/src/" + makefilename_win)
-					l_src_file.read_stream (l_src_file.count)
-					l_dest_file.put_string (l_src_file.last_string)
-					l_src_file.close
-					l_dest_file.close
-				end
-
-					--Copy	finish_freezing.eant iff exist
-				create l_src_file.make_with_path (l_path.extended (finish_freezing))
-				if l_src_file.exists then
-					l_src_file.open_read
-					create l_dest_file.make_create_read_write (config_system.output_directory_name + "/c/src/geant.eant")
-					l_src_file.read_stream (l_src_file.count)
-					l_dest_file.put_string (l_src_file.last_string)
-					l_src_file.close
-					l_dest_file.close
-				end
-
-					-- xcopy manual_wrapper\c\src\*.c generated_wrapper\c\src
-				create l_copy_cmd.make_from_string ("xcopy")
-				l_copy_cmd.append_string (" ")
-				l_copy_cmd.append_string_general (l_path.name)
-				l_copy_cmd.append_string_general ("\manual_wrapper\c\src\*.c ")
-				l_copy_cmd.append_string_general ((create {PATH}.make_from_string (config_system.output_directory_name)).name)
-				l_copy_cmd.append_string_general ("\c\src")
-				if attached process_misc.output_of_command (l_copy_cmd, l_path) as l_result then
+			if attached script_pre_process as l_script then
+				if attached process_misc.output_of_command (l_script, Void) as l_result then
 					if l_result.exit_code = 0 then
-						error_handler.report_info_message ("[Copy C files]")
-						error_handler.report_info_message (l_copy_cmd)
+						error_handler.report_info_message ("[Execute pre process script]")
 					else
 						-- Error
 						error_handler.report_info_message (l_result.error_output)
 					end
 				else
-					error_handler.report_info_message ("Command not found " + l_copy_cmd )
+					error_handler.report_info_message ("Script not found " + l_script )
 				end
-			else
-				-- Linux
-				-- Copy Makefile.SH
-				create l_src_file.make_with_path (l_path.extended (makefilename))
-				if l_src_file.exists then
-					l_src_file.open_read
-					create l_dest_file.make_create_read_write (config_system.output_directory_name + "\c\src\" + makefilename)
-					l_src_file.read_stream (l_src_file.count)
-					l_dest_file.put_string (l_src_file.last_string)
-					l_src_file.close
-					l_dest_file.close
-				end
-
-					--Copy	finish_freezing.eant iff exist
-				create l_src_file.make_with_path (l_path.extended (finish_freezing))
-				if l_src_file.exists then
-					l_src_file.open_read
-					create l_dest_file.make_create_read_write (config_system.output_directory_name + "\c\src\geant.eant" )
-					l_src_file.read_stream (l_src_file.count)
-					l_dest_file.put_string (l_src_file.last_string)
-					l_src_file.close
-					l_dest_file.close
-				end
-
 			end
-
 		end
 
+	execute_post_process
+			-- Execute post process script, if any.
+		do
+			if attached script_post_process as l_script then
+				if attached process_misc.output_of_command (l_script, Void) as l_result then
+					if l_result.exit_code = 0 then
+						error_handler.report_info_message ("[Execute post process script]")
+					else
+						-- Error
+						error_handler.report_info_message (l_result.error_output)
+					end
+				else
+					error_handler.report_info_message ("Script not found " + l_script )
+				end
+			end
+		end
+
+feature {NONE} -- Implementation
+
+	script_pre_process: STRING
+
+	script_post_process: STRING
 
 feature -- Access
 
