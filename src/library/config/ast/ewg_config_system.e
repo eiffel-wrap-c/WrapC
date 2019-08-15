@@ -98,7 +98,7 @@ feature {ANY}
 								shallow_wrapped_type_table.item (a_type) = True
 		end
 
-feature {ANY}
+feature {ANY} -- Change Element
 
 	set_output_directory_name (a_output_directory_name: STRING)
 		require
