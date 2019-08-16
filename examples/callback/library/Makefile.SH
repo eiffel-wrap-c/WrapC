@@ -14,7 +14,7 @@ $spitshell >Makefile <<!GROK!THIS!
 SHELL = /bin/sh
 CC= $cc
 AR = ar rc
-CFLAGS = $optimize $ccflags $large -I$rt_include -I\$(MYSQLINC)
+CFLAGS = $optimize $ccflags $large -I$rt_include -I../../../manual_wrapper/c/include -I../include 
 LDFLAGS = $ldflags
 LIBS = $libs
 MAKE = $make
@@ -29,19 +29,19 @@ $spitshell >>Makefile <<'!NO!SUBS!'
 .c.o:
 	$(CC) $(CFLAGS) -c $<
 
-OBJECTS = eif_mysql.o
+OBJECTS = ewg_callback_callback_c_glue_code.o callback.o
 
-libmysql_store.a: $(OBJECTS)
-	mkdir -p ../../../../spec/$(PLATFORM)/lib
+eif_callback.a: $(OBJECTS)
+	mkdir -p ../../../C/spec/$(PLATFORM)/lib
 	$(RM) $@
 	$(AR) $@ $(OBJECTS)
-	$(MV) $@ ../../../../spec/$(PLATFORM)/lib
-	$(RANLIB) ../../../../spec/$(PLATFORM)/lib/$@
+	$(MV) $@ ../../../C/spec/$(PLATFORM)/lib
+	$(RANLIB) ../../../C/spec/$(PLATFORM)/lib/$@
 	$(MAKE) clean
 
-	#$(RM) libmysql_store.a $(OBJECTS) Makefile config.sh
+	#$(RM) eif_callback.a $(OBJECTS) Makefile config.sh
 clean:
-	$(RM) libmysql_store.a $(OBJECTS)
+	$(RM) eif_callback.a $(OBJECTS)
 !NO!SUBS!
 chmod 644 Makefile
 $eunicefix Makefile
