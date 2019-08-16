@@ -231,7 +231,7 @@ feature
 			-- Process arguments (using the obsolete syntax)
 		local
 			header_file_name: STRING
-			index: INTEGER
+			l_path: PATH
 		do
 			if match_long_option ("output-dir") then
 				if is_next_option_long_option and then has_next_option_value then
@@ -267,19 +267,9 @@ feature
 				consume_option
 			end
 
-			index := header_file_name.last_index_of (windows_separator, header_file_name.count)
-			if index > 0 then
-				header_file_name := header_file_name.substring (index + 1, header_file_name.count)
-			else
-				index := header_file_name.last_index_of (unix_separator, header_file_name.count)
-				if index > 0 then
-					header_file_name := header_file_name.substring (index + 1, header_file_name.count)
-				else
-					error_handler.report_error_message (header_file_name + " is not a valid --full-header=<...>")
-					error_handler.report_usage_error
-					Exceptions.die (1)
-				end
-			end
+			create l_path.make_from_string (header_file_name)
+			header_file_name := l_path.entry.out
+
 
 			if match_long_option ("config") then
 				if is_next_option_long_option and then has_next_option_value then

@@ -4,8 +4,8 @@ OUTDIR= .
 INDIR= .
 CC = $cc
 OUTPUT_CMD = $output_cmd
-CFLAGS = -I"$rt_include" -I $(INDIR)$(DIR)generated_wrapped$(DIR)c$(DIR)include -I $(INDIR)$(DIR)manual_wrapped$(DIR)c$(DIR)include 
-JCFLAGS = $(CFLAGS) $optimize $ccflags $(INDIR)$(DIR)generated_wrapped$(DIR)c$(DIR)src$(DIR)$*.c
+CFLAGS = -I"$rt_include" -I $(TOP)$(DIR)include -I $(TOP)$(DIR)$(TOP)$(DIR)$(TOP)$(DIR)manual_wrapper$(DIR)c$(DIR)include 
+JCFLAGS = $(CFLAGS) $optimize $ccflags 
 JMTCFLAGS = $(CFLAGS) $optimize $mtccflags 
 JILCFLAGS = $(CFLAGS) $optimize $mtccflags  -DEIF_IL_DLL
 LN = copy
@@ -15,11 +15,8 @@ MAKE = $make
 MKDIR = $mkdir
 OBJECTS = 	ewg_callback_callback_c_glue_code.$obj callback.$obj
 
-%.c.$obj:
+.c.$obj:
 	$(CC) -c $(JCFLAGS) $<
-
-#callback.c.$obj:	
-#	$(CC) -c $(JCFLAGS) $(INDIR)$(DIR)generated_wrapped$(DIR)c$(DIR)src $<
 
 all:: standard
 	$(MAKE) clean
@@ -32,5 +29,5 @@ clean:
 
 eif_callback.lib: $(OBJECTS)
 	$alib_line
-#	$(MKDIR) $(TOP)$(DIR)$(TOP)$(DIR)$(TOP)$(DIR)C$(DIR)spec$(DIR)$(ISE_C_COMPILER)$(DIR)$(ISE_PLATFORM)$(DIR)lib
-#	$(MV) $@ $(TOP)$(DIR)$(TOP)$(DIR)$(TOP)$(DIR)C$(DIR)spec$(DIR)$(ISE_C_COMPILER)$(DIR)$(ISE_PLATFORM)$(DIR)lib$(DIR)$@
+	$(MKDIR) $(TOP)$(DIR)$(TOP)$(DIR)$(TOP)$(DIR)C$(DIR)spec$(DIR)$(ISE_C_COMPILER)$(DIR)$(ISE_PLATFORM)$(DIR)lib
+	$(MV) $@ $(TOP)$(DIR)$(TOP)$(DIR)$(TOP)$(DIR)C$(DIR)spec$(DIR)$(ISE_C_COMPILER)$(DIR)$(ISE_PLATFORM)$(DIR)lib$(DIR)$@
