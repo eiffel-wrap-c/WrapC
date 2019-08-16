@@ -12,7 +12,7 @@
 	*  [Functions](#functions)
 	*  [Callbacks](#callbacks)
 * [The configuration file](#config_file)
-	*  [Dependent Types](#dependent types)
+	*  [Dependent Types](#dependent_types)
 	
 	
 	
@@ -662,7 +662,7 @@ Note that the value of name can be a regular expression. In the above example an
 
 You can choose more than one constraint per match clause. In which case you constrain the match clause to all individual constraints.
 
-<a name="dependent types"></a>
+<a name="dependent_types"></a>
 ### Dependent Types
 
 If you choose to include a type who depends on a type which you choose to exclude, the dependent type will also be included. Confused? Let's say you have:
