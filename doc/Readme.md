@@ -53,7 +53,8 @@ You can use `wrap_c` directly to see what it produces on a header  of your own w
 <a name="gencode"></a>
 ## The Generated Code
 
-As shown in the next figure, `wrap_C` takes an already `preprocessed` C header file and generates Eiffel classes and a C glue code library. The generation of the C glue code library, is needed for C callbacks, it might seem a little counter productive at first, since we really want to use Eiffel not C. But first of all this generated C code makes accessing the C library from Eiffel possible (at least for C callbacks) and second of all this generated C code is wrapped by the generated Eiffel classes as well, eliminating the need to deal with it directly.
+As shown in the next figure, `WrapC` takes C header file which will be preprocessed and generates Eiffel classes and a C glue code library, based on the rules defined in the configuration `config.xml`. Optionally `WrapC`can use plugin scripts to do some pre processing, before to do the C preprocessing and Eiffel Code generation and after the code generation with the plugin post processing.  
+The generation of the C glue code library, is needed for C callbacks, it might seem a little counter productive at first, since we really want to use Eiffel not C. But first of all this generated C code makes accessing the C library from Eiffel possible (at least for C callbacks) and second of all this generated C code is wrapped by the generated Eiffel classes as well, eliminating the need to deal with it directly.
 
 ![Wrap C flow](./WrapC_flow.png "WrapC flow")
 
