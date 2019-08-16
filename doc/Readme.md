@@ -461,7 +461,7 @@ This section describes what code gets generated for C callbacks and how to use t
 
 It is important to understand that there is an inherent problem when wrapping callbacks in Eiffel. For example the following callback:
     	   
-    			 typedef void (*void_callback) (void);
+	typedef void (*void_callback) (void);
 
 Does not convey any state when invoked (other than it has been invoked). This is the reason for the following limitation: One can only register one Eiffel callback receiver per callback type. If more receivers were allowed how would one decide on the invocation of a callback which receiver is meant? In practice this limitation is usually of no concern. Most C libraries have adopted a pseudo OO technique of supplying a user definable parameter as the first parameter on every callback. This parameter can be used to do further dispatching. 
 
@@ -479,8 +479,47 @@ Let us look at the following declarations (taken from the callback-example)
 
 The first one is the one you have to create in order to establish the C-Eiffel bridge and register via an agent the Eiffel feature that you want to call on a callback. The second one is the Eiffel wrapper of the C glue code generated needed to implement callbacks.
 
-Let's look how to use it,
+First let's check the callback dispatcher generated class
 
+	class SAMPLE_CALLBACK_TYPE_DISPATCHER
+
+	inherit
+
+		EWG_CALLBACK_CALLBACK_C_GLUE_CODE_FUNCTIONS_API
+			export {NONE} all end
+	create
+		make
+
+	feature -- Initialization
+
+		make (a_routine: like routine) 
+					-- Dispatcher initialization
+			do
+				routine := a_routine
+				set_sample_callback_type_entry (Current, $on_callback)
+			end
+
+	feature --Access: Routine 
+
+		routine: PROCEDURE [TUPLE [a_pdata: POINTER; a_a_event_type: INTEGER]]  
+				--Eiffel routine to be call on callback.
+
+	feature --Access: Dispatcher
+
+		c_dispatcher: POINTER 
+			do
+				Result := get_sample_callback_type_stub
+			end
+
+	feature --Access: Callback
+
+		on_callback (a_pdata: POINTER; a_a_event_type: INTEGER)  
+			do
+				routine (a_pdata, a_a_event_type)
+			end
+	end
+
+To use this wrapper you just need to create an object instance of `SAMPLE_CALLBACK_TYPE_DISPATCHER` to register via agent the Eiffel feature that you want to call on a callback.Then call an Eiffel function that will register the dispatcher with the C library usign `SAMPLE_CALLBACK_TYPE_DISPATCHER.c_dispatcher`. Let's look an example, taken from the callback example.
 
 
 	class CALLBACK_HELLO_WORLD
