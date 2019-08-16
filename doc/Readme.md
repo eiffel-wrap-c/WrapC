@@ -4,14 +4,12 @@
 * [Install WrapC](#installation)
 * [Understanding WrapC](#understanding_wrapc)
 	*  [Command Line Options](#commands)
-	*  [The Generated Code](#gencode)*  
+	*  [The Generated Code](#gencode)  
 	*  [Example of use](#tooluse)
 * [Eiffel Generated Code](#eiffel_gen_code)
 	*  [Enums](#enums)
-	*  [Structs](#structs)  
-	*  [Unions](#unions)
+	*  [Structs/Unions](#structs)  
 	*  [Functions](#functions)
-	
 	
 	
 	
@@ -138,12 +136,11 @@ colors is an alias for an anonymous enum. WrapC generates an Eiffel wrapper clas
 The name of the class is `COLORS_ENUM_API`. Since Eiffel does not have the enum concept, enums are mapped as INTEGER in Eiffel. Simply inherit from `COLORS_ENUM_API` wherever you want to use them or just use it as a client.
 
 <a name="structs"></a>
-## Structs
+## Structs and Unions
 
-Here we describe what code gets generated for a C struct declaration and how to use that code to create, free, read from and write to a struct.
+Here we describe what code gets generated for a C struct declaration and how to use that code to create, free, read from and write to a struct. Unions are wrapped in a similar way.
 
-For structs `WrapC` generates a class with a low level layer using [inline externals](https://www.eiffel.org/doc/solutions/Interfacing_with_C_and_C%2B%2B#Inline_externals) and a high level access use the low level features to provide object oriented access. 
-Every struct wrapper class inherits from `MEMORY_STRUCTURE` which is a deferred class with the following interface part of EiffelBase library:
+For structs `WrapC` generates a class with a low level layer using [inline externals](https://www.eiffel.org/doc/solutions/Interfacing_with_C_and_C%2B%2B#Inline_externals) and a high level access using the low level features to provide object oriented access. Every struct wrapper class inherits from `MEMORY_STRUCTURE` which is a deferred class with the following interface part of EiffelBase library:
 
 	deferred class interface
 		MEMORY_STRUCTURE
@@ -415,6 +412,123 @@ To use this wrappper just use it as a client or inherit from `FOO_STRUCT_API`. T
 			]"
 		end
 
+<a name="functions"></a>
+## Functions
+
+This section describes what code gets generated for a C function declaration and how to use that code to call the declared function.
+Let us look at the following function declarations (taken from the simple-example)
+
+	void func1 (int a, int b);
+	int func2 (int a, int b);
+  
+func1 is a function that takes two parameters of type int and and does not return a value
+func2 is a function that takes two parameters of type int and returns a value of type int. 
+
+`WrapC` generates an Eiffel wrapper class like this
+
+	class SIMPLE_HEADER_FUNCTIONS_API
+
+	feature -- Access
+
+		func1 (a: INTEGER; b: INTEGER)
+			external
+				"C inline use <simple_header.h>"
+			alias
+				"[
+					func1 ((int)$a, (int)$b);
+				]"
+			end
+
+		func2 (a: INTEGER; b: INTEGER): INTEGER
+			external
+				"C inline use <simple_header.h>"
+			alias
+				"[
+					return func2 ((int)$a, (int)$b);
+				]"
+			end
+	end		
+
+The name of the class is `SIMPLE_HEADER_FUNCTIONS_API`. This is because the function declarations comes from the C header file `simple_header.h`. `WrapC` will put all function declarations from the same header in the same class.
+
+`func1`, `func2` are the features you will want to call if you want to execute the c function `func1` and `func2`.
+
+<a name="callbacks"></a>
+## Callbacks
+
+This section describes what code gets generated for C callbacks and how to use that code. Now first of all its not as trivial to define what a callback is. `WrapC` defines callbacks as pointers to functions. Wherever it sees a pointer to a function, it generates a callback wrapper. Of course chances are some pointers to functions are not meant to be callbacks, but in this case we can simply ignore the generated code.
+
+It is important to understand that there is an inherent problem when wrapping callbacks in Eiffel. For example the following callback:
+    	   
+    			 typedef void (*void_callback) (void);
+
+Does not convey any state when invoked (other than it has been invoked). This is the reason for the following limitation: One can only register one Eiffel callback receiver per callback type. If more receivers were allowed how would one decide on the invocation of a callback which receiver is meant? In practice this limitation is usually of no concern. Most C libraries have adopted a pseudo OO technique of supplying a user definable parameter as the first parameter on every callback. This parameter can be used to do further dispatching. 
+
+Let us look at the following declarations (taken from the callback-example)
+    	   
+    typedef void (*sample_callback_type) (void* pdata, int a_event_type);
+
+    // make `sample_callback_type' receive events.
+    void register_callback (sample_callback_type a_callback, void* pdata);
+
+    // make all registered callbacks receive an event
+    void trigger_event (int a_event_type);
+    	   
+`sample_callback_type` is the actual callback. `register_callback` is used to register a given callback receiver, so that it gets called whenever one calls `trigger_event`. The two function declarations are wrapped as usual. For `sample_callback_type` `WrapC` generates two classes both are located in eiffel cluster. Actually `WrapC` generate an special C code. The two classes of interest are `SAMPLE_CALLBACK_TYPE_DISPATCHER` and `EWG_CALLBACK_CALLBACK_C_GLUE_CODE_FUNCTIONS_API`. 
+
+The first one is the one you have to create in order to establish the C-Eiffel bridge and register via an agent the Eiffel feature that you want to call on a callback. The second one is the Eiffel wrapper of the C glue code generated needed to implement callbacks.
+
+Let's look how to use it,
+
+
+
+	class CALLBACK_HELLO_WORLD
+	inherit
+		CALLBACK_FUNCTIONS_API
+			export {NONE} all end
+	
+	create
+		make
+
+	feature
+
+		make 
+			do
+					-- Create the callback dispatcher and
+					-- tell him to dispatch calls to `agent register_callback'
+					-- Note that there must be at most one dispatcher object
+					-- per callback type in every system.
+					-- It is a good idea to make it a singleton.
+				 create dispatcher.make (agent on_callback )
+
+					-- Trigger a callback event without the dispatcher connected
+					-- to the c library. You will notice that `on_callback'
+					-- will not be called.
+				trigger_event (27)
+
+					-- Now lets register the dispatcher with the c library.
+				register_callback (dispatcher.c_dispatcher, Default_pointer)
+					-- This time the triggering will yield a call to `on_callback'.
+				trigger_event (28)
+			end
+
+		dispatcher: SAMPLE_CALLBACK_TYPE_DISPATCHER
+				-- The dispatcher is on the one side connected to a C function,
+				-- that can be given to the C library as a callback target
+				-- and on the other hand to an Eiffel object with a feature
+				-- `on_callback'. Whenn its C function gets called, the dispatcher
+				-- calls `on_callback' in the connected Eiffel object
+
+
+		on_callback (a_data: POINTER; a_event_type: INTEGER)
+				-- Callback target. This feature gets called
+				-- anytime somebody calls `trigger_event_external'
+			do
+				print ("on_callback has been called with: " + a_data.out + ", " + a_event_type.out + "%N")
+			end
+	end    	 
+
+
 
 
 <h2>**How to create your own Wrapper**</h2>
@@ -430,6 +544,7 @@ To generate a new Eiffel wrapper, the simplest way is to start from the template
 	        config.xml     -- configuration file to customize the way EWG generates the wrapper.
 	        build.eant     -- build script
 	        library.ecf    -- library configuration file.
+
 
 ### Updating the configuration file
 
