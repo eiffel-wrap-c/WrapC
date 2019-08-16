@@ -304,6 +304,7 @@ feature
 	    	l_file: RAW_FILE
 	    	l_directory_name: STRING
 	    	l_directory: DIRECTORY
+	    	l_env: EXECUTION_ENVIRONMENT
 		do
 			if attached full_header_file_name as l_full_header_file_name  then
 				-- gcc -E ${wrap_c.c_compile.options.default} ${wrap_c.c_compile.options} ${wrap_c.full_header_name} &gt; ${wrap_c.cpp_header_name}
@@ -335,25 +336,37 @@ feature
 				l_cmd.append (" ")
 				l_cmd.append_string (l_full_header_file_name)
 
-				if attached process_misc.output_of_command (l_cmd, l_path) as l_result then
-					if l_result.exit_code = 0 then
-						error_handler.report_info_message ("[Preprocess C header]")
-						error_handler.report_info_message (l_cmd)
-							-- To be updated.
-						l_index := l_result.error_output.index_of ('.', 1) - 1
-						l_name := l_result.error_output.substring (1, l_index)
-						l_name.append_string ("_cpp.h")
-						cpp_header_file_name := l_name.twin
-						create l_file.make_create_read_write (l_name)
-						l_file.put_string (l_result.output)
-						l_file.flush
-						l_file.close
+				if {PLATFORM}.is_windows then
+					if attached process_misc.output_of_command (l_cmd, l_path) as l_result then
+						if l_result.exit_code = 0 then
+							error_handler.report_info_message ("[Preprocess C header]")
+							error_handler.report_info_message (l_cmd)
+								-- To be updated.
+							l_index := l_result.error_output.index_of ('.', 1) - 1
+							l_name := l_result.error_output.substring (1, l_index)
+							l_name.append_string ("_cpp.h")
+							cpp_header_file_name := l_name.twin
+							create l_file.make_create_read_write (l_name)
+							l_file.put_string (l_result.output)
+							l_file.flush
+							l_file.close
+						else
+								-- Error
+							error_handler.report_info_message (l_result.error_output)
+						end
 					else
-							-- Error
-						error_handler.report_info_message (l_result.error_output)
+						error_handler.report_info_message ("Command not found " + l_cmd )
 					end
 				else
-					error_handler.report_info_message ("Command not found " + l_cmd )
+						-- Linux workaround Base Process doesn't work as expected
+
+					create l_env
+					l_env.change_working_path (l_path.parent)
+					l_index := config_system.header_file_name.index_of ('.', 1) - 1
+					l_name := config_system.header_file_name.substring (1, l_index)
+					l_name.append_string ("_cpp.h")
+					cpp_header_file_name := l_name.twin
+					l_env.system (l_cmd + " > " + cpp_header_file_name)
 				end
 			end
 		end

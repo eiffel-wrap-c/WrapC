@@ -41,22 +41,21 @@
 
   	<target name="wrap_c_pre_script" depend="init_wrap_c">
    		 <description>
-     		 Generate wrapper files
+     			 Generate wrapper files
     		</description>
-    	<set name="wrap_c.config_file_option" value=""/>
+	
     	<set name="wrap_c.config_file_option" value="--config=config.xml" if="${wrap_c.use_config_file}=True"/>	
     	<exec executable="wrap_c ${wrap_c.verbose} --script_pre_process=${cwd}/pre_script.bat --output-dir=${wrap_c.wrapper_dir} --full-header=${wrap_c.full_header_name} ${wrap_c.config_file_option}"/>
   	</target>
 
   	 <target name="wrap_c_post_script" depend="init_wrap_c">
    		 <description>
-     		 Generate wrapper files
+     			 Generate wrapper files
     		</description>
-    	<set name="msc_extensions_flag" value=""/>
- 		<set name="msc_extensions_flag" value="--enable-msc-extensions" if="${is_windows}"/>
-    	<set name="wrap_c.config_file_option" value=""/>
-    	<set name="wrap_c.config_file_option" value="--config=config.xml" if="${wrap_c.use_config_file}=True"/>	
-    	<exec executable="wrap_c ${wrap_c.verbose} --script_post_process=${cwd}/post_script.bat --output-dir=${wrap_c.wrapper_dir} --full-header=${wrap_c.full_header_name} ${wrap_c.config_file_option}"/>
+		<set name="script" value="post_script.bat" if="${is_windows}" />
+		<set name="script" value="post_script.sh" unless="${is_windows}" />
+    		<set name="wrap_c.config_file_option" value="--config=config.xml" if="${wrap_c.use_config_file}=True"/>	
+    		<exec executable="wrap_c ${wrap_c.verbose} --script_post_process=${cwd}${path_separator}${script} --output-dir=${wrap_c.wrapper_dir} --full-header=${wrap_c.full_header_name} ${wrap_c.config_file_option}"/>
   	</target>
 
 
