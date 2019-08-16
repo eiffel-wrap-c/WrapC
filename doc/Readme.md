@@ -11,6 +11,8 @@
 	*  [Structs/Unions](#structs)  
 	*  [Functions](#functions)
 	*  [Callbacks](#callbacks)
+* [The configuration file](#config_file)
+	*  [Dependent Types](#dependent types)
 	
 	
 	
@@ -479,7 +481,7 @@ Let us look at the following declarations (taken from the callback-example)
 
 The first one is the one you have to create in order to establish the C-Eiffel bridge and register via an agent the Eiffel feature that you want to call on a callback. The second one is the Eiffel wrapper of the C glue code generated needed to implement callbacks.
 
-First let's check the callback dispatcher generated class
+First let's check generated dispatcher class for our example
 
 	class SAMPLE_CALLBACK_TYPE_DISPATCHER
 
@@ -569,24 +571,13 @@ To use this wrapper you just need to create an object instance of `SAMPLE_CALLBA
 	end    	 
 
 
+<a name="config_file"></a>
+## The configuration file
+To customize the way `WrapC` generates wrappers, you can provide a configuration file. This file usually named config.xml This section will describe it's structure.
 
+Configuration support is quite new many very interesting things have not yet been implemented. Basically all you can do so far is control what from a header should be wrapped and what not.
 
-<h2>**How to create your own Wrapper**</h2>
-
-To generate a new Eiffel wrapper, the simplest way is to start from the template wrapping example located at {WRAP_C}/example/template
-
-<h3>**Directory Structure**</h3>
-
-	template	
-		example        -- examples using the library 
-		library        -- generated wrapper and the manual wrapping.
-		test	       -- code to test the library
-	        config.xml     -- configuration file to customize the way EWG generates the wrapper.
-	        build.eant     -- build script
-	        library.ecf    -- library configuration file.
-
-
-### Updating the configuration file
+Here is a simple example of how a config file can look like: 
 
 ```
 <?xml version="1.0"?>
@@ -616,7 +607,117 @@ To generate a new Eiffel wrapper, the simplest way is to start from the template
 </rule>
 
 </rule_list>
-
 </ewg_config>
 ```
+The concept used is very similar to the concept used in XSLT. You have a ordered list of rules. For every parsed C construct `WrapC` will go through the list of rules and use the first rule that matches on the construct. If no rule matches the construct will be ignored.
+
+Each rule consists of two parts:
+
+`match`
+    Describing what C constructs shall be matched by this rule. 
+`wrapper`
+    Describing how the matched construct should be wrapped. Right now all you can specify is the wrapper type that should be used, using the type attribute. You can choose between the default wrapper, which will wrap the construct using `WrapC` defaults, or the none wrapper, which will generate no wrapper for the matched construct. 
+
+If the match element is empty, all constructs match, but you can use sub-elements to constrain what constructs should match:
+
+`header`
+    What header does the construct come from. Note that you have to specify the exact header the construct comes from. A header that only includes another header that contains a construct, will not match. Here is an example of how to use this element:
+
+        		 
+        <?xml version="1.0"?>
+        <match>
+           <header name=".*foo.h"/>
+        </match>
+        		 
+Note that the value of name can be a regular expression. In the above example any header that ends with foo.h will match.
+
+`identifier`
+    Constrains the name of elements. Here is an example:
+
+        		 
+        <?xml version="1.0"?>
+        <match>
+        	<identifier name="foo"/>
+        </match>
+
+    Note that the value of name can be a regular expression.
+
+`type`
+    Constrains the construct type. Here is an example:
+        		 
+        <?xml version="1.0"?>
+        <match>
+        	<type name="function"/>
+        </match>
+
+    Possible values for name are
+
+        any
+        none
+        struct
+        union
+        enum
+        function
+        callback
+
+You can choose more than one constraint per match clause. In which case you constrain the match clause to all individual constraints.
+
+<a name="dependent types"></a>
+### Dependent Types
+
+If you choose to include a type who depends on a type which you choose to exclude, the dependent type will also be included. Confused? Let's say you have:
+
+    	   
+    struct foo
+    {
+    	int i;
+    };
+    struct bar
+    {
+    	struct foo* pfoo;
+    };
+
+And you specify the following config file:
+
+```    	   
+  <?xml version="1.0"?>
+  <ewg_config>
+    <rule_list>
+    <rule>
+    <match>
+    <identifier name="bar"/>
+    </match>
+    <wrapper type="default">
+    </wrapper>
+    </rule>
+
+    <rule>
+    <match>
+    </match>
+    <wrapper type="none">
+    </wrapper>
+    </rule>
+    </rule_list>
+
+    </ewg_config>
+  ```  	   
+    	 
+
+That would mean, struct bar will be wrapped and struct foo will not be wrapped. Now, because struct bar depends on struct foo, struct bar will be wrapped after all.
+
+## How to create your own Wrapper (Work in Progress)
+
+To generate a new Eiffel wrapper, the simplest way is to start from the template wrapping example located at {WRAP_C}/example/template
+
+<h3>**Directory Structure**</h3>
+
+	template	
+		example        -- examples using the library 
+		library        -- generated wrapper and the manual wrapping.
+		test	       -- code to test the library
+	        config.xml     -- configuration file to customize the way EWG generates the wrapper.
+	        build.eant     -- build script
+	        library.ecf    -- library configuration file.
+
+
 
