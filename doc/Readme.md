@@ -24,21 +24,20 @@ The wrap_c tool is a command line application and takes the following command li
 	wrap_c: You must specify '--full-header=<...>'
 	usage: wrap_c   [--version] [--verbose]
                 [--c_compile_options=<...>] [--script_pre_process=<...>] [--script_post_process=<...>]
-		[--output-dir=<...>]
-                --full-header=<...> [--config=<...>]
+		[--output-dir=<...>] --full-header=<...> [--config=<...>]
 
 	options:
-		--version ... Output EWG version number
+		--version ... Output WrapC (EWG) version number.
 		--verbose ... Output progress information on STDOUT
 		--c_compile_options: Optional c compile options
 		--script_pre_process: Optional pre-processing script, to be executed before C header preprocessing
 		--scrtip_post_process: Optional post-processing script, to be executed after Eiffel code wrapping.
 
 	arguments:
-		--output-dir ... Directory where generated files will be placed
+		--output-dir  ... Directory where generated files will be placed
 		--full-header ... Filename (including pathname) to the C header to be preprocessed, 
 			          and name of header file, that should be used in eiffel external clauses
-		--config ... Name of config file to use. A config file allows to customize the wrapping process
+		--config      ... Name of config file to use. A config file allows to customize the wrapping process
 
 You can use `wrap_c` directly to see what it produces on a header  of your own without setting up a complete project, or use your own build process. Most of the time you will not use the `wrap_c` tool directly, but use it indirectly through geant as an example.
 
