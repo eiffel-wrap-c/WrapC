@@ -649,8 +649,8 @@ Note that the value of name can be a regular expression. In the above example an
         <match>
         	<type name="function"/>
         </match>
-
-    Possible values for name are
+    
+   Possible values for name are
 
         any
         none
