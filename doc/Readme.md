@@ -142,6 +142,55 @@ The name of the class is `COLORS_ENUM_API`. Since Eiffel does not have the enum 
 
 Here we describe what code gets generated for a C struct declaration and how to use that code to create, free, read from and write to a struct.
 
+For structs `WrapC` generates a class with a low level layer using [inline externals](https://www.eiffel.org/doc/solutions/Interfacing_with_C_and_C%2B%2B#Inline_externals) and a high level access use the low level features to provide object oriented access. 
+Every struct wrapper class inherits from `MEMORY_STRUCTURE` which is a deferred class with the following interface part of EiffelBase library:
+
+	deferred class interface
+		MEMORY_STRUCTURE
+
+	feature -- Initialization
+
+		make
+				-- Initialize current with given structure_size.
+			ensure
+				not_shared: not shared
+
+		make_by_pointer (a_ptr: POINTER)
+				-- Initialize current with `a_ptr`.
+			require
+				a_ptr_not_null: a_ptr /= default_pointer
+			ensure
+				shared: shared
+
+	feature -- Access
+
+		item: POINTER
+				-- Access to memory area.
+
+		shared: BOOLEAN
+				-- Is current memory area shared with others?
+
+	feature -- Measurement
+
+		structure_size: INTEGER_32
+				-- Size to allocate (in bytes).
+			ensure
+				is_class: class
+				positive_result: Result > 0
+
+	feature -- Status report
+
+		exists: BOOLEAN
+				-- Is allocated memory still allocated?
+
+	invariant
+		managed_pointer_valid: not shared implies managed_pointer /= Void
+		internal_item_valid: shared implies internal_item /= default_pointer
+	end
+	 
+The low level implementation are purely procedural but still provide full access to C structs. 
+The high level access on the other hand provide an object oriented way to handle structs. 
+
 Let's look at the following struct declaration (taken from simple example) defined in the header `simple_header.h`
 
 	struct foo
@@ -149,10 +198,7 @@ Let's look at the following struct declaration (taken from simple example) defin
 	  int a,b,*pc;
 	};
 
-For structs `WrapC` generates a class with a low level layer using [inline externals](https://www.eiffel.org/doc/solutions/Interfacing_with_C_and_C%2B%2B#Inline_externals). 
-The low level implementation are purely procedural but still provide full access to C structs. 
-The high level access use the low level features to provide object oriented access. 
-The high level access on the other hand provide an object oriented way to handle structs. 
+`WrapC` will generate the following Eiffel class
 
 	class FOO_STRUCT_API
 	inherit
@@ -315,9 +361,9 @@ The high level access on the other hand provide an object oriented way to handle
 
 	end
 	
-To use this wrappper just use it as a client or inherit from `FOO_STRUCT_API. The following code snippet demonstrates how to use the struct wrapper class
+To use this wrappper just use it as a client or inherit from `FOO_STRUCT_API`. The following code snippet demonstrates how to use the struct wrapper class.
 
-    		 
+   		 
     example_struc_foo 
     	local
     		foo: FOO_STRUCT_API
