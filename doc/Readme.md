@@ -126,6 +126,239 @@ colors is an alias for an anonymous enum. WrapC generates an Eiffel wrapper clas
 
 The name of the class is `COLORS_ENUM_API`. Since Eiffel does not have the enum concept, enums are mapped as INTEGER in Eiffel. Simply inherit from `COLORS_ENUM_API` wherever you want to use them. 
 
+## Structs
+
+Here we describe what code gets generated for a C struct declaration and how to use that code to create, free, read from and write to a struct.
+
+Let's look at the following struct declaration (taken from simple example) defined in the header `simple_header.h`
+
+	struct foo
+	{
+	  int a,b,*pc;
+	};
+
+For structs `WrapC` generates a class with a low level layer using [inline externals](https://www.eiffel.org/doc/solutions/Interfacing_with_C_and_C%2B%2B#Inline_externals). 
+The low level implementation are purely procedural but still provide full access to C structs. 
+The high level access use the low level features to provide object oriented access. 
+The high level access on the other hand provide an object oriented way to handle structs. 
+
+	class FOO_STRUCT_API
+	inherit
+
+		MEMORY_STRUCTURE
+	create
+
+		make,
+		make_by_pointer
+
+	feature -- Measurement
+
+		structure_size: INTEGER 
+			do
+				Result := sizeof_external
+			end
+
+	feature {ANY} -- Member Access
+
+		a: INTEGER
+				-- Access member `a`
+			require
+				exists: exists
+			do
+				Result := c_a (item)
+			ensure
+				result_correct: Result = c_a (item)
+			end
+
+		set_a (a_value: INTEGER) 
+				-- Change the value of member `a` to `a_value`.
+			require
+				exists: exists
+			do
+				set_c_a (item, a_value)
+			ensure
+				a_set: a_value = a
+			end
+
+		b: INTEGER
+				-- Access member `b`
+			require
+				exists: exists
+			do
+				Result := c_b (item)
+			ensure
+				result_correct: Result = c_b (item)
+			end
+
+		set_b (a_value: INTEGER) 
+				-- Change the value of member `b` to `a_value`.
+			require
+				exists: exists
+			do
+				set_c_b (item, a_value)
+			ensure
+				b_set: a_value = b
+			end
+
+		pc: POINTER
+				-- Access member `pc`
+			require
+				exists: exists
+			do
+				Result := c_pc (item)
+			ensure
+				result_correct: Result = c_pc (item)
+			end
+
+		set_pc (a_value: POINTER) 
+				-- Change the value of member `pc` to `a_value`.
+			require
+				exists: exists
+			do
+				set_c_pc (item, a_value)
+			ensure
+				pc_set: a_value = pc
+			end
+
+	feature {NONE} -- Implementation wrapper for struct struct foo
+
+		sizeof_external: INTEGER 
+			external
+				"C inline use <simple_header.h>"
+			alias
+				"sizeof(struct foo)"
+			end
+
+		c_a (an_item: POINTER): INTEGER
+			require
+				an_item_not_null: an_item /= default_pointer
+			external
+				"C inline use <simple_header.h>"
+			alias
+				"[
+					((struct foo*)$an_item)->a
+				]"
+			end
+
+		set_c_a (an_item: POINTER; a_value: INTEGER) 
+			require
+				an_item_not_null: an_item /= default_pointer
+			external
+				"C inline use <simple_header.h>"
+			alias
+				"[
+					((struct foo*)$an_item)->a =  (int)$a_value
+				]"
+			ensure
+				a_set: a_value = c_a (an_item)
+			end
+
+		c_b (an_item: POINTER): INTEGER
+			require
+				an_item_not_null: an_item /= default_pointer
+			external
+				"C inline use <simple_header.h>"
+			alias
+				"[
+					((struct foo*)$an_item)->b
+				]"
+			end
+
+		set_c_b (an_item: POINTER; a_value: INTEGER) 
+			require
+				an_item_not_null: an_item /= default_pointer
+			external
+				"C inline use <simple_header.h>"
+			alias
+				"[
+					((struct foo*)$an_item)->b =  (int)$a_value
+				]"
+			ensure
+				b_set: a_value = c_b (an_item)
+			end
+
+		c_pc (an_item: POINTER): POINTER
+			require
+				an_item_not_null: an_item /= default_pointer
+			external
+				"C inline use <simple_header.h>"
+			alias
+				"[
+					((struct foo*)$an_item)->pc
+				]"
+			end
+
+		set_c_pc (an_item: POINTER; a_value: POINTER) 
+			require
+				an_item_not_null: an_item /= default_pointer
+			external
+				"C inline use <simple_header.h>"
+			alias
+				"[
+					((struct foo*)$an_item)->pc =  (int*)$a_value
+				]"
+			ensure
+				pc_set: a_value = c_pc (an_item)
+			end
+
+	end
+	
+To use this wrappper just use it as a client or inherit from `FOO_STRUCT_API. The following code snippet demonstrates how to use the struct wrapper class
+
+    		 
+    example_struc_foo 
+    	local
+    		foo: FOO_STRUCT_API
+			-- Wrapper object for `struct foo'
+    	do
+    			-- Create a new struct of type 'struct foo'
+			-- `unshared' means that when `foo' will get
+			-- collected, the struct it wrapps will be
+			-- freed.
+		create foo.make
+		
+ 			-- Set members `a' and `b'.
+			-- Note that `a' and `b' are real
+			-- members of struct foo.
+		foo.set_a (33)  -- (1) High level access: set struct member
+		foo.set_b (75)   	 	
+		
+			-- Output the members
+		print ("foo.a (33): " + foo.a.out + "%N")  -- (2) High level access: read struct member
+		print ("foo.b (75): " + foo.b.out + "%N")
+    	end
+  
+(1) In this case we use our high level access to the STRUCT_API that will use the low level implementation in this case the following code will be called form te feature `FOO_STRUCT_API.set_a`
+ 
+	 set_c_a (an_item: POINTER; a_value: INTEGER) 
+		require
+			an_item_not_null: an_item /= default_pointer
+		external
+			"C inline use <simple_header.h>"
+		alias
+			"[
+				((struct foo*)$an_item)->a =  (int)$a_value
+			]"
+		ensure
+			a_set: a_value = c_a (an_item)
+		end
+
+(2) Similar to (1)  but to read a member value in this case `a`, the low level implmentation to be called from `FOO_STRUCT_API.a` 
+
+
+	c_a (an_item: POINTER): INTEGER
+		require
+			an_item_not_null: an_item /= default_pointer
+		external
+			"C inline use <simple_header.h>"
+		alias
+			"[
+				((struct foo*)$an_item)->a
+			]"
+		end
+
+
+
 <h2>**How to create your own Wrapper**</h2>
 
 To generate a new Eiffel wrapper, the simplest way is to start from the template wrapping example located at {WRAP_C}/example/template
