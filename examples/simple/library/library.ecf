@@ -11,21 +11,36 @@
 		<setting name="dead_code_removal" value="feature"/>
 		<library name="base" location="$ISE_LIBRARY/library/base/base.ecf"/>
 
-		<external_include location="$ECF_CONFIG_PATH/generated_wrapper/c/include">
-	
+		<external_include location="$ECF_CONFIG_PATH\generated_wrapper\c\include">
+			<condition>
+				<platform value="windows"/>
+			</condition>
 		</external_include>
-		
-		<external_object location="$ECF_CONFIG_PATH/simple_c_eiffel_glue_library_ise_$(GOBO_CC).lib">
+		<external_include location="$ECF_CONFIG_PATH\manual_wrapper\c\include">
+			<condition>
+				<platform value="windows"/>
+			</condition>		
+		</external_include>
+		<external_include location="$ECF_CONFIG_PATH/generated_wrapper/c/include">
+			<condition>
+				<platform excluded_value="windows"/>
+			</condition>
+		</external_include>
+		<external_include location="$ECF_CONFIG_PATH/manual_wrapper/c/include">
+			<condition>
+				<platform excluded_value="windows"/>
+			</condition>		
+		</external_include>
+		<external_object location="$ECF_CONFIG_PATH/C/spec/$ISE_C_COMPILER/$ISE_PLATFORM/lib/eif_simple.lib">
 			<condition>
 				<platform value="windows"/>
 			</condition>
 		</external_object>
-		<external_object location="$ECF_CONFIG_PATH/simple_c_eiffel_glue_library_ise_$(GOBO_CC).a">
+		<external_object location="$ECF_CONFIG_PATH/C/spec/$(ISE_PLATFORM)/lib/eif_simple.a">
 			<condition>
 				<platform excluded_value="windows"/>
 			</condition>
 		</external_object>
-
 		<cluster name="src" location="." recursive="true">
 			<file_rule>
 				<exclude>/c$</exclude>
