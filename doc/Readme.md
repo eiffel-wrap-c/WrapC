@@ -364,27 +364,27 @@ Let's look at the following struct declaration (taken from simple example) defin
 To use this wrappper just use it as a client or inherit from `FOO_STRUCT_API`. The following code snippet demonstrates how to use the struct wrapper class.
 
    		 
-    example_struc_foo 
-    	local
-    		foo: FOO_STRUCT_API
-			-- Wrapper object for `struct foo'
-    	do
-    			-- Create a new struct of type 'struct foo'
-			-- `unshared' means that when `foo' will get
-			-- collected, the struct it wrapps will be
-			-- freed.
-		create foo.make
+	example_struct_foo 
+		local
+			foo: FOO_STRUCT_API
+				-- Wrapper object for `struct foo'
+		do
+				-- Create a new struct of type 'struct foo'
+				-- `unshared' means that when `foo' will get
+				-- collected, the struct it wrapps will be
+				-- freed.
+			create foo.make
 		
- 			-- Set members `a' and `b'.
-			-- Note that `a' and `b' are real
-			-- members of struct foo.
-		foo.set_a (33)  -- (1) High level access: set struct member
-		foo.set_b (75)   	 	
+				-- Set members `a' and `b'.
+				-- Note that `a' and `b' are real
+				-- members of struct foo.
+			foo.set_a (33)  -- (1) High level access: set struct member
+			foo.set_b (75)   	 	
 		
-			-- Output the members
-		print ("foo.a (33): " + foo.a.out + "%N")  -- (2) High level access: read struct member
-		print ("foo.b (75): " + foo.b.out + "%N")
-    	end
+				-- Output the members
+			print ("foo.a (33): " + foo.a.out + "%N")  -- (2) High level access: read struct member
+			print ("foo.b (75): " + foo.b.out + "%N")
+		end
   
 (1) In this case we use our high level access to the STRUCT_API that will use the low level implementation in this case the following code will be called form te feature `FOO_STRUCT_API.set_a`
  
