@@ -10,7 +10,7 @@ It was updated to use the latest Eiffel version. `WrapC` generates Eiffel wrappe
 
 ### Current Features
 
-	 Parses pretty much all _ANSI C_, but also understands _gcc_ and _Visual C _extensions
+	 Parses pretty much all ANSI C, but also understands gcc and Visual C extensions
 	 Generates wrappers for: 	
 
 *   _Structs_
@@ -21,7 +21,7 @@ It was updated to use the latest Eiffel version. `WrapC` generates Eiffel wrappe
 
 #### Note 
 
-	*   **Macros are not supported for now.**
+	*   Macros are not supported for now.
 
 *	Works with ISE Eiffel.
 *	Includes a framework to automate building libraries and applications that use `WrapC`. 
