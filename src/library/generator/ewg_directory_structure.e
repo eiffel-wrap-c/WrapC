@@ -335,6 +335,13 @@ feature -- File names (to be moved out of here)
 			result_not_void: Result /= Void
 		end
 
+	relative_callback_c_glue_code_object_name: STRING
+		do
+			Result := "ewg_" + config_system.name + "_callback_c_glue_code"
+		ensure
+			result_not_void: Result /= Void
+		end
+
 feature
 
 	default_output_directory: STRING
@@ -426,6 +433,14 @@ feature
 	callback_c_glue_code_file_name (a_eiffel_compiler: INTEGER): STRING
 		do
 			Result := file_system.pathname (c_src_directory_name, relative_callback_c_glue_code_file_name)
+		ensure
+			result_not_void: Result /= Void
+		end
+
+
+	callback_c_glue_code_object_name (a_eiffel_compiler: INTEGER): STRING
+		do
+			Result := file_system.pathname (c_src_directory_name, relative_callback_c_glue_code_object_name)
 		ensure
 			result_not_void: Result /= Void
 		end

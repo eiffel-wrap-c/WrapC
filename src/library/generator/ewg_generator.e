@@ -81,6 +81,11 @@ feature {ANY}
 				generate_callback_wrappers
 				error_handler.stop_task
 			end
+
+			error_handler.report_info_message ("phase 5: generating Makefiles and WrapC header")
+			genarate_makefiles
+			create_wrap_c_header
+			finish_freezing_file
 		end
 
 feature {NONE} -- Implementation
@@ -122,7 +127,7 @@ feature {NONE} -- Implementation
 			c_glue_code_generator: EWG_C_GLUE_CODE_ANSI_C_CALLBACK_WRAPPER_GENERATOR
 			c_glue_header_generator: EWG_C_GLUE_HEADER_ANSI_C_CALLBACK_WRAPPER_GENERATOR
 			eiffel_abstraction_ansi_wrapper_generator: EWG_EIFFEL_ABSTRACTION_ANSI_C_CALLBACK_WRAPPER_GENERATOR
-			eiffel_abstraction_ffcall_wrapper_generator: EWG_EIFFEL_ABSTRACTION_FFCALL_CALLBACK_WRAPPER_GENERATOR
+--			eiffel_abstraction_ffcall_wrapper_generator: EWG_EIFFEL_ABSTRACTION_FFCALL_CALLBACK_WRAPPER_GENERATOR
 			eiffel_abstraction_dispatcher_generator: EWG_EIFFEL_ABSTRACTION_ANSI_C_CALLBACK_DISPATCHER_GENERATOR
 		do
 			create c_glue_code_generator.make (error_handler, directory_structure)
@@ -134,13 +139,20 @@ feature {NONE} -- Implementation
 --			create eiffel_abstraction_ansi_wrapper_generator.make (error_handler, directory_structure)
 --			eiffel_abstraction_ansi_wrapper_generator.generate (eiffel_wrapper_set)
 
-			create eiffel_abstraction_ffcall_wrapper_generator.make (error_handler, directory_structure)
-			eiffel_abstraction_ffcall_wrapper_generator.generate (eiffel_wrapper_set)
+--			create eiffel_abstraction_ffcall_wrapper_generator.make (error_handler, directory_structure)
+--			eiffel_abstraction_ffcall_wrapper_generator.generate (eiffel_wrapper_set)
 
 			create eiffel_abstraction_dispatcher_generator.make (error_handler, directory_structure)
 			eiffel_abstraction_dispatcher_generator.generate (eiffel_wrapper_set)
 
-			create_wrap_c_header
+		end
+
+	genarate_makefiles
+		local
+			make_files: WRAPC_MAKEFILES_GENERATOR
+		do
+			create make_files.make (error_handler, directory_structure)
+			make_files.generate (eiffel_wrapper_set)
 		end
 
 feature {NONE} -- Implementation
@@ -149,9 +161,23 @@ feature {NONE} -- Implementation
 		local
 			l_raw_file: RAW_FILE
 		do
+
 			create l_raw_file.make_create_read_write ((create {PATH}.make_from_string (directory_structure.c_include_directory_name)).extended ("ewg_eiffel.h").name)
 			l_raw_file.open_read_write
 			l_raw_file.put_string (ewg_eiffel_header)
+			l_raw_file.flush
+			l_raw_file.close
+		end
+
+
+	finish_freezing_file
+		local
+			l_raw_file: RAW_FILE
+		do
+
+			create l_raw_file.make_create_read_write ((create {PATH}.make_from_string (directory_structure.c_src_directory_name)).extended ("finish_freezing.eant").name)
+			l_raw_file.open_read_write
+			l_raw_file.put_string (finish_freezing_eant)
 			l_raw_file.flush
 			l_raw_file.close
 		end
@@ -169,7 +195,7 @@ feature {NONE} -- Implementation
 			-- Wrapper set
 
 
-	ewg_eiffel_header: STRING = "[
+	Ewg_eiffel_header: STRING = "[
 #ifndef eif_h
 #define eif_h
 
@@ -183,6 +209,35 @@ feature {NONE} -- Implementation
 
 #endif
 	]"
+
+
+
+Finish_freezing_eant: STRING = "[
+<?xml version="1.0"?>
+<project name="build_callback_clib" default="help">
+
+	<description>
+		description: "Eiffel Callback Clib library compilation"
+	</description>
+
+	<target name="help">
+		<echo message="usage:"/>
+		<echo message=" geant compile"/>
+		<echo message=" geant clean"/>
+		<echo message=" geant clobber"/>
+	</target>
+
+	<target name="compile" >
+		<exec executable="finish_freezing -library" />
+	</target>
+
+	<target name="clean" >
+	</target>
+
+	<target name="clobber" depend="clean" />
+</project>
+]"
+
 
 invariant
 

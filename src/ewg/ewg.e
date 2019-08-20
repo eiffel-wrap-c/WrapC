@@ -349,7 +349,6 @@ feature
 					end
 				else
 						-- Linux workaround Base Process doesn't work as expected
-
 					create l_env
 					l_env.change_working_path (l_path.parent)
 					l_index := config_system.header_file_name.index_of ('.', 1) - 1
@@ -464,10 +463,6 @@ feature -- Access
 
 	output_directory_name: STRING
 
-
-	makefilename: STRING = "Makefile.SH"
-	makefilename_win: STRING = "Makefile-win.SH"
-	finish_freezing: STRING ="finish_freezing.eant"
 
 
 feature -- Platform directory Separator.
