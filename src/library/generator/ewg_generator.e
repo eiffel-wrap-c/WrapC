@@ -80,6 +80,9 @@ feature {ANY}
 				error_handler.set_current_task_total_ticks (eiffel_wrapper_set.callback_wrapper_count * 9)
 				generate_callback_wrappers
 				error_handler.stop_task
+			else
+					-- generate empty folders and c files.
+				generate_c_stubs
 			end
 
 			error_handler.report_info_message ("phase 5: generating Makefiles and WrapC header")
@@ -89,6 +92,27 @@ feature {ANY}
 		end
 
 feature {NONE} -- Implementation
+
+	generate_c_stubs
+		local
+			file_name: STRING
+			file: KL_TEXT_OUTPUT_FILE
+		do
+				-- C src mock
+			file_name := directory_structure.callback_c_glue_code_file_name (eiffel_compiler_names.ise_code)
+			create file.make (file_name)
+			file.recursive_open_write
+			file.close
+
+				-- C header mock
+			file_name := directory_structure.callback_c_glue_header_file_name (eiffel_compiler_names.ise_code)
+			create file.make (file_name)
+			file.recursive_open_write
+			file.close
+
+		end
+
+
 
 	generate_enum_wrappers
 		local
@@ -175,7 +199,7 @@ feature {NONE} -- Implementation
 			l_raw_file: RAW_FILE
 		do
 
-			create l_raw_file.make_create_read_write ((create {PATH}.make_from_string (directory_structure.c_src_directory_name)).extended ("finish_freezing.eant").name)
+			create l_raw_file.make_create_read_write ((create {PATH}.make_from_string (directory_structure.c_src_directory_name)).extended ("geant.eant").name)
 			l_raw_file.open_read_write
 			l_raw_file.put_string (finish_freezing_eant)
 			l_raw_file.flush
