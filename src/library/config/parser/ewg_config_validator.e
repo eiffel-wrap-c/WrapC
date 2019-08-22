@@ -166,6 +166,10 @@ feature {NONE} -- Validation
 						-- OK.
 						validate_wrapper (child, a_position_table, construct_type_code)
 					end
+				elseif STRING_.same_string (child.name, function_element_name) then
+					validate_function (child, a_position_table)
+				elseif STRING_.same_string (child.name, function_element_address_name) then
+					validate_function_address (child, a_position_table)
 				else
 					has_error := True
 					error_handler.report_unknown_config_element_error (a_rule, child, a_position_table.item (child))
@@ -202,6 +206,78 @@ feature {NONE} -- Validation
 				else
 					has_error := True
 					error_handler.report_unknown_config_element_error (a_match, child, a_position_table.item (child))
+				end
+				cs.forth
+			end
+		end
+
+	validate_function (a_function: XM_ELEMENT; a_position_table: XM_POSITION_TABLE)
+			-- Check whether `a_function' is a valid EWG config "function" element.
+			-- Set `has_error' to `True' if not.
+		require
+			a_function_not_void: a_function /= Void
+			a_function_is_rule: STRING_.same_string (a_function.name, function_element_name)
+			a_position_table_not_void: a_position_table /= Void
+		local
+			cs: DS_BILINEAR_CURSOR [XM_NODE]
+			child: XM_ELEMENT
+		do
+			if not a_function.has_attribute_by_name (name_attribute_name) then
+				has_error := True
+				error_handler.report_missing_config_attribute_error (a_function, name_attribute_name, a_position_table.item (a_function))
+			else
+				cs := a_function.new_cursor
+				from cs.start until cs.after loop
+					child ?= cs.item
+					if child = Void then
+						-- Not an element. Ignore.
+					elseif STRING_.same_string (child.name, parameter_element_name) then
+						-- OK.
+						validate_parameter (child, a_position_table)
+					else
+						has_error := True
+						error_handler.report_unknown_config_element_error (a_function, child, a_position_table.item (child))
+					end
+					cs.forth
+				end
+			end
+		end
+
+	validate_function_address (a_function_address: XM_ELEMENT; a_position_table: XM_POSITION_TABLE)
+			-- Check whether `a_function_address' is a valid EWG config "function_address" element.
+			-- Set `has_error' to `True' if not.
+		require
+			a_function_address_not_void: a_function_address /= Void
+			a_function_address_is_rule: STRING_.same_string (a_function_address.name, function_element_address_name)
+			a_position_table_not_void: a_position_table /= Void
+		local
+			cs: DS_BILINEAR_CURSOR [XM_NODE]
+			child: XM_ELEMENT
+			regexp: RX_PCRE_REGULAR_EXPRESSION
+		do
+			if not a_function_address.has_attribute_by_name (name_attribute_name) then
+				has_error := True
+				error_handler.report_missing_config_attribute_error (a_function_address, name_attribute_name, a_position_table.item (a_function_address))
+			else
+--				create regexp.make
+--				regexp.compile (a_identifier.attribute_by_name (name_attribute_name).value)
+--				if not regexp.is_compiled then
+--					error_handler.report_illegal_regular_expression_in_attribute (a_identifier,
+--																									  name_attribute_name,
+--																									  a_position_table.item (a_identifier),
+--																									  regexp.error_message,
+--																									  regexp.error_position)
+--				end
+			end
+
+			cs := a_function_address.new_cursor
+			from cs.start until cs.after loop
+				child ?= cs.item
+				if child = Void then
+					-- Not an element. Ignore.
+				else
+					has_error := True
+					error_handler.report_unknown_config_element_error (a_function_address, child, a_position_table.item (child))
 				end
 				cs.forth
 			end
@@ -324,6 +400,46 @@ feature {NONE} -- Validation
 				else
 					has_error := True
 					error_handler.report_unknown_config_element_error (a_identifier, child, a_position_table.item (child))
+				end
+				cs.forth
+			end
+		end
+
+	validate_parameter (a_parameter: XM_ELEMENT; a_position_table: XM_POSITION_TABLE)
+			-- Check whether `a_parameter' is a valid EWG config "parameter" element.
+			-- Set `has_error' to `True' if not.
+		require
+			a_parameter_not_void: a_parameter /= Void
+			a_parameter_is_rule: STRING_.same_string (a_parameter.name, parameter_element_name)
+			a_position_table_not_void: a_position_table /= Void
+		local
+			cs: DS_BILINEAR_CURSOR [XM_NODE]
+			child: XM_ELEMENT
+			regexp: RX_PCRE_REGULAR_EXPRESSION
+		do
+			if not a_parameter.has_attribute_by_name (name_attribute_name) then
+				has_error := True
+				error_handler.report_missing_config_attribute_error (a_parameter, name_attribute_name, a_position_table.item (a_parameter))
+			else
+--				create regexp.make
+--				regexp.compile (a_identifier.attribute_by_name (name_attribute_name).value)
+--				if not regexp.is_compiled then
+--					error_handler.report_illegal_regular_expression_in_attribute (a_identifier,
+--																									  name_attribute_name,
+--																									  a_position_table.item (a_identifier),
+--																									  regexp.error_message,
+--																									  regexp.error_position)
+--				end
+			end
+
+			cs := a_parameter.new_cursor
+			from cs.start until cs.after loop
+				child ?= cs.item
+				if child = Void then
+					-- Not an element. Ignore.
+				else
+					has_error := True
+					error_handler.report_unknown_config_element_error (a_parameter, child, a_position_table.item (child))
 				end
 				cs.forth
 			end

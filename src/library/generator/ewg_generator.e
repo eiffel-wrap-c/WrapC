@@ -112,8 +112,6 @@ feature {NONE} -- Implementation
 
 		end
 
-
-
 	generate_enum_wrappers
 		local
 			eiffel_api_generator: EWG_EIFFEL_API_ENUM_WRAPPER_GENERATOR

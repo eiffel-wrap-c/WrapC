@@ -37,6 +37,10 @@ feature {NONE} -- Initialization
 			create shallow_wrapped_type_table.make_map_default
 			create deeply_wrapped_table.make_default
 			create directory_structure.make (Current)
+			create function_address.make (10)
+			function_address.compare_objects
+			create function_output_parameters.make (10)
+			function_output_parameters.compare_objects
 		end
 
 feature {ANY} -- Access
@@ -53,6 +57,13 @@ feature {ANY} -- Access
 
 	name: STRING
 			-- Wrapper name
+
+	function_address: ARRAYED_LIST [STRING]
+			-- List of functions which we want
+			-- to return a function address.
+
+	function_output_parameters: STRING_TABLE [LIST [STRING]]
+			-- Table of functions with a list of output parameters
 
 feature {ANY}
 

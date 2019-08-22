@@ -363,7 +363,27 @@ feature {NONE} -- Generate Eiffel High Level Access
 				output_stream.put_string (": ")
 				output_stream.put_string (l_ast_struct.name.as_upper)
 				output_stream.put_string ("_STRUCT_API")
+			elseif attached {EWG_C_AST_STRUCT_TYPE} a_native_member_wrapper.c_declaration.type.skip_wrapper_irrelevant_types as l_ast_struct then
+				output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
+				output_stream.put_string (": ")
+				if l_ast_struct.name /= Void then
+					output_stream.put_string (l_ast_struct.name.as_upper)
+				else
+					 -- TODO check
+					output_stream.put_string (l_ast_struct.closest_alias_type.name.as_upper)
+				end
+				output_stream.put_string ("_STRUCT_API")
 			elseif attached {EWG_C_AST_UNION_TYPE} a_native_member_wrapper.c_declaration.type as l_ast_union then
+				output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
+				output_stream.put_string (": ")
+				if l_ast_union.name /= Void then
+					output_stream.put_string (l_ast_union.name.as_upper)
+				else
+					 -- TODO check
+					output_stream.put_string (l_ast_union.closest_alias_type.name.as_upper)
+				end
+				output_stream.put_string ("_UNION_API")
+			elseif attached {EWG_C_AST_UNION_TYPE} a_native_member_wrapper.c_declaration.type.skip_wrapper_irrelevant_types as l_ast_union then
 				output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
 				output_stream.put_string (": ")
 				output_stream.put_string (l_ast_union.name.as_upper)
@@ -438,10 +458,14 @@ feature {NONE} -- Generate Eiffel Routine calls
 		require
 			a_native_member_wrapper_not_void: a_native_member_wrapper /= Void
 		do
-			if  attached {EWG_C_AST_STRUCT_TYPE} a_native_member_wrapper.c_declaration.type as l_ast_struct then
+			if  attached {EWG_C_AST_STRUCT_TYPE} a_native_member_wrapper.c_declaration.type or else
+				attached {EWG_C_AST_STRUCT_TYPE} a_native_member_wrapper.c_declaration.type.skip_wrapper_irrelevant_types
+			 then
 				output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
 				output_stream.put_string (".item")
-			elseif attached {EWG_C_AST_UNION_TYPE} a_native_member_wrapper.c_declaration.type as l_ast_union then
+			elseif attached {EWG_C_AST_UNION_TYPE} a_native_member_wrapper.c_declaration.type or else
+			 attached {EWG_C_AST_UNION_TYPE} a_native_member_wrapper.c_declaration.type.skip_wrapper_irrelevant_types
+			 then
 				output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
 				output_stream.put_string (".item")
 			elseif attached {EWG_C_AST_ARRAY_TYPE} a_native_member_wrapper.c_declaration.type as l_ast_array then
@@ -609,6 +633,7 @@ feature {NONE} -- Generate Eiffel locals
 			native_member_wrapper: EWG_NATIVE_MEMBER_WRAPPER
 			zero_terminated_string_member_wrapper: EWG_ZERO_TERMINATED_STRING_MEMBER_WRAPPER
 		do
+--			if is_local_needed (a_function_wrapper) or has_function_out_parameter (a_function_wrapper) then
 			if is_local_needed (a_function_wrapper) then
 				output_stream.put_string ("%T%Tlocal")
 				output_stream.put_new_line
@@ -623,12 +648,30 @@ feature {NONE} -- Generate Eiffel locals
 						if native_member_wrapper /= Void then
 							generate_local_for_native_member_wrapper (native_member_wrapper)
 						end
+--						if native_member_wrapper /= Void and then has_function_out_parameter (a_function_wrapper) then
+--							generate_local_for_out_parameter (a_function_wrapper, native_member_wrapper)
+--						end
 						zero_terminated_string_member_wrapper ?= cs.item
 						if zero_terminated_string_member_wrapper /= Void then
 							generate_local_for_zero_terminated_string_member_wrapper (zero_terminated_string_member_wrapper)
 						end
 						cs.forth
 					end
+				end
+			end
+		end
+
+	generate_local_for_out_parameter (a_function_wrapper: EWG_FUNCTION_WRAPPER; a_native_member_wrapper: EWG_NATIVE_MEMBER_WRAPPER)
+		do
+			if attached {ARRAYED_LIST [STRING]} directory_structure.config_system.function_output_parameters.item (a_function_wrapper.function_declaration.declarator) as list
+			then
+				list.compare_objects
+				if list.has (a_native_member_wrapper.c_declaration.declarator) then
+					output_stream.put_string ("%T%T%Tl_")
+					output_stream.put_string (a_native_member_wrapper.mapped_eiffel_name)
+					output_stream.put_string (":")
+					output_stream.put_string (" POINTER")
+					output_stream.put_new_line
 				end
 			end
 		end
@@ -665,10 +708,30 @@ feature {NONE} -- Generate Eiffel locals
 
 
 	is_local_needed (a_function_wrapper: EWG_FUNCTION_WRAPPER ): BOOLEAN
+		local
+			cs: DS_BILINEAR_CURSOR [EWG_MEMBER_WRAPPER]
+			zero_terminated_string_member_wrapper: EWG_ZERO_TERMINATED_STRING_MEMBER_WRAPPER
 		do
-			if attached {EWG_ZERO_TERMINATED_STRING_MEMBER_WRAPPER} a_function_wrapper then
-				Result := True
+			if a_function_wrapper.function_declaration.function_type.members.count > 0 then
+				from
+					cs := a_function_wrapper.members.new_cursor
+					cs.start
+				until
+					cs.off or else Result
+				loop
+					zero_terminated_string_member_wrapper ?= cs.item
+					if zero_terminated_string_member_wrapper /= Void then
+						Result := True
+					end
+					cs.forth
+				end
 			end
+		end
+
+
+	has_function_out_parameter (a_function_wrapper: EWG_FUNCTION_WRAPPER): BOOLEAN
+		do
+			Result := directory_structure.config_system.function_output_parameters.has_key (a_function_wrapper.function_declaration.declarator)
 		end
 
 
