@@ -260,7 +260,7 @@ feature
 		do
 			Result := a_name.as_lower
 			remove_leading_underscores_from_string (Result)
-			if eiffel_keywords.has (Result) then
+			if eiffel_keywords.has (Result) or else any_feature_names.has (Result) then
 				create escaped_name.make (2 + Result.count)
 				escaped_name.append_string ("a_")
 				escaped_name.append_string (Result)

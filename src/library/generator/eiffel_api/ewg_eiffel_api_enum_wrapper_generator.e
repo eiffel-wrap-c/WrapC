@@ -36,7 +36,7 @@ feature
 			until
 				cs.off
 			loop
-				file_name := file_system.pathname (directory_structure.eiffel_directory_name.as_lower, cs.item.mapped_eiffel_name.as_lower + "_enum_api.e")
+				file_name := file_system.pathname (directory_structure.eiffel_directory_name, cs.item.mapped_eiffel_name.as_lower + "_enum_api.e")
 				create file.make (file_name)
 				file.recursive_open_write
 				if file.is_open_write then
