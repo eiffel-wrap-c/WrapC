@@ -102,6 +102,7 @@ feature {NONE} -- Implementation
 					error_handler.tick
 				end
 				generate_c_inline_function_wrappers_for_class (a_function_declaration_list)
+				generate_c_inline_function_address_wrappers_for_class (a_function_declaration_list)
 				file.put_line ("end")
 				file.close
 			else
@@ -113,7 +114,9 @@ feature {NONE} -- Implementation
 		require
 			a_function_wrapper_not_void: a_function_wrapper /= Void
 		do
-			if is_function_accessor_simple (a_function_wrapper) then
+			if is_function_accessor_simple (a_function_wrapper) or
+				directory_structure.config_system.function_excludes.has (a_function_wrapper.declaration.declarator)
+			then
 				generate_c_inline_function_accessor (a_function_wrapper, False)
 			else
 				generate_function_accessor (a_function_wrapper)
@@ -663,17 +666,17 @@ feature {NONE} -- Generate Eiffel locals
 
 	generate_local_for_out_parameter (a_function_wrapper: EWG_FUNCTION_WRAPPER; a_native_member_wrapper: EWG_NATIVE_MEMBER_WRAPPER)
 		do
-			if attached {ARRAYED_LIST [STRING]} directory_structure.config_system.function_output_parameters.item (a_function_wrapper.function_declaration.declarator) as list
-			then
-				list.compare_objects
-				if list.has (a_native_member_wrapper.c_declaration.declarator) then
-					output_stream.put_string ("%T%T%Tl_")
-					output_stream.put_string (a_native_member_wrapper.mapped_eiffel_name)
-					output_stream.put_string (":")
-					output_stream.put_string (" POINTER")
-					output_stream.put_new_line
-				end
-			end
+--			if attached {ARRAYED_LIST [STRING]} directory_structure.config_system.function_output_parameters.item (a_function_wrapper.function_declaration.declarator) as list
+--			then
+--				list.compare_objects
+--				if list.has (a_native_member_wrapper.c_declaration.declarator) then
+--					output_stream.put_string ("%T%T%Tl_")
+--					output_stream.put_string (a_native_member_wrapper.mapped_eiffel_name)
+--					output_stream.put_string (":")
+--					output_stream.put_string (" POINTER")
+--					output_stream.put_new_line
+--				end
+--			end
 		end
 
 	generate_local_for_native_member_wrapper (a_native_member_wrapper: EWG_NATIVE_MEMBER_WRAPPER)
@@ -728,13 +731,6 @@ feature {NONE} -- Generate Eiffel locals
 			end
 		end
 
-
-	has_function_out_parameter (a_function_wrapper: EWG_FUNCTION_WRAPPER): BOOLEAN
-		do
-			Result := directory_structure.config_system.function_output_parameters.has_key (a_function_wrapper.function_declaration.declarator)
-		end
-
-
 feature {NONE} -- Generate Eiffel to C inline code.	
 
 	generate_c_inline_function_wrappers_for_class (a_function_declaration_list: DS_LINKED_LIST [EWG_FUNCTION_WRAPPER])
@@ -764,6 +760,34 @@ feature {NONE} -- Generate Eiffel to C inline code.
 			end
 		end
 
+	generate_c_inline_function_address_wrappers_for_class (a_function_declaration_list: DS_LINKED_LIST [EWG_FUNCTION_WRAPPER])
+		require
+			a_function_declaration_list_not_void: a_function_declaration_list /= Void
+			a_function_declaration_list_not_empty: a_function_declaration_list.count > 0
+			a_function_declaration_list_not_has_void: not a_function_declaration_list.has (Void)
+		local
+			cs: DS_LINKED_LIST_CURSOR [EWG_FUNCTION_WRAPPER]
+			class_name: STRING
+			file_name: STRING
+			file: KL_TEXT_OUTPUT_FILE
+		do
+			output_stream.put_line ("feature -- Externals Address")
+			output_stream.put_new_line
+			from
+				cs := a_function_declaration_list.new_cursor
+				cs.start
+			until
+				cs.off
+			loop
+					-- generate function address iff the current function it's defined in
+					-- the configuration file.
+				if directory_structure.config_system.function_address.has (cs.item.declaration.declarator) then
+					generate_function_address_accessor (cs.item)
+				end
+				cs.forth
+				error_handler.tick
+			end
+		end
 
 	generate_c_inline_function_accessor (a_function_wrapper: EWG_FUNCTION_WRAPPER; a_need_prefix: BOOLEAN)
 		require
@@ -943,6 +967,41 @@ feature {NONE} -- Generate Eiffel to C inline code.
 			output_stream.put_character (';')
 			output_stream.put_new_line
 		end
+
+
+	generate_function_address_accessor (a_function_wrapper: EWG_FUNCTION_WRAPPER)
+		require
+			a_function_wrapper_not_void: a_function_wrapper /= Void
+		do
+			output_stream.put_string ("%T")
+			output_stream.put_string (a_function_wrapper.mapped_eiffel_name)
+			output_stream.put_string ("_address: POINTER ")
+			output_stream.put_new_line
+
+			output_stream.put_string ("%T%T%T-- Address of C function `")
+			output_stream.put_string (a_function_wrapper.function_declaration.declarator)
+			output_stream.put_string ("'")
+			output_stream.put_new_line
+			output_stream.put_line ("%T%Texternal")
+
+			output_stream.put_string ("%T%T%T%"C inline use <")
+			output_stream.put_string (a_function_wrapper.header_file_name)
+			output_stream.put_string (">")
+			output_stream.put_new_line
+			output_stream.put_line ("%T%Talias")
+			output_stream.put_string ("%T%T%T%"(void*) ")
+			output_stream.put_string (a_function_wrapper.function_declaration.declarator)
+			output_stream.put_string ("%"")
+			output_stream.put_new_line
+			output_stream.put_line ("%T%Tend")
+			output_stream.put_new_line
+
+		end
+
+
+
+
+
 
 feature {NONE} -- Helper formatters
 

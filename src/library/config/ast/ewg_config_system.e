@@ -39,8 +39,8 @@ feature {NONE} -- Initialization
 			create directory_structure.make (Current)
 			create function_address.make (10)
 			function_address.compare_objects
-			create function_output_parameters.make (10)
-			function_output_parameters.compare_objects
+			create function_excludes.make (10)
+			function_excludes.compare_objects
 		end
 
 feature {ANY} -- Access
@@ -62,8 +62,9 @@ feature {ANY} -- Access
 			-- List of functions which we want
 			-- to return a function address.
 
-	function_output_parameters: STRING_TABLE [LIST [STRING]]
-			-- Table of functions with a list of output parameters
+	function_excludes: ARRAYED_LIST [STRING]
+			-- List of functions which we want
+			-- to eclude for the high level api.
 
 feature {ANY}
 

@@ -174,9 +174,10 @@ feature {NONE} -- Implementation
 			wrapper_clause: EWG_CONFIG_WRAPPER_CLAUSE
 			rule: EWG_CONFIG_RULE
 		do
-			if attached a_rule_element.element_by_name (function_element_name) as l_function then
-					-- functions with output parameters
-				add_function (a_config_system, l_function, a_position_table)
+			if attached a_rule_element.element_by_name (function_element_name) as l_function_excludes and then
+				l_function_excludes.has_attribute_by_name (name_attribute_name) then
+					-- functions_excludes
+				a_config_system.function_excludes.force (l_function_excludes.attribute_by_name (name_attribute_name).value)
 			elseif attached  a_rule_element.element_by_name (function_element_address_name) as l_function_address and then
 				l_function_address.has_attribute_by_name (name_attribute_name)
 					-- function address
@@ -344,42 +345,6 @@ feature {NONE} -- Implementation
 		do
 			create {EWG_CONFIG_CALLBACK_WRAPPER_CLAUSE} Result.make
 		end
-
-
-	add_function (a_config_system: EWG_CONFIG_SYSTEM; a_function: XM_ELEMENT; a_position_table: XM_POSITION_TABLE)
-			-- Add `a_function' name with the list of parameters used as output parameters
-		require
-			a_config_system_not_void: a_config_system /= Void
-			a_function_not_void: a_function /= Void
-			a_function_is_rule: STRING_.same_string (a_function.name, function_element_name)
-			a_position_table_not_void: a_position_table /= Void
-		local
-			elements: DS_LIST [XM_ELEMENT]
-			function_name: STRING
-			l_param: STRING
-			list: ARRAYED_LIST [STRING]
-		do
-
-			function_name := a_function.attribute_by_name (name_attribute_name).value
-			elements := a_function.elements
-			create list.make (elements.count)
-			from
-				elements.start
-			until
-				elements.after
-			loop
-				if attached {XM_ELEMENT} elements.item_for_iteration as child and then
-					child.name.same_string_general (parameter_element_name)
-				then
-					l_param := child.attribute_by_name (name_attribute_name).value
-					list.force (l_param)
-				end
-				elements.forth
-			end
-			a_config_system.function_output_parameters.put (list, function_name)
-		end
-
-
 
 invariant
 

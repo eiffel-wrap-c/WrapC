@@ -50,14 +50,12 @@ feature -- Constants
 	name_attribute_name: STRING = "name"
 			-- "name" attribute name
 
-	function_element_name: STRING = "function"
+	function_element_name: STRING = "function_exclude"
 			--	function element name
 
 	function_element_address_name: STRING = "function_address"
 			--	function_address element name
 
-	parameter_element_name: STRING = "parameter"
-			--	parameter element name
 
 
 end
