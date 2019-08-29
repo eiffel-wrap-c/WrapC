@@ -23,7 +23,7 @@ create
 
 feature
 
-	make 
+	make
 		local
 			function_table: FUNCTION_TABLE_STRUCT_API
 			i: INTEGER
@@ -48,21 +48,22 @@ feature
 
 				-- This demonstrates how to call function pointers as members of structs
 				-- Get a struct with a function pointer member
-			create function_table.make_by_pointer (get_function_table)
-				-- Call it using the appropriate caller
+			if attached get_function_table as l_table then
+				create function_table.make_by_pointer (l_table.item)
+					-- Call it using the appropriate caller
+					-- Create
+				create anonymous_dispatcher.make (agent sum)
+				i := anonymous_dispatcher.call_int_int_int_anonymous_callback (function_table.callme, 7, 10)
 
-				-- Create
-			create anonymous_dispatcher.make (agent sum)
-			i := anonymous_dispatcher.call_int_int_int_anonymous_callback (function_table.callme, 7, 10)
 
+					-- The c function we called should have added the integers
+				print ("result of callme: " + i.out + "%N")
 
-				-- The c function we called should have added the integers
-			print ("result of callme: " + i.out + "%N")
-
-			function_table.set_callme (anonymous_dispatcher.c_dispatcher)
-			i := anonymous_dispatcher.call_int_int_int_anonymous_callback (function_table.callme, 5, 5)
-				-- The c function we called should have added the integers
-			print ("result of callme: " + i.out + "%N")
+				function_table.set_callme (anonymous_dispatcher.c_dispatcher)
+				i := anonymous_dispatcher.call_int_int_int_anonymous_callback (function_table.callme, 5, 5)
+					-- The c function we called should have added the integers
+				print ("result of callme: " + i.out + "%N")
+			end
 
 		end
 

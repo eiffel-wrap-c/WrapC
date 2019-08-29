@@ -139,12 +139,14 @@ feature -- Generate Eiffel API
 	generate_member (a_struct_member: EWG_MEMBER_WRAPPER)
 		do
 			if attached {EWG_NATIVE_MEMBER_WRAPPER} a_struct_member as  native_wrapper  then
-				if attached {EWG_C_AST_STRUCT_TYPE} native_wrapper.c_declaration.type  then
+				if attached {EWG_C_AST_STRUCT_TYPE} native_wrapper.c_declaration.type  or
+				    attached {EWG_C_AST_STRUCT_TYPE} native_wrapper.c_declaration.type.skip_wrapper_irrelevant_types then
 					generate_native_struct_wrapper_member (native_wrapper.mapped_eiffel_name,
 														  native_wrapper.composite_wrapper,
 														  native_wrapper.c_declaration,
 														  native_wrapper.header_file_name)
-				elseif attached {EWG_C_AST_UNION_TYPE} native_wrapper.c_declaration.type  then
+				elseif attached {EWG_C_AST_UNION_TYPE} native_wrapper.c_declaration.type or
+						attached {EWG_C_AST_UNION_TYPE} native_wrapper.c_declaration.type.skip_wrapper_irrelevant_types  then
 					generate_native_union_wrapper_member (native_wrapper.mapped_eiffel_name,
 														  native_wrapper.composite_wrapper,
 														  native_wrapper.c_declaration,
@@ -184,7 +186,7 @@ feature -- Generate Eiffel API
 
 			output_stream.put_string ("%T")
 			output_stream.put_string (escaped_mapped_eiffel_name)
-			output_stream.put_string (": ")
+			output_stream.put_string (": detachable ")
 			output_stream.put_string (l_union_name)
 			output_stream.put_string ("_UNION_API")
 			output_stream.put_new_line
@@ -198,16 +200,20 @@ feature -- Generate Eiffel API
 			output_stream.put_line ("%T%T%Texists: exists")
 
 			output_stream.put_line ("%T%Tdo")
-			output_stream.put_string ("%T%T%Tcreate Result.make_by_pointer (c_")
+			output_stream.put_string ("%T%T%Tif attached c_")
 			output_stream.put_string (eiffel_member_name)
-			output_stream.put_line (" (item))")
+			output_stream.put_line (" (item) as l_ptr and then not l_ptr.is_default_pointer then")
+			output_stream.put_line ("%T%T%T%Tcreate Result.make_by_pointer (l_ptr)")
+			output_stream.put_line ("%T%T%Tend")
 
 			output_stream.put_line ("%T%Tensure")
-			output_stream.put_line ("%T%T%Tresult_not_void: Result /= Void")
-			output_stream.put_string ("%T%T%Tresult_has_correct_item: Result.item = c_")
+			output_stream.put_string ("%T%T%Tresult_void: Result = Void implies c_")
 			output_stream.put_string (eiffel_member_name)
-			output_stream.put_string (" (item)")
-			output_stream.put_new_line
+			output_stream.put_line (" (item) = default_pointer ")
+
+			output_stream.put_string ("%T%T%Tresult_not_void: attached Result as l_result implies l_result.item = c_")
+			output_stream.put_string (eiffel_member_name)
+			output_stream.put_line (" (item) ")
 			output_stream.put_line ("%T%Tend")
 			output_stream.put_new_line
 
@@ -234,9 +240,9 @@ feature -- Generate Eiffel API
 				output_stream.put_string (eiffel_member_name)
 				output_stream.put_line (" (item, a_value.item)")
 				output_stream.put_line ("%T%Tensure")
-				output_stream.put_string ("%T%T%T" + eiffel_member_name + "_set: a_value.item = ")
+				output_stream.put_string ("%T%T%T" + eiffel_member_name + "_set: attached ")
 				output_stream.put_string (eiffel_member_name)
-				output_stream.put_string (".item")
+				output_stream.put_string (" as l_value implies l_value = a_value.item")
 				output_stream.put_new_line
 				output_stream.put_line ("%T%Tend")
 				output_stream.put_new_line
@@ -251,7 +257,7 @@ feature -- Generate Eiffel API
 
 			output_stream.put_string ("%T")
 			output_stream.put_string (escaped_struct_feature_name (a_union_wrapper.mapped_eiffel_name))
-			output_stream.put_string (": ")
+			output_stream.put_string (": detachable ")
 			output_stream.put_string (a_union_wrapper.union_wrapper.mapped_eiffel_name)
 			output_stream.put_string ("_UNION_API ")
 			output_stream.put_new_line
@@ -265,15 +271,22 @@ feature -- Generate Eiffel API
 			output_stream.put_line ("%T%T%Texists: exists")
 
 			output_stream.put_line ("%T%Tdo")
-			output_stream.put_string ("%T%T%Tcreate Result.make_by_pointer (c_")
+			output_stream.put_string ("%T%T%Tif attached c_")
 			output_stream.put_string (eiffel_member_name)
-			output_stream.put_line (" (item))")
+			output_stream.put_line (" (item) as l_ptr and then not l_ptr.is_default_pointer then")
+			output_stream.put_line ("%T%T%T%Tcreate Result.make_by_pointer (l_ptr)")
+			output_stream.put_line ("%T%T%Telse")
+			output_stream.put_line ("%T%T%T%Tcreate Result.make")
+			output_stream.put_line ("%T%T%Tend")
 
 			output_stream.put_line ("%T%Tensure")
-			output_stream.put_line ("%T%T%Tresult_not_void: Result /= Void")
-			output_stream.put_string ("%T%T%Tresult_has_correct_item: Result.item = c_")
+			output_stream.put_string ("%T%T%Tresult_void: Result = Void implies c_")
 			output_stream.put_string (eiffel_member_name)
-			output_stream.put_string ("(item)")
+			output_stream.put_line (" (item) = default_pointer ")
+
+			output_stream.put_string ("%T%T%Tresult_not_void: attached Result as l_result implies l_result.item = c_")
+			output_stream.put_string (eiffel_member_name)
+			output_stream.put_line (" (item) ")
 			output_stream.put_line ("%T%Tend")
 			output_stream.put_new_line
 
@@ -300,9 +313,9 @@ feature -- Generate Eiffel API
 				output_stream.put_string (eiffel_member_name)
 				output_stream.put_line (" (item, a_value.item)")
 				output_stream.put_line ("%T%Tensure")
-				output_stream.put_string ("%T%T%T" + eiffel_member_name + "_set: a_value.item = ")
+				output_stream.put_string ("%T%T%T" + eiffel_member_name + "_set: attached ")
 				output_stream.put_string (eiffel_member_name)
-				output_stream.put_string (".item")
+				output_stream.put_string ("as l_value implies l_value.item = a_value.item")
 				output_stream.put_line ("%T%Tend")
 				output_stream.put_new_line
 			end
@@ -322,12 +335,12 @@ feature -- Generate Eiffel API
 			escaped_mapped_eiffel_name := escaped_struct_feature_name (a_mapped_eiffel_name)
 			eiffel_member_name := eiffel_parameter_name_from_c_parameter_name (a_c_declaration.declarator)
 
-			l_struct_name := a_c_declaration.type.name
+			l_struct_name := a_c_declaration.type.name.twin
 			l_struct_name.to_upper
 
 			output_stream.put_string ("%T")
 			output_stream.put_string (escaped_mapped_eiffel_name)
-			output_stream.put_string (": ")
+			output_stream.put_string (": detachable ")
 			output_stream.put_string (l_struct_name)
 			output_stream.put_string ("_STRUCT_API")
 			output_stream.put_new_line
@@ -341,16 +354,20 @@ feature -- Generate Eiffel API
 			output_stream.put_line ("%T%T%Texists: exists")
 
 			output_stream.put_line ("%T%Tdo")
-			output_stream.put_string ("%T%T%Tcreate Result.make_by_pointer (c_")
+			output_stream.put_string ("%T%T%Tif attached c_")
 			output_stream.put_string (eiffel_member_name)
-			output_stream.put_line (" (item))")
+			output_stream.put_line (" (item) as l_ptr and then not l_ptr.is_default_pointer then")
+			output_stream.put_line ("%T%T%T%Tcreate Result.make_by_pointer (l_ptr)")
+			output_stream.put_line ("%T%T%Tend")
 
 			output_stream.put_line ("%T%Tensure")
-			output_stream.put_line ("%T%T%Tresult_not_void: Result /= Void")
-			output_stream.put_string ("%T%T%Tresult_has_correct_item: Result.item = c_")
+			output_stream.put_string ("%T%T%Tresult_void: Result = Void implies c_")
 			output_stream.put_string (eiffel_member_name)
-			output_stream.put_string (" (item)")
-			output_stream.put_new_line
+			output_stream.put_line (" (item) = default_pointer ")
+
+			output_stream.put_string ("%T%T%Tresult_not_void: attached Result as l_result implies l_result.item = c_")
+			output_stream.put_string (eiffel_member_name)
+			output_stream.put_line (" (item) ")
 			output_stream.put_line ("%T%Tend")
 			output_stream.put_new_line
 
@@ -377,9 +394,9 @@ feature -- Generate Eiffel API
 				output_stream.put_string (eiffel_member_name)
 				output_stream.put_line (" (item, a_value.item)")
 				output_stream.put_line ("%T%Tensure")
-				output_stream.put_string ("%T%T%T" + eiffel_member_name + "_set: a_value.item = ")
+				output_stream.put_string ("%T%T%T" + eiffel_member_name + "_set: attached ")
 				output_stream.put_string (eiffel_member_name)
-				output_stream.put_string (".item")
+				output_stream.put_string (" as l_value implies l_value.item = a_value.item")
 				output_stream.put_new_line
 				output_stream.put_line ("%T%Tend")
 				output_stream.put_new_line
@@ -394,7 +411,7 @@ feature -- Generate Eiffel API
 
 			output_stream.put_string ("%T")
 			output_stream.put_string (escaped_struct_feature_name (a_struct_wrapper.mapped_eiffel_name))
-			output_stream.put_string (": ")
+			output_stream.put_string (": detachable ")
 			output_stream.put_string (a_struct_wrapper.struct_wrapper.mapped_eiffel_name)
 			output_stream.put_string ("_STRUCT_API ")
 			output_stream.put_new_line
@@ -408,17 +425,23 @@ feature -- Generate Eiffel API
 			output_stream.put_line ("%T%T%Texists: exists")
 
 			output_stream.put_line ("%T%Tdo")
-			output_stream.put_string ("%T%T%Tcreate Result.make_by_pointer (c_")
+			output_stream.put_string ("%T%T%Tif attached c_")
 			output_stream.put_string (eiffel_member_name)
-			output_stream.put_line (" (item))")
+			output_stream.put_line (" (item) as l_ptr and then not l_ptr.is_default_pointer then")
+			output_stream.put_line ("%T%T%T%Tcreate Result.make_by_pointer (l_ptr)")
+			output_stream.put_line ("%T%T%Tend")
 
 			output_stream.put_line ("%T%Tensure")
-			output_stream.put_line ("%T%T%Tresult_not_void: Result /= Void")
-			output_stream.put_string ("%T%T%Tresult_has_correct_item: Result.item = c_")
+			output_stream.put_string ("%T%T%Tresult_void: Result = Void implies c_")
 			output_stream.put_string (eiffel_member_name)
-			output_stream.put_line ("(item)")
+			output_stream.put_line (" (item) = default_pointer ")
+
+			output_stream.put_string ("%T%T%Tresult_not_void: attached Result as l_result implies l_result.item = c_")
+			output_stream.put_string (eiffel_member_name)
+			output_stream.put_line (" (item) ")
 			output_stream.put_line ("%T%Tend")
 			output_stream.put_new_line
+
 
 			if not a_struct_wrapper.c_declaration.type.skip_consts_and_aliases.is_array_type then
 				-- the setter
@@ -443,9 +466,9 @@ feature -- Generate Eiffel API
 				output_stream.put_string (eiffel_member_name)
 				output_stream.put_line (" (item, a_value.item)")
 				output_stream.put_line ("%T%Tensure")
-				output_stream.put_string ("%T%T%T" + eiffel_member_name + "_set: a_value.item = ")
+				output_stream.put_string ("%T%T%T" + eiffel_member_name + "_set: attached ")
 				output_stream.put_string (eiffel_member_name)
-				output_stream.put_line (".item")
+				output_stream.put_line (" as l_value implies l_value.item = a_value.item")
 				output_stream.put_line ("%T%Tend")
 				output_stream.put_new_line
 			end
@@ -483,6 +506,11 @@ feature -- Generate Eiffel API
 				output_stream.put_string (escaped_mapped_eiffel_name)
 				output_stream.put_string (": ")
 
+					-- Add detachable iff the type is STRING OR UNICODE STRING
+				if is_char_pointer_type (a_c_declaration) or is_unicode_char_pointer_type (a_c_declaration) then
+					output_stream.put_string (" detachable ")
+				end
+
 				output_stream.put_string (a_c_declaration.type.corresponding_eiffel_type_api )
 				output_stream.put_new_line
 
@@ -496,23 +524,31 @@ feature -- Generate Eiffel API
 
 				output_stream.put_line ("%T%Tdo")
 				if is_char_pointer_type (a_c_declaration) then
-					output_stream.put_string ("%T%T%TResult := (create {C_STRING}.make_by_pointer (c_")
+					output_stream.put_string ("%T%T%Tif attached c_")
 					output_stream.put_string (eiffel_member_name)
-					output_stream.put_line (" (item))).string")
+					output_stream.put_line (" (item) as l_ptr then")
+					output_stream.put_line ("%T%T%T%TResult := (create {C_STRING}.make_by_pointer (l_ptr)).string")
+					output_stream.put_line ("%T%T%Tend")
+
 					output_stream.put_line ("%T%Tensure")
-					output_stream.put_string ("%T%T%Tresult_correct: Result.same_string ((create {C_STRING}.make_by_pointer (c_")
+					output_stream.put_string ("%T%T%Tresult_void: Result = Void implies c_")
 					output_stream.put_string (eiffel_member_name)
-					output_stream.put_line (" (item))).string)")
+					output_stream.put_line (" (item) = default_pointer")
+					output_stream.put_line ("%T%T%Tresult_not_void: attached Result as l_result implies l_result.same_string ((create {C_STRING}.make_by_pointer (item)).string)")
 					output_stream.put_line ("%T%Tend")
 					output_stream.put_new_line
 				elseif is_unicode_char_pointer_type (a_c_declaration) then
-					output_stream.put_string ("%T%T%TResult := (create {NATIVE_STRING}.make_from_pointer (c_")
+					output_stream.put_string ("%T%T%Tif attached c_")
 					output_stream.put_string (eiffel_member_name)
-					output_stream.put_line (" (item))).string")
+					output_stream.put_line (" (item) as l_ptr then")
+					output_stream.put_line ("%T%T%T%TResult := (create {NATIVE_STRING}.make_from_pointer (l_ptr)).string")
+					output_stream.put_line ("%T%T%Tend")
+
 					output_stream.put_line ("%T%Tensure")
-					output_stream.put_string ("%T%T%Tresult_correct: Result.same_string ((create {NATIVE_STRING}.make_from_pointer (c_")
+					output_stream.put_string ("%T%T%Tresult_void: Result = Void implies c_")
 					output_stream.put_string (eiffel_member_name)
-					output_stream.put_line (" (item))).string)")
+					output_stream.put_line (" (item) = default_pointer")
+					output_stream.put_line ("%T%T%Tresult_not_void: attached Result as l_result implies l_result.same_string ((create {NATIVE_STRING}.make_from_pointer (item)).string)")
 					output_stream.put_line ("%T%Tend")
 					output_stream.put_new_line
 				else
@@ -740,8 +776,6 @@ feature -- Generate Eiffel API
 			end
 
 		end
-
-
 
 	generate_signature_parameter_for_callback (a_c_declaration: EWG_C_AST_DECLARATION): STRING
 		do

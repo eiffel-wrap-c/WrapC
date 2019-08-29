@@ -33,10 +33,11 @@ feature -- Generation
 					-- Linux
 				create l_content.make_from_string (makefile_linux)
 
-					-- $EIF_LIBARY_NAME, $OBJECT_LIST, $OUTPUT_DIRECTORY
+					-- $EIF_LIBARY_NAME, $OBJECT_LIST, $OUTPUT_DIRECTORY $LIBRARY_NAME
 				l_content.replace_substring_all ("$EIF_LIBARY_NAME", "eif_" + directory_structure.config_system.name)
 				l_content.replace_substring_all ("$OBJECT_LIST", object_name + ".o")
 				l_content.replace_substring_all ("$OUTPUT_DIRECTORY", directory_name)
+				l_content.replace_substring_all ("$LIBRARY_NAME", directory_structure.config_system.name)
 				create_make_file (makefilename, l_content)
 
 					-- Windows
@@ -82,7 +83,7 @@ OUTDIR= .
 INDIR= .
 CC = $cc
 OUTPUT_CMD = $output_cmd
-CFLAGS = -I"$rt_include" -I $(TOP)$(DIR)include -I $(TOP)$(DIR)$(TOP)$(DIR)$(TOP)$(DIR)$OUTPUT_DIRECTORY$(DIR)c$(DIR)include
+CFLAGS = -I"$rt_include" -I $(TOP)$(DIR)include -I $(TOP)$(DIR)$(TOP)$(DIR)$(TOP)$(DIR)$OUTPUT_DIRECTORY$(DIR)c$(DIR)include -I $(TOP)$(DIR)$(TOP)$(DIR)$(TOP)$(DIR)C$(DIR)include
 JCFLAGS = $(CFLAGS) $optimize $ccflags
 JMTCFLAGS = $(CFLAGS) $optimize $mtccflags
 JILCFLAGS = $(CFLAGS) $optimize $mtccflags  -DEIF_IL_DLL
@@ -130,7 +131,7 @@ $spitshell >Makefile <<!GROK!THIS!
 SHELL = /bin/sh
 CC= $cc
 AR = ar rc
-CFLAGS = $optimize $ccflags $large -I$rt_include -I../../../$OUTPUT_DIRECTORY/c/include -I../include 
+CFLAGS = $optimize $ccflags $large -I$rt_include -I../../../$OUTPUT_DIRECTORY/c/include -I../include `pkg-config --cflags $LIBRARY_NAME` -I../../../C/include
 LDFLAGS = $ldflags
 LIBS = $libs
 MAKE = $make
