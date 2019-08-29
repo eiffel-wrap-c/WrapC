@@ -220,9 +220,11 @@ feature {NONE} -- Generate Eiffel High Level Access
 						attached {EWG_C_AST_UNION_TYPE} a_function_wrapper.function_declaration.function_type.return_type or else
 						attached {EWG_C_AST_UNION_TYPE} a_function_wrapper.function_declaration.function_type.return_type.skip_wrapper_irrelevant_types
 					then
-						output_stream.put_string ("%T%T%T create Result.make_by_pointer (")
+						output_stream.put_string ("%T%T%Tif attached ")
 						generate_routine_call (a_function_wrapper)
-						output_stream.put_string (")")
+						output_stream.put_line (" as l_ptr and then not l_ptr.is_default_pointer then")
+						output_stream.put_line ("%T%T%T%Tcreate Result.make_by_pointer ( l_ptr )")
+						output_stream.put_line ("%T%T%Tend")
 					else
 						output_stream.put_string ("%T%T%TResult := ")
 						generate_routine_call (a_function_wrapper)
@@ -276,10 +278,12 @@ feature {NONE} -- Generate Eiffel High Level Access
 				output_stream.put_string (": ")
 				if attached {EWG_C_AST_STRUCT_TYPE} a_function_wrapper.function_declaration.function_type.return_type as l_struct
 				then
+					output_stream.put_string ("detachable ")
 					output_stream.put_string (l_struct.name.as_upper)
 					output_stream.put_string ("_STRUCT_API")
 				elseif attached {EWG_C_AST_STRUCT_TYPE} a_function_wrapper.function_declaration.function_type.return_type.skip_wrapper_irrelevant_types as l_struct
 				then
+					output_stream.put_string ("detachable ")
 					if l_struct.name /= Void then
 						output_stream.put_string (l_struct.name.as_upper)
 					else
@@ -288,10 +292,12 @@ feature {NONE} -- Generate Eiffel High Level Access
 					output_stream.put_string ("_STRUCT_API")
 				elseif attached {EWG_C_AST_UNION_TYPE} a_function_wrapper.function_declaration.function_type.return_type as l_union
 				then
+					output_stream.put_string ("detachable ")
 					output_stream.put_string (l_union.name.as_upper)
 					output_stream.put_string ("_UNION_API")
 				elseif attached {EWG_C_AST_UNION_TYPE} a_function_wrapper.function_declaration.function_type.return_type.skip_wrapper_irrelevant_types as l_union
 				then
+					output_stream.put_string ("detachable ")
 					if l_union /= Void then
 						output_stream.put_string (l_union.name.as_upper)
 					else

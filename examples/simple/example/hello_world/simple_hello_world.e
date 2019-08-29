@@ -68,10 +68,10 @@ feature
 			person.set_name ("Joe")
 			person.set_pref (preferences)
 
-			print ("%NPerson Name:" + person.name)
+			print ("%NPerson Name:" + if attached person.name as l_name then l_name else "" end)
 			print ("%NPerson Age:"  + person.age.out)
-			print ("%NPerson food preference: " + person.pref.food)
-			print ("%NPerson value preference: " + person.pref.a.out)
+			print ("%NPerson food preference: " + if attached person.pref as l_pref and then attached l_pref.food as l_food then l_food else "" end)
+			print ("%NPerson value preference: " + if attached person.pref as l_pref then l_pref.a.out else "" end )
 
 		end
 
