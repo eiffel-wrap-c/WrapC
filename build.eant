@@ -13,7 +13,7 @@
 	<target name="help">
 		<echo message="usage:"/>
 		<echo message="   geant install"/>
-		<echo message="   geant install_examples"/>
+		<!--echo message="   geant install_examples"/-->
 		<echo message="   geant clobber"/>
 		<echo message="   geant clean"/>
 		<echo message="   geant compile"/>
