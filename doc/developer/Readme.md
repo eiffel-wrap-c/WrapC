@@ -48,8 +48,8 @@ The following example shows a possible setup for windows:
 
 The following example shows a possible setup for linux:
 
-	export WRAP_C=/home/aleitner/wrap_c
-	export PATH=$PATH:$WRAP_C\bin
+	export WRAP_C=/home/tools/wrap_c
+	export PATH=$PATH:$WRAP_C/bin
    
 #### Note
 	You have to make sure that Eiffel compiler or C compiler gets used can be located via the PATH environment variable.
