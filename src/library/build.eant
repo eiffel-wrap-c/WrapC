@@ -26,15 +26,12 @@
 
 		<geant target="ewg_c_parser"/>
 		<geant target="ewg_c_macro_parser"/>
-		<geant file="build.eant" target="install" dir="runtime/eiffel"/>
 	</target>
 
 	<target name="clean">
 		<description>
 			Remove intermediary generated files.
 		</description>
-
-		<geant file="build.eant" target="clean" dir="runtime/eiffel"/>
 	</target>
 
 	<target name="clobber">
@@ -51,7 +48,6 @@
 		<delete file="parser/c_macro_parser/ewg_c_macro_parser.e"/>
 		<delete file="parser/c_macro_parser/ewg_c_macro_tokens.e"/>
 		<delete file="parser/c_macro_parser/ewg_c_macro_parser.txt"/>
-		<geant file="build.eant" target="clobber" dir="runtime/eiffel"/>
 	</target>
 
 

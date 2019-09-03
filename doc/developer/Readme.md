@@ -48,8 +48,8 @@ The following example shows a possible setup for windows:
 
 The following example shows a possible setup for linux:
 
-	export WRAP_C=/home/aleitner/wrap_c
-	export PATH=$PATH:$WRAP_C\bin
+	export WRAP_C=/home/tools/wrap_c
+	export PATH=$PATH:$WRAP_C/bin
    
 #### Note
 	You have to make sure that Eiffel compiler or C compiler gets used can be located via the PATH environment variable.
@@ -79,8 +79,6 @@ In this section we will describe how to build WrapC tool using ecf's and using g
     wrap_c -- The Eiffel Wrapper Generator command line tool.
    
 The source to those tools is located in `${WRAP_C}/src`. When using a binary distribution (i.e. not the source distribution) there is no need to compile the tools, as they come already precompiled for your platform. 
-
-Optional tools are located in ``${WRAP_C}/tools`.
 
 <a name="ecf"></a>
 ## Compiling the Tools using ECF's
@@ -140,13 +138,12 @@ Available targets for `WrapC` libraries.
 
 	geant
 	usage:
-	   geant install                -- Execute pre_process, install, post_process, c_build_library_ise
-	   geant c_build_library_ise    -- Build C code
-	   geant pre_process		-- User defined pre-process script. By default do nothing.	
-	   geant process_wrap_c         -- Generate wrap_c wrappers for the target C library.
-	   geant post_process		-- User defined post-process script. By default do nothing.
-	   geant clean   		-- remove intermediary generated files
-	   geant clobber 		-- remove all generated files
+	   geant wrap_c			-- Generate wrap_c wrappers for the target C library.
+	   geant wrap_c_pre_script      -- Generate wrap_c wrappers for the target C library, executing a pre processing script
+	   geant wrap_c_post_script     -- Generate wrap_c wrappers for the target C library, executing a post processing script
+	   geant compile  		-- Build C code
+	   geant clean			-- remove intermediary generated files
+	   geant clobber   		-- remove all generated files
 
 Most examples wrap a 3rd party C library. If you want to build such an example please read the Readme.md file in the examples directory. It is usually necessary for you to install certain development versions of the libraries to wrap. The Readme.md file gives details on what is necessary.
 
