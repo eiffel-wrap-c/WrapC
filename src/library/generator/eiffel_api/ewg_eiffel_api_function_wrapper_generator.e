@@ -370,32 +370,40 @@ feature {NONE} -- Generate Eiffel High Level Access
 			elseif attached {EWG_C_AST_STRUCT_TYPE} a_native_member_wrapper.c_declaration.type as l_ast_struct then
 				output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
 				output_stream.put_string (": ")
-				output_stream.put_string (l_ast_struct.name.as_upper)
+				if attached l_ast_struct.name as l_name then
+					output_stream.put_string (eiffel_class_name_from_c_type_name (l_name))
+				elseif attached a_native_member_wrapper.c_declaration.type.skip_wrapper_irrelevant_types.closest_alias_type then
+					output_stream.put_string (eiffel_class_name_from_c_type_name (a_native_member_wrapper.c_declaration.type.skip_wrapper_irrelevant_types.closest_alias_type.name))
+				end
 				output_stream.put_string ("_STRUCT_API")
 			elseif attached {EWG_C_AST_STRUCT_TYPE} a_native_member_wrapper.c_declaration.type.skip_wrapper_irrelevant_types as l_ast_struct then
 				output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
 				output_stream.put_string (": ")
 				if l_ast_struct.name /= Void then
-					output_stream.put_string (l_ast_struct.name.as_upper)
+					output_stream.put_string (eiffel_class_name_from_c_type_name (l_ast_struct.name))
 				else
 					 -- TODO check
-					output_stream.put_string (l_ast_struct.closest_alias_type.name.as_upper)
+					output_stream.put_string (eiffel_class_name_from_c_type_name (l_ast_struct.closest_alias_type.name))
 				end
 				output_stream.put_string ("_STRUCT_API")
 			elseif attached {EWG_C_AST_UNION_TYPE} a_native_member_wrapper.c_declaration.type as l_ast_union then
 				output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
 				output_stream.put_string (": ")
 				if l_ast_union.name /= Void then
-					output_stream.put_string (l_ast_union.name.as_upper)
+					output_stream.put_string (eiffel_class_name_from_c_type_name (l_ast_union.name))
 				else
 					 -- TODO check
-					output_stream.put_string (l_ast_union.closest_alias_type.name.as_upper)
+					output_stream.put_string (eiffel_class_name_from_c_type_name (l_ast_union.closest_alias_type.name))
 				end
 				output_stream.put_string ("_UNION_API")
 			elseif attached {EWG_C_AST_UNION_TYPE} a_native_member_wrapper.c_declaration.type.skip_wrapper_irrelevant_types as l_ast_union then
 				output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
 				output_stream.put_string (": ")
-				output_stream.put_string (l_ast_union.name.as_upper)
+				if attached l_ast_union.name as l_name then
+					output_stream.put_string (eiffel_class_name_from_c_type_name (l_name))
+				elseif attached a_native_member_wrapper.c_declaration.type.skip_wrapper_irrelevant_types.closest_alias_type then
+					output_stream.put_string (eiffel_class_name_from_c_type_name (a_native_member_wrapper.c_declaration.type.skip_wrapper_irrelevant_types.closest_alias_type.name))
+				end
 				output_stream.put_string ("_UNION_API")
 			elseif is_char_pointer_type (a_native_member_wrapper.c_declaration) then
 				output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))

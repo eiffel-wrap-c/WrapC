@@ -251,7 +251,13 @@ feature -- Generate Eiffel API
 			escaped_mapped_eiffel_name := escaped_struct_feature_name (a_mapped_eiffel_name)
 			eiffel_member_name := eiffel_parameter_name_from_c_parameter_name (a_c_declaration.declarator)
 
-			l_struct_name := a_c_declaration.type.name
+			if attached a_c_declaration.type.name as l_name  then
+				l_struct_name := l_name.twin
+			else
+				l_struct_name := a_c_declaration.type.skip_wrapper_irrelevant_types.name.twin
+			end
+			l_struct_name := escaped_struct_feature_name (l_struct_name)
+
 			l_struct_name.to_upper
 
 			output_stream.put_string ("%T")
@@ -332,7 +338,14 @@ feature -- Generate Eiffel API
 			escaped_mapped_eiffel_name := escaped_struct_feature_name (a_mapped_eiffel_name)
 			eiffel_member_name := eiffel_parameter_name_from_c_parameter_name (a_c_declaration.declarator)
 
-			l_union_name := a_c_declaration.type.name.twin
+			if attached a_c_declaration.type.name as l_name  then
+				l_union_name := l_name.twin
+			else
+				l_union_name := a_c_declaration.type.skip_wrapper_irrelevant_types.name.twin
+			end
+			l_union_name := escaped_struct_feature_name (l_union_name)
+
+
 			l_union_name.to_upper
 
 			output_stream.put_string ("%T")
