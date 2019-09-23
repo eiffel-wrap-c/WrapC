@@ -85,6 +85,13 @@ feature {ANY}
 				generate_c_stubs
 			end
 
+			if eiffel_wrapper_set.macro_wrapper_group_count > 0 then
+				error_handler.start_task ("phase 4: generating Macro wrappers")
+				error_handler.set_current_task_total_ticks ((eiffel_wrapper_set.macro_wrapper_group_count + 1) * 12)
+				generate_macro_wrappers
+				error_handler.stop_task
+			end
+
 			error_handler.report_info_message ("phase 5: generating Makefiles and WrapC header")
 			genarate_makefiles
 			create_wrap_c_header
@@ -168,6 +175,15 @@ feature {NONE} -- Implementation
 			eiffel_abstraction_dispatcher_generator.generate (eiffel_wrapper_set)
 
 		end
+
+	generate_macro_wrappers
+		local
+			eiffel_api_generator: EWG_EIFFEL_API_MACRO_WRAPPER_GENERATOR
+		do
+			create eiffel_api_generator.make (error_handler, directory_structure)
+			eiffel_api_generator.generate (eiffel_wrapper_set)
+		end
+
 
 	genarate_makefiles
 		local

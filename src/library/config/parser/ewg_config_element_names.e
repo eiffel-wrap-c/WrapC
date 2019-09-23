@@ -57,5 +57,10 @@ feature -- Constants
 			--	function_address element name
 
 
+	macro_element_name: STRING = "macro"
+			--	macro element name.
+
+
+
 
 end

@@ -46,6 +46,13 @@ feature {NONE}
 			function_wrapper_groups.set_key_equality_tester (string_equality_tester)
 			create callback_wrapper_groups.make_map (Initial_callback_wrapper_groups_size)
 			callback_wrapper_groups.set_key_equality_tester (string_equality_tester)
+
+
+			create macro_wrapper_table.make_map (initial_macro_wrapper_table_size)
+			macro_wrapper_table.set_key_equality_tester (string_equality_tester)
+			create macro_wrapper_groups.make_map (initial_macro_wrapper_groups_size)
+			macro_wrapper_groups.set_key_equality_tester (string_equality_tester)
+
 		end
 
 feature {ANY}
@@ -137,6 +144,16 @@ feature {ANY} -- Statistical Queries
 			count_greater_equal_zero: Result >= 0
 		end
 
+
+	macro_wrapper_group_count: INTEGER
+			-- Number of macro wrapper groups in this set
+		do
+			Result := macro_wrapper_groups.count
+		ensure
+			count_greater_equal_zero: Result >= 0
+		end
+
+
 feature {ANY} -- Get cursors for wrappers
 
 	new_enum_wrapper_cursor: DS_BILINEAR_CURSOR [EWG_ENUM_WRAPPER]
@@ -159,6 +176,11 @@ feature {ANY} -- Get cursors for wrappers
 			Result := function_wrapper_table.new_cursor
 		end
 
+	new_macro_wrapper_cursor: DS_BILINEAR_CURSOR [EWG_MACRO_WRAPPER]
+		do
+			Result := macro_wrapper_table.new_cursor
+		end
+
 	new_callback_wrapper_cursor: DS_BILINEAR_CURSOR [EWG_CALLBACK_WRAPPER]
 		do
 			Result := callback_wrapper_table.new_cursor
@@ -173,6 +195,12 @@ feature {ANY} -- Get cursors for wrappers
 		do
 			Result := callback_wrapper_groups.new_cursor
 		end
+
+	new_macro_wrapper_groups_cursor: DS_HASH_TABLE_CURSOR [DS_LINKED_LIST [EWG_MACRO_WRAPPER], STRING]
+		do
+			Result := macro_wrapper_groups.new_cursor
+		end
+
 
 feature {ANY} -- Latest wrappers
 
@@ -190,6 +218,9 @@ feature {ANY} -- Latest wrappers
 
 	last_callback_wrapper: EWG_CALLBACK_WRAPPER
 			-- Last callback wrapper added to `callback_wrapper_table'
+
+	last_macro_wrapper: EWG_MACRO_WRAPPER
+			-- Last macro wrapper added to `macro_wrapper_table'
 
 feature {ANY} -- Helper queries
 
@@ -238,6 +269,14 @@ feature {ANY} -- Helper queries
 			Result := function_wrapper_table.has (function_declaration)
 		end
 
+	has_wrapper_for_macro (a_macro: STRING): BOOLEAN
+			-- Has `Current' a wrapper for `a_macro'?
+		require
+			a_macro_not_void: a_macro /= Void
+		do
+			Result := macro_wrapper_table.has (a_macro)
+		end
+
 	has_wrapper (a_wrapper: EWG_ABSTRACT_WRAPPER): BOOLEAN
 			-- Does this set already contain a wrapper for the type that `a_wrapper' wraps?
 		require
@@ -246,15 +285,19 @@ feature {ANY} -- Helper queries
 			type_wrapper: EWG_ABSTRACT_TYPE_WRAPPER
 			declaration_wrapper: EWG_ABSTRACT_DECLARATION_WRAPPER
 		do
-			type_wrapper ?= a_wrapper
-			declaration_wrapper ?= a_wrapper
-				check
-					exactly_one_not_void: (type_wrapper = Void) xor (declaration_wrapper = Void)
-				end
-			if type_wrapper /= Void then
-				Result := has_wrapper_for_type (type_wrapper.type)
+			if attached {EWG_MACRO_WRAPPER} a_wrapper as l_wrapper then
+				Result := has_wrapper_for_macro (l_wrapper.constant_name)
 			else
-				Result := has_wrapper_for_declaration (declaration_wrapper.declaration)
+				type_wrapper ?= a_wrapper
+				declaration_wrapper ?= a_wrapper
+					check
+						exactly_one_not_void: (type_wrapper = Void) xor (declaration_wrapper = Void)
+					end
+				if type_wrapper /= Void then
+					Result := has_wrapper_for_type (type_wrapper.type)
+				else
+					Result := has_wrapper_for_declaration (declaration_wrapper.declaration)
+				end
 			end
 		end
 
@@ -380,12 +423,15 @@ feature {ANY} -- Add new wrappers to set
 			callback_wrapper: EWG_CALLBACK_WRAPPER
 			function_wrapper_list: DS_LINKED_LIST [EWG_FUNCTION_WRAPPER]
 			callback_wrapper_list: DS_LINKED_LIST [EWG_CALLBACK_WRAPPER]
+			macro_wrapper_list: DS_LINKED_LIST [EWG_MACRO_WRAPPER]
+			macro_wrapper: EWG_MACRO_WRAPPER
 		do
 			enum_wrapper ?= a_wrapper
 			struct_wrapper ?= a_wrapper
 			union_wrapper ?= a_wrapper
 			function_wrapper ?= a_wrapper
 			callback_wrapper ?= a_wrapper
+			macro_wrapper ?= a_wrapper
 
 			if enum_wrapper /= Void then
 				enum_wrapper_table.force_new (enum_wrapper, enum_wrapper.c_enum_type)
@@ -418,10 +464,21 @@ feature {ANY} -- Add new wrappers to set
 					callback_wrapper_groups.force (callback_wrapper_list, callback_wrapper.c_pointer_type.header_file_name)
 				end
 				callback_wrapper_list.put_last (callback_wrapper)
+			elseif macro_wrapper /= Void then
+				macro_wrapper_table.force_new (macro_wrapper, macro_wrapper.constant_name)
+				last_macro_wrapper := macro_wrapper
+
+				if macro_wrapper_groups.has (macro_wrapper.class_name) then
+					macro_wrapper_list := macro_wrapper_groups.item (macro_wrapper.class_name)
+				else
+					create macro_wrapper_list.make
+					macro_wrapper_groups.force (macro_wrapper_list, macro_wrapper.class_name)
+				end
+				macro_wrapper_list.put_last (macro_wrapper)
 			else
-					check
-						dead_end: False
-					end
+				check
+					dead_end: False
+				end
 			end
 		ensure
 			has_a_wrapper: has_wrapper (a_wrapper)
@@ -439,6 +496,12 @@ feature {ANY} -- Resolve Name clashes
 			-- Resolve any callback wrapper name clashes.
 		do
 			rename_wrapper_names_in_group (new_callback_wrapper_cursor)
+		end
+
+	resolve_macro_wrapper_name_clashes
+			-- Resolve any macro wrapper name clashes.
+		do
+			rename_wrapper_names_in_group (new_macro_wrapper_cursor)
 		end
 
 feature {NONE} -- Function declaration name clash resolving implementation
@@ -542,6 +605,10 @@ feature {NONE} -- Tables that map C AST to wrapper
 			-- Table containing function wrappers.
 			-- Maps C function declarations to its wrappers.
 
+	macro_wrapper_table: DS_HASH_TABLE [EWG_MACRO_WRAPPER, STRING]
+			-- Table containing function wrappers.
+			-- Maps C header declarations to its wrappers.		
+
 	callback_wrapper_table: DS_HASH_TABLE [EWG_CALLBACK_WRAPPER, EWG_C_AST_POINTER_TYPE]
 			-- Table containing callback wrappers.
 			-- Maps C function callbacks to its wrappers.
@@ -553,6 +620,10 @@ feature {NONE} -- Grouping of function and callbacks by header file name
 
 	callback_wrapper_groups: DS_HASH_TABLE [DS_LINKED_LIST [EWG_CALLBACK_WRAPPER], STRING]
 			-- Table that groups callback wrappers by the header file name they were declared in.
+
+	macro_wrapper_groups: DS_HASH_TABLE [DS_LINKED_LIST [EWG_MACRO_WRAPPER], STRING]
+			-- Table that groups macro wrappers by the class name they will be part of.
+
 
 feature {NONE} -- Implementation Constants
 
@@ -566,6 +637,9 @@ feature {NONE} -- Implementation Constants
 	Initial_wrapper_clash_table_size: INTEGER = 80
 	Initial_array_wrapper_table_size: INTEGER = 1000
 
+	Initial_macro_wrapper_table_size: INTEGER = 1000
+	Initial_macro_wrapper_groups_size: INTEGER = 800
+
 invariant
 
 	enum_wrapper_table_not_void: enum_wrapper_table /= Void
@@ -576,5 +650,8 @@ invariant
 	union_wrapper_table_does_not_contain_void: not union_wrapper_table.has (Void)
 	function_wrapper_groups_not_void: function_wrapper_groups /= Void
 	callback_wrapper_groups_not_void: callback_wrapper_groups /= Void
+
+	macro_wrapper_groups_not_void: macro_wrapper_groups /= Void
+
 
 end

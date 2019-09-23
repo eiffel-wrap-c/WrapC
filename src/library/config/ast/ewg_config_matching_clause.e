@@ -174,6 +174,22 @@ feature {ANY} -- Operations
 			end
 		end
 
+	is_matching_header_and_contant_name (a_header: STRING; a_constant_name: STRING): BOOLEAN
+			-- Does `a_declaration' match the matching criteria from `Current'?
+		require
+			a_header_not_void: a_header /= Void
+			a_constant_name: a_constant_name /= Void
+		do
+			Result := True
+			if not match_text (a_header, header_file_name_regexp) then
+				Result := False
+			end
+
+			if not match_text (a_constant_name, c_identifier_regexp) then
+				Result := False
+			end
+		end
+
 feature {NONE}
 
 	match_text (a_text: STRING; a_regexp: RX_PCRE_REGULAR_EXPRESSION): BOOLEAN
