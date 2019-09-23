@@ -18,10 +18,11 @@ It was updated to use the latest Eiffel version. `WrapC` generates Eiffel wrappe
 *   _Enums_
 *   _Functions_
 *   _Callbacks_
+*   _Macro_
 
 #### Note 
 
-	*   Macros are not supported for now.
+	*  Macros are supported, but only for macro definitions used to define constants. Everything else will be ignored.
 
 *	Works with ISE Eiffel.
 *	Includes a framework to automate building libraries and applications that use `WrapC`. 

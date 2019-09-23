@@ -11,6 +11,7 @@
 	*  [Structs/Unions](#structs)  
 	*  [Functions](#functions)
 	*  [Callbacks](#callbacks)
+	*  [Macros](#macros)	
 * [The configuration file](#config_file)
 	*  [Dependent Types](#dependent_types)
 	
@@ -570,6 +571,37 @@ To use this wrapper you just need to create an object instance of `SAMPLE_CALLBA
 			end
 	end    	 
 
+<a name="macro"></a>
+## Macros
+This section describes what code gets generated for C macros and how to use that code. Now first of all,  but only for macro definitions used to define constants, everything else will be ignored. Let us look at the following macro declarations (taken from the libgit library)
+
+	#define LIBGIT2_VERSION "0.28.3"
+	#define LIBGIT2_VER_MAJOR 0
+
+In the first case we will have a high level access 
+
+	libgit2_version: STRING
+		do
+			Result := (create {C_STRING}.make_by_pointer (c_libgit2_version)).string
+		end
+
+and a low level external code. 
+
+	c_libgit2_version: POINTER
+		external
+			"C inline use <git2.h>"
+		alias
+			"LIBGIT2_VERSION"
+		end
+
+In the second case that distintion is not needed
+
+	libgit2_ver_major: INTEGER_64
+		external
+			"C inline use <git2.h>"
+		alias
+			"LIBGIT2_VER_MAJOR"
+		end
 
 <a name="config_file"></a>
 ## The configuration file
@@ -659,6 +691,7 @@ Note that the value of name can be a regular expression. In the above example an
         enum
         function
         callback
+	macro
 
 You can choose more than one constraint per match clause. In which case you constrain the match clause to all individual constraints.
 

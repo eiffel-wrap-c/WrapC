@@ -115,14 +115,14 @@ feature {NONE}
 				output_stream.put_line ("%T%Tdo")
 					-- STRING
 				if a_wrapper.eiffel_type.same_string_general ("STRING") then
-					output_stream.put_string ("%T%T%Tcreate Result := (create {C_STRING}.make_by_pointer (")
+					output_stream.put_string ("%T%T%TResult := (create {C_STRING}.make_by_pointer (")
 					output_stream.put_string ("c_")
 					output_stream.put_string (eiffel_member_name)
 					output_stream.put_line (")).string")
 				end
 
 				if a_wrapper.eiffel_type.same_string_general ("CHARACTER_32") then
-					output_stream.put_string ("%T%T%T%TResult :=")
+					output_stream.put_string ("%T%T%TResult :=")
 					output_stream.put_string ("c_")
 					output_stream.put_string (eiffel_member_name)
 					output_stream.put_line (".to_character_32")
@@ -169,6 +169,7 @@ feature {NONE}
 			eiffel_member_name := a_wrapper.mapped_eiffel_name
 			if a_wrapper.eiffel_type.same_string_general ("CHARACTER_32") or a_wrapper.eiffel_type.same_string_general ("STRING") then
 				output_stream.put_string ("%T")
+				output_stream.put_string ("c_")
 				output_stream.put_string (eiffel_member_name)
 				output_stream.put_string (": ")
 				if a_wrapper.eiffel_type.same_string_general ("CHARACTER_32") then
