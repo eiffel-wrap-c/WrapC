@@ -112,6 +112,9 @@ feature
 			c_parser.print_summary
 			c_parser := Void
 
+				-- parsing C macro header
+			create c_macro_parser.make (create {PATH}.make_from_string (cpp_header_file_name))
+			c_macro_parser.parse_macro
 
 				-- post process C AST
 			post_parser_processor.post_process
@@ -120,12 +123,16 @@ feature
 			eiffel_wrapper_builder.build
 			print_eiffel_wrapper_summary
 
+
+			eiffel_wrapper_builder.build_macros (c_macro_parser.constants)
+
+
 				-- generating
 			ewg_generator.generate
 
 				-- Post processing
 			execute_post_process
-	end
+		end
 
 
 	preprocess_file
@@ -462,6 +469,10 @@ feature -- Access
 
 
 	output_directory_name: STRING
+
+
+	c_macro_parser: WRAPC_MARCO_PARSER
+			-- C header macro parser
 
 
 

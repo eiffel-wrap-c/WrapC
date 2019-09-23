@@ -114,6 +114,56 @@ feature {ANY} -- Basic Routines
 			end
 		end
 
+	build_macros (a_macros: STRING_TABLE [LIST [TUPLE [constant:STRING; type: STRING]]])
+			-- Build Eiffel Macro Wrappers from C Macro Parser.
+		do
+			if a_macros.is_empty then
+				-- do nothing.
+			else
+				if config_system.rule_macro_list.count > 0 then
+					-- Has rule list configuration
+					across config_system.rule_macro_list as ic loop
+						wrap_macros (ic.item, a_macros)
+					end
+				end
+			end
+
+		end
+
+feature {NONE} -- Wrapping of Macros
+
+	wrap_macros (a_rule: EWG_CONFIG_RULE; a_macro: STRING_TABLE [LIST [TUPLE [constant:STRING; type: STRING]]])
+			-- Iterate through all macros in `a_macros` filtered by the rule
+			-- `a_rule`.
+		local
+			l_class_name: STRING
+			l_actual_class_name: STRING
+			l_wrap: EWG_MACRO_WRAPPER
+		do
+			if attached {WRAPC_CONFIG_MACRO_WRAPPER_CLAUSE} a_rule.wrapper_clause as l_macro_clause then
+				l_class_name := l_macro_clause.class_name
+			end
+
+			across a_macro as ic loop
+
+				if l_class_name /= Void then
+					l_actual_class_name := l_class_name
+				else
+					l_actual_class_name := c_header_file_name_to_eiffel_class_name (ic.key.to_string_8) + "_CONSTANTS"
+				end
+
+				across ic.item as lc loop
+					if a_rule.matching_clause.is_matching_header_and_contant_name (ic.key.to_string_8, lc.item.constant) then
+						create l_wrap.make (eiffel_feature_name_from_c_function_name (lc.item.constant), ic.key.to_string_8, l_actual_class_name, lc.item.constant, lc.item.type)
+						if not eiffel_wrapper_set.has_wrapper (l_wrap) then
+							eiffel_wrapper_set.add_wrapper (l_wrap)
+						end
+					end
+				end
+			end
+		end
+
+
 feature {NONE} -- Wraping of declarations
 
 	wrap_declarations
@@ -368,7 +418,7 @@ feature {NONE}
 		end
 
 
-	resolve_feature_name_clashes 
+	resolve_feature_name_clashes
 		local
 			cs: DS_LINEAR_CURSOR [EWG_COMPOSITE_WRAPPER]
 		do

@@ -292,6 +292,7 @@ feature {NONE} -- Validation
 			end
 		end
 
+
 	validate_wrapper (a_wrapper: XM_ELEMENT; a_position_table: XM_POSITION_TABLE; a_construct_type_code: INTEGER)
 			-- Check whether `a_wrapper' is a valid EWG config "wrapper" element.
 			-- Set `has_error' to `True' if not.
@@ -321,8 +322,9 @@ feature {NONE} -- Validation
 				if child = Void then
 					-- Not an element. Ignore.
 				elseif
-					STRING_.same_string (child.name, class_name_element_name) and
-					a_construct_type_code = construct_type_names.function_code
+					STRING_.same_string (child.name, class_name_element_name) and (
+					a_construct_type_code = construct_type_names.function_code	or
+					a_construct_type_code = construct_type_names.macro_code)
 				then
 					-- OK
 					validate_class_name (child, a_position_table)

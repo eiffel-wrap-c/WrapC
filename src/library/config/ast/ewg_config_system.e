@@ -34,6 +34,7 @@ feature {NONE} -- Initialization
 			name := "unknown"
 			create {EWG_CONFIG_DEFAULT_WRAPPER_CLAUSE} default_wrapper_clause.make
 			create rule_list.make_default
+			create rule_macro_list.make_default
 			create shallow_wrapped_type_table.make_map_default
 			create deeply_wrapped_table.make_default
 			create directory_structure.make (Current)
@@ -96,6 +97,14 @@ feature {ANY}
 			a_rule_not_void: a_rule /= Void
 		do
 			Result := rule_list.has (a_rule)
+		end
+
+	has_macro_rule (a_rule: EWG_CONFIG_RULE): BOOLEAN
+			-- Does `Current' contain the rule `a_rule' ?
+		require
+			a_rule_not_void: a_rule /= Void
+		do
+			Result := rule_macro_list.has (a_rule)
 		end
 
 	does_type_need_deep_wrapping (a_type: EWG_C_AST_TYPE): BOOLEAN
@@ -420,7 +429,6 @@ feature {ANY} -- Operations
 															  Current)
 		end
 
-
 	append_rule (a_rule: EWG_CONFIG_RULE)
 			-- Add `a_rule' at the end of the rule list.
 		require
@@ -431,11 +439,26 @@ feature {ANY} -- Operations
 			has_rule: has_rule (a_rule)
 		end
 
+	append_macro_rule (a_rule: EWG_CONFIG_RULE)
+			-- Add `a_rule' at the end of the rule list.
+		require
+			a_rule_not_void: a_rule /= Void
+		do
+			rule_macro_list.force_last (a_rule)
+		ensure
+			has_rule: has_macro_rule (a_rule)
+		end
+
 feature {NONE} -- Implementation
 
 	rule_list: DS_ARRAYED_LIST [EWG_CONFIG_RULE]
 
+
 	default_wrapper_clause: EWG_CONFIG_WRAPPER_CLAUSE
+
+feature {EWG_CONFIG_SYSTEM, EWG_EIFFEL_WRAPPER_BUILDER} -- Macro implementation
+
+	rule_macro_list: DS_ARRAYED_LIST [EWG_CONFIG_RULE]
 
 feature {NONE} -- Implementation
 
@@ -523,6 +546,7 @@ invariant
 	header_file_name_not_empty: header_file_name.count > 0
 	output_directory_name_not_void: output_directory_name /= Void
 	rule_list_not_void: rule_list /= Void
+	rule_macro_list_not_void: rule_macro_list /= Void
 	rule_list_not_has_empty: not rule_list.has (Void)
 	default_wrapper_clause_not_void: default_wrapper_clause /= Void
 	eiffel_wrapper_set_not_void: eiffel_wrapper_set /= Void

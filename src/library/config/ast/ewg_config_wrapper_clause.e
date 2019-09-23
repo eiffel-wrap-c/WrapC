@@ -157,7 +157,7 @@ feature {NONE} -- Implementation
 			default_eiffel_identifier_not_empty: Result.count > 0
 		end
 
-	default_eiffel_identifier_for_declaration (a_declaration: EWG_C_AST_DECLARATION): STRING 
+	default_eiffel_identifier_for_declaration (a_declaration: EWG_C_AST_DECLARATION): STRING
 			-- Default eiffel identifier to be used for the wrapper of `a_declaration'.
 			-- This identifier will be used if the user did not specify a custom
 			-- identifier via `eiffel_identifier_template'.

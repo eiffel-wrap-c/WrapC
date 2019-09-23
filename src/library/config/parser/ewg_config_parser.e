@@ -202,13 +202,19 @@ feature {NONE} -- Implementation
 					wrapper_clause := new_function_wrapper_clause (a_config_system, wrapper_element, a_position_table)
 				elseif matching_clause.construct_type_code = construct_type_names.callback_code then
 					wrapper_clause := new_callback_wrapper_clause (a_config_system, wrapper_element, a_position_table)
+				elseif matching_clause.construct_type_code = construct_type_names.macro_code then
+					wrapper_clause := new_macro_wrapper_clause (a_config_system, wrapper_element, a_position_table)
 				else
-						check
-							dead_end: False
-						end
+					check
+						dead_end: False
+					end
 				end
 				create rule.make (matching_clause, wrapper_clause)
-				a_config_system.append_rule (rule)
+				if matching_clause.construct_type_code = construct_type_names.macro_code then
+					a_config_system.append_macro_rule (rule)
+				else
+					a_config_system.append_rule (rule)
+				end
 			end
 		end
 
@@ -332,7 +338,6 @@ feature {NONE} -- Implementation
 				class_name := class_name_element.attribute_by_name (name_attribute_name).value
 				Result.set_class_name (class_name)
 			end
-
 		end
 
 	new_callback_wrapper_clause (a_config_system: EWG_CONFIG_SYSTEM; a_wrapper_element: XM_ELEMENT; a_position_table: XM_POSITION_TABLE): EWG_CONFIG_WRAPPER_CLAUSE
@@ -345,6 +350,26 @@ feature {NONE} -- Implementation
 		do
 			create {EWG_CONFIG_CALLBACK_WRAPPER_CLAUSE} Result.make
 		end
+
+	new_macro_wrapper_clause (a_config_system: EWG_CONFIG_SYSTEM; a_wrapper_element: XM_ELEMENT; a_position_table: XM_POSITION_TABLE): WRAPC_CONFIG_MACRO_WRAPPER_CLAUSE
+			-- New wrapper clause from `a_wrapper_element'
+		require
+			a_config_system_not_void: a_config_system /= Void
+			a_wrapper_element_not_void: a_wrapper_element /= Void
+			is_wrapper_element: STRING_.same_string (a_wrapper_element.name, wrapper_element_name)
+			a_position_table: a_position_table /= Void
+		local
+			class_name_element: XM_ELEMENT
+			class_name: STRING
+		do
+			create Result.make
+			if a_wrapper_element.has_element_by_name (class_name_element_name) then
+				class_name_element := a_wrapper_element.element_by_name (class_name_element_name)
+				class_name := class_name_element.attribute_by_name (name_attribute_name).value
+				Result.set_class_name (class_name)
+			end
+		end
+
 
 invariant
 
