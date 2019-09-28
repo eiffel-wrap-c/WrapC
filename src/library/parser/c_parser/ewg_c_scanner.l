@@ -222,10 +222,19 @@ NL    [\r\n
 						report_type_or_identifier (text)
 					end
 				}
-"__asm"			{
+"__asm"				{
 					if is_msc_extensions_enabled then
 						last_token := TOK_CL_ASM
 						last_string_value := text
+					else
+						-- This is a gcc extension, we ignore it
+						gcc_attribute_bracket_counter := 0
+						set_start_condition (SC_GCC_ATTRIBUTE)
+					end
+				}
+"__asm__"			{
+					if is_msc_extensions_enabled then
+						-- ignore, we don't need it, it's a gcc extension
 					else
 						-- This is a gcc extension, we ignore it
 						gcc_attribute_bracket_counter := 0

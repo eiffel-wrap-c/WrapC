@@ -409,6 +409,7 @@ feature {NONE} -- Implementation
 			Result.put ("and")
 			Result.put ("as")
 			Result.put ("assign")
+			Result.put ("attached")
 			Result.put ("attribute")
 --			Result.put ("bit")
 --			Result.put ("boolean")
@@ -421,6 +422,7 @@ feature {NONE} -- Implementation
 			Result.put ("current")
 			Result.put ("debug")
 			Result.put ("deferred")
+			Result.put ("detachable")
 			Result.put ("do")
 --			Result.put ("double")
 			Result.put ("else")
@@ -487,7 +489,7 @@ feature {NONE} -- Implementation
 --			Result.put ("integer_16")
 --			Result.put ("integer_32")
 --			Result.put ("integer_64")
---			Result.put ("reference")
+			Result.put ("reference")
 --			Result.put ("note")
 
 		end
