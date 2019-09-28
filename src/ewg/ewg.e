@@ -202,6 +202,15 @@ feature
 				if is_next_option_long_option and then has_next_option_value then
 					compiler_options := next_option_value
 					consume_option
+					from
+
+					until
+						 match_long_option ("script_pre_process") or  match_long_option ("script_post_process") or match_long_option ("output-dir") or  match_long_option ("full-header") or not has_next_option
+					loop
+						compiler_options.append (" ")
+						compiler_options.append (next_option_value)
+						consume_option
+					end
 				else
 					error_handler.report_missing_command_line_parameter_value_error ("--c_compile_options=<...>")
 					error_handler.report_usage_error

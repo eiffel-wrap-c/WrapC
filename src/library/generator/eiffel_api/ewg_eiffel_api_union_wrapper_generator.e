@@ -10,10 +10,10 @@ class
 
 
 inherit
-	EWG_ABSTRACT_GENERATOR
-		redefine
-			make_internal
-		end
+--	EWG_ABSTRACT_GENERATOR
+--		redefine
+--			make_internal
+--		end
 
 	EWG_SHARED_TEMPLATE_EXPANDER
 		export {NONE} all end
@@ -25,7 +25,10 @@ inherit
 		export {NONE} all end
 
 	EWG_EIFFEL_API_SHARED
-		export {NONE} all end
+		redefine
+			make_internal
+		end
+
 
 
 create
@@ -173,8 +176,8 @@ feature -- Generate Eiffel API
 
 			output_stream.put_string ("%T")
 			output_stream.put_string (escaped_struct_feature_name (a_struct_wrapper.mapped_eiffel_name))
-			output_stream.put_string (": detachable")
-			output_stream.put_string (a_struct_wrapper.struct_wrapper.mapped_eiffel_name)
+			output_stream.put_string (": detachable ")
+			output_stream.put_string (eiffel_class_name_from_c_type_name (a_struct_wrapper.struct_wrapper.mapped_eiffel_name))
 			output_stream.put_string ("_STRUCT_API ")
 			output_stream.put_new_line
 
@@ -210,7 +213,7 @@ feature -- Generate Eiffel API
 				output_stream.put_string ("%Tset_")
 				output_stream.put_string (a_struct_wrapper.mapped_eiffel_name)
 				output_stream.put_string (" (a_value: ")
-				output_stream.put_string (a_struct_wrapper.struct_wrapper.mapped_eiffel_name)
+				output_stream.put_string (eiffel_class_name_from_c_type_name (a_struct_wrapper.struct_wrapper.mapped_eiffel_name))
 				output_stream.put_string ("_STRUCT_API) ")
 				output_stream.put_new_line
 
@@ -262,8 +265,8 @@ feature -- Generate Eiffel API
 
 			output_stream.put_string ("%T")
 			output_stream.put_string (escaped_mapped_eiffel_name)
-			output_stream.put_string (": detachable")
-			output_stream.put_string (l_struct_name)
+			output_stream.put_string (": detachable ")
+			output_stream.put_string (eiffel_class_name_from_c_type_name (l_struct_name))
 			output_stream.put_string ("_STRUCT_API")
 			output_stream.put_new_line
 
@@ -298,7 +301,7 @@ feature -- Generate Eiffel API
 				output_stream.put_string ("%Tset_")
 				output_stream.put_string (escaped_mapped_eiffel_name)
 				output_stream.put_string (" (a_value: ")
-				output_stream.put_string (l_struct_name)
+				output_stream.put_string (eiffel_class_name_from_c_type_name (l_struct_name))
 				output_stream.put_string ("_STRUCT_API) ")
 				output_stream.put_new_line
 
@@ -351,7 +354,7 @@ feature -- Generate Eiffel API
 			output_stream.put_string ("%T")
 			output_stream.put_string (escaped_mapped_eiffel_name)
 			output_stream.put_string (": detachable ")
-			output_stream.put_string (l_union_name)
+			output_stream.put_string (eiffel_class_name_from_c_type_name (l_union_name))
 			output_stream.put_string ("_UNION_API")
 			output_stream.put_new_line
 
@@ -386,7 +389,7 @@ feature -- Generate Eiffel API
 				output_stream.put_string ("%Tset_")
 				output_stream.put_string (escaped_mapped_eiffel_name)
 				output_stream.put_string (" (a_value: ")
-				output_stream.put_string (l_union_name)
+				output_stream.put_string (eiffel_class_name_from_c_type_name (l_union_name))
 				output_stream.put_string ("_UNION_API) ")
 				output_stream.put_new_line
 
@@ -422,7 +425,7 @@ feature -- Generate Eiffel API
 
 			output_stream.put_string ("%T")
 			output_stream.put_string (escaped_struct_feature_name (a_union_wrapper.mapped_eiffel_name))
-			output_stream.put_string (": detachable")
+			output_stream.put_string (": detachable ")
 			output_stream.put_string (a_union_wrapper.union_wrapper.mapped_eiffel_name)
 			output_stream.put_string ("_UNION_API ")
 			output_stream.put_new_line

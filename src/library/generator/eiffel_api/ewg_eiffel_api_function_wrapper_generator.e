@@ -279,29 +279,29 @@ feature {NONE} -- Generate Eiffel High Level Access
 				if attached {EWG_C_AST_STRUCT_TYPE} a_function_wrapper.function_declaration.function_type.return_type as l_struct
 				then
 					output_stream.put_string ("detachable ")
-					output_stream.put_string (l_struct.name.as_upper)
+					output_stream.put_string (eiffel_class_name_from_c_type_name (l_struct.name))
 					output_stream.put_string ("_STRUCT_API")
 				elseif attached {EWG_C_AST_STRUCT_TYPE} a_function_wrapper.function_declaration.function_type.return_type.skip_wrapper_irrelevant_types as l_struct
 				then
 					output_stream.put_string ("detachable ")
 					if l_struct.name /= Void then
-						output_stream.put_string (l_struct.name.as_upper)
+						output_stream.put_string (eiffel_class_name_from_c_type_name (l_struct.name))
 					else
-						output_stream.put_string (l_struct.closest_alias_type.name.as_upper)
+						output_stream.put_string (eiffel_class_name_from_c_type_name (l_struct.closest_alias_type.name))
 					end
 					output_stream.put_string ("_STRUCT_API")
 				elseif attached {EWG_C_AST_UNION_TYPE} a_function_wrapper.function_declaration.function_type.return_type as l_union
 				then
 					output_stream.put_string ("detachable ")
-					output_stream.put_string (l_union.name.as_upper)
+					output_stream.put_string (eiffel_class_name_from_c_type_name (l_union.name))
 					output_stream.put_string ("_UNION_API")
 				elseif attached {EWG_C_AST_UNION_TYPE} a_function_wrapper.function_declaration.function_type.return_type.skip_wrapper_irrelevant_types as l_union
 				then
 					output_stream.put_string ("detachable ")
 					if l_union /= Void then
-						output_stream.put_string (l_union.name.as_upper)
+						output_stream.put_string (eiffel_class_name_from_c_type_name (l_union.name))
 					else
-						output_stream.put_string (l_union.closest_alias_type.name.as_upper)
+						output_stream.put_string (eiffel_class_name_from_c_type_name (l_union.closest_alias_type.name))
 					end
 
 					output_stream.put_string ("_UNION_API")
@@ -475,8 +475,9 @@ feature {NONE} -- Generate Eiffel Routine calls
 		require
 			a_native_member_wrapper_not_void: a_native_member_wrapper /= Void
 		do
-			if  attached {EWG_C_AST_STRUCT_TYPE} a_native_member_wrapper.c_declaration.type or else
-				attached {EWG_C_AST_STRUCT_TYPE} a_native_member_wrapper.c_declaration.type.skip_wrapper_irrelevant_types
+			if  (attached {EWG_C_AST_STRUCT_TYPE} a_native_member_wrapper.c_declaration.type or else
+				attached {EWG_C_AST_STRUCT_TYPE} a_native_member_wrapper.c_declaration.type.skip_wrapper_irrelevant_types) and
+				(not attached {EWG_C_AST_ARRAY_TYPE} a_native_member_wrapper.c_declaration.type)
 			 then
 				output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
 				output_stream.put_string (".item")
@@ -514,24 +515,26 @@ feature {NONE} -- Generate Eiffel Routine calls
 						output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
 						output_stream.put_string (".code")
 					end
-				elseif attached {EWG_C_AST_PRIMITIVE_TYPE} l_ast_array.skip_const_pointer_and_array_types as l_type  then
-					if a_native_member_wrapper.c_declaration.type.corresponding_eiffel_type.has_substring ("POINTER") then
-						if l_type.is_char_type then
-							output_stream.put_string ( "(create {C_STRING}.make (")
-							output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
-							output_stream.put_string ( ")).item")
-						else
-							output_stream.put_string (eiffel_parameter_name_from_c_parameter_name(a_native_member_wrapper.mapped_eiffel_name))
-							output_stream.put_string (".area.base_address")
-						end
-					else
-						output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
-						output_stream.put_string (".code")
-					end
 				else
 					output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
-					output_stream.put_string (".area.base_address")
 				end
+--					if a_native_member_wrapper.c_declaration.type.corresponding_eiffel_type.has_substring ("POINTER") then
+--						if l_type.is_char_type then
+--							output_stream.put_string ( "(create {C_STRING}.make (")
+--							output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
+--							output_stream.put_string ( ")).item")
+--						else
+--							output_stream.put_string (eiffel_parameter_name_from_c_parameter_name(a_native_member_wrapper.mapped_eiffel_name))
+--							output_stream.put_string (".area.base_address")
+--						end
+--					else
+--						output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
+--						output_stream.put_string (".code")
+--					end
+--				else
+--					output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
+--					output_stream.put_string (".area.base_address")
+--				end
 --			elseif attached {EWG_C_AST_ALIAS_TYPE} a_native_member_wrapper.c_declaration.type as l_ast_alias and then  --char **
 --				attached {EWG_C_AST_POINTER_TYPE} l_ast_alias.base as l_base_type and then
 --				attached {EWG_C_AST_POINTER_TYPE} l_base_type.base as l_type and then

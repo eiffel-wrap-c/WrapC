@@ -3,8 +3,12 @@ note
 	date: "$Date$"
 	revision: "$Revision$"
 
-class
+deferred class
 	EWG_EIFFEL_API_SHARED
+
+inherit
+
+	EWG_ABSTRACT_GENERATOR
 
 
 feature -- Status Report.
@@ -32,5 +36,49 @@ feature -- Status Report.
 				end
 			end
 		end
+
+	has_struct_wrapper_by_name (a_name: STRING): BOOLEAN
+		local
+			cs: DS_BILINEAR_CURSOR [EWG_STRUCT_WRAPPER]
+			l_name: STRING
+			found: BOOLEAN
+		do
+			from
+				cs := directory_structure.config_system.eiffel_wrapper_set.new_struct_wrapper_cursor
+				cs.start
+			until
+				cs.off or found
+			loop
+				l_name := cs.item.mapped_eiffel_name
+				if l_name.is_case_insensitive_equal_general (a_name) then
+					found := True
+				end
+				cs.forth
+			end
+			Result := found
+		end
+
+
+	has_union_wrapper_by_name ( a_name: STRING): BOOLEAN
+		local
+			cs: DS_BILINEAR_CURSOR [EWG_UNION_WRAPPER]
+			l_name: STRING
+			found: BOOLEAN
+		do
+			from
+				cs := directory_structure.config_system.eiffel_wrapper_set.new_union_wrapper_cursor
+				cs.start
+			until
+				cs.off or found
+			loop
+				l_name := cs.item.mapped_eiffel_name
+				if l_name.is_case_insensitive_equal_general (a_name) then
+					found := True
+				end
+				cs.forth
+			end
+			Result := found
+		end
+
 
 end

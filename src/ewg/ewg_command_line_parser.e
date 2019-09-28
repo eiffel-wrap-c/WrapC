@@ -146,7 +146,7 @@ feature {NONE} -- Implementation
 
 feature -- Status report
 
-	has_long_option (an_option_name: STRING): BOOLEAN 
+	has_long_option (an_option_name: STRING): BOOLEAN
 			-- Is there a long option on the command-line whose name is
 			-- `an_option_name' (note that `an_option_name' does not
 			-- contain the leading '--' characters)?
