@@ -85,10 +85,12 @@ feature {NONE} -- Parser Implementation
 					next
 					if is_line then
 						-- mark_define
-						next
-						next
-						next
-						next
+						if {PLATFORM}.is_windows then
+							next
+							next
+							next
+							next
+						end
 						skip_white_spaces
 						skip_values
 						skip_white_spaces
@@ -147,7 +149,11 @@ feature {NONE} -- Parser Implementation
 	is_line: BOOLEAN
 			-- Word at index represents define?
 		do
-			Result := last_line.same_characters_general (line_id, 1, 4, cursor) -- 6 = line_id.count
+			if {PLATFORM}.is_windows then
+				Result := last_line.same_characters_general (line_id, 1, 4, cursor) -- 6 = line_id.count
+			else
+				Result := True
+			end
 		end
 
 feature {NONE} -- Implementation
