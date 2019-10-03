@@ -564,7 +564,7 @@ feature
 	Version_message: UT_MESSAGE
 			-- 'Version' message
 		do
-			create Result.make ("ewg version " + Version_number)
+			create Result.make ("wrap_c version " + Version_number)
 		ensure
 			version_message_not_void: Version_message /= Void
 		end
