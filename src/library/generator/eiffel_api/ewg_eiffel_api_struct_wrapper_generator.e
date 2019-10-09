@@ -195,7 +195,7 @@ feature -- Generate Eiffel API
 			if has_union_wrapper_by_name (l_union_name) then
 				output_stream.put_string ("%T")
 				output_stream.put_string (escaped_mapped_eiffel_name)
-				output_stream.put_string (": detachable ")
+				output_stream.put_string (": ")
 				output_stream.put_string (l_union_name)
 				output_stream.put_string ("_UNION_API")
 				output_stream.put_new_line
@@ -209,20 +209,16 @@ feature -- Generate Eiffel API
 				output_stream.put_line ("%T%T%Texists: exists")
 
 				output_stream.put_line ("%T%Tdo")
-				output_stream.put_string ("%T%T%Tif attached c_")
-				output_stream.put_string (eiffel_member_name)
-				output_stream.put_line (" (item) as l_ptr and then not l_ptr.is_default_pointer then")
-				output_stream.put_line ("%T%T%T%Tcreate Result.make_by_pointer (l_ptr)")
-				output_stream.put_line ("%T%T%Tend")
 
+				output_stream.put_string ("%T%T%Tcreate Result.make_by_pointer ( c_")
+				output_stream.put_string (eiffel_member_name)
+				output_stream.put_line ("(item) )")
 				output_stream.put_line ("%T%Tensure")
-				output_stream.put_string ("%T%T%Tresult_void: Result = Void implies c_")
-				output_stream.put_string (eiffel_member_name)
-				output_stream.put_line (" (item) = default_pointer ")
-
-				output_stream.put_string ("%T%T%Tresult_not_void: attached Result as l_result implies l_result.item = c_")
+				output_stream.put_string ("%T%T%Tresult_not_void: Result.item = c_")
 				output_stream.put_string (eiffel_member_name)
 				output_stream.put_line (" (item) ")
+
+
 				output_stream.put_line ("%T%Tend")
 				output_stream.put_new_line
 
@@ -249,9 +245,9 @@ feature -- Generate Eiffel API
 					output_stream.put_string (eiffel_member_name)
 					output_stream.put_line (" (item, a_value.item)")
 					output_stream.put_line ("%T%Tensure")
-					output_stream.put_string ("%T%T%T" + eiffel_member_name + "_set: attached ")
+					output_stream.put_string ("%T%T%T" + eiffel_member_name + "_set: ")
 					output_stream.put_string (eiffel_member_name)
-					output_stream.put_string (" as l_value implies l_value = a_value.item")
+					output_stream.put_string (".item = a_value.item")
 					output_stream.put_new_line
 					output_stream.put_line ("%T%Tend")
 					output_stream.put_new_line
@@ -439,7 +435,8 @@ feature -- Generate Eiffel API
 					output_stream.put_line ("%T%Tend")
 					output_stream.put_new_line
 				end
-			end		end
+			end
+		end
 
 
 
@@ -465,7 +462,7 @@ feature -- Generate Eiffel API
 			if has_struct_wrapper_by_name (l_struct_name) then
 				output_stream.put_string ("%T")
 				output_stream.put_string (escaped_mapped_eiffel_name)
-				output_stream.put_string (": detachable ")
+				output_stream.put_string (": ")
 				output_stream.put_string (l_struct_name)
 				output_stream.put_string ("_STRUCT_API")
 				output_stream.put_new_line
@@ -479,20 +476,16 @@ feature -- Generate Eiffel API
 				output_stream.put_line ("%T%T%Texists: exists")
 
 				output_stream.put_line ("%T%Tdo")
-				output_stream.put_string ("%T%T%Tif attached c_")
-				output_stream.put_string (eiffel_member_name)
-				output_stream.put_line (" (item) as l_ptr and then not l_ptr.is_default_pointer then")
-				output_stream.put_line ("%T%T%T%Tcreate Result.make_by_pointer (l_ptr)")
-				output_stream.put_line ("%T%T%Tend")
 
+				output_stream.put_string ("%T%T%Tcreate Result.make_by_pointer ( c_")
+				output_stream.put_string (eiffel_member_name)
+				output_stream.put_line ("(item) )")
 				output_stream.put_line ("%T%Tensure")
-				output_stream.put_string ("%T%T%Tresult_void: Result = Void implies c_")
-				output_stream.put_string (eiffel_member_name)
-				output_stream.put_line (" (item) = default_pointer ")
-
-				output_stream.put_string ("%T%T%Tresult_not_void: attached Result as l_result implies l_result.item = c_")
+				output_stream.put_string ("%T%T%Tresult_not_void: Result.item = c_")
 				output_stream.put_string (eiffel_member_name)
 				output_stream.put_line (" (item) ")
+
+
 				output_stream.put_line ("%T%Tend")
 				output_stream.put_new_line
 
@@ -519,9 +512,9 @@ feature -- Generate Eiffel API
 					output_stream.put_string (eiffel_member_name)
 					output_stream.put_line (" (item, a_value.item)")
 					output_stream.put_line ("%T%Tensure")
-					output_stream.put_string ("%T%T%T" + eiffel_member_name + "_set: attached ")
+					output_stream.put_string ("%T%T%T" + eiffel_member_name + "_set: ")
 					output_stream.put_string (eiffel_member_name)
-					output_stream.put_string (" as l_value implies l_value.item = a_value.item")
+					output_stream.put_string (".item = a_value.item")
 					output_stream.put_new_line
 					output_stream.put_line ("%T%Tend")
 					output_stream.put_new_line
