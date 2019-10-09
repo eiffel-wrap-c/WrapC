@@ -110,24 +110,44 @@ feature {NONE}
 				output_stream.put_string (eiffel_member_name)
 				output_stream.put_string (": ")
 				output_stream.put_string (a_wrapper.eiffel_type)
-				output_stream.put_new_line
+				if a_wrapper.eiffel_value.is_empty then
+					output_stream.put_line ("%T%Tdo")
+						-- STRING
+					if a_wrapper.eiffel_type.same_string_general ("STRING") then
+						output_stream.put_string ("%T%T%TResult := (create {C_STRING}.make_by_pointer (")
+						output_stream.put_string ("c_")
+						output_stream.put_string (eiffel_member_name)
+						output_stream.put_line (")).string")
+					end
 
-				output_stream.put_line ("%T%Tdo")
-					-- STRING
-				if a_wrapper.eiffel_type.same_string_general ("STRING") then
-					output_stream.put_string ("%T%T%TResult := (create {C_STRING}.make_by_pointer (")
-					output_stream.put_string ("c_")
-					output_stream.put_string (eiffel_member_name)
-					output_stream.put_line (")).string")
-				end
+					if a_wrapper.eiffel_type.same_string_general ("CHARACTER_32") then
+						output_stream.put_string ("%T%T%TResult :=")
+						output_stream.put_string ("c_")
+						output_stream.put_string (eiffel_member_name)
+						output_stream.put_line (".to_character_32")
+					end
+					output_stream.put_line ("%T%Tend")
+				else
+					output_stream.put_string (" = ")
+					if a_wrapper.eiffel_type.same_string_general ("CHARACTER_32") then
+						output_stream.put_string ("'")
+						output_stream.put_string (a_wrapper.eiffel_value)
+						output_stream.put_string ("'")
+					end
+					if a_wrapper.eiffel_type.same_string_general ("STRING") then
+						if a_wrapper.eiffel_value.has_substring ("%N") then
+							output_stream.put_string ("%"[%N")
+							output_stream.put_string (a_wrapper.eiffel_value)
+							output_stream.put_string ("%N]%"")
 
-				if a_wrapper.eiffel_type.same_string_general ("CHARACTER_32") then
-					output_stream.put_string ("%T%T%TResult :=")
-					output_stream.put_string ("c_")
-					output_stream.put_string (eiffel_member_name)
-					output_stream.put_line (".to_character_32")
+						else
+							output_stream.put_string ("%"")
+							output_stream.put_string (a_wrapper.eiffel_value)
+							output_stream.put_string ("%"")
+						end
+					end
+					output_stream.put_new_line
 				end
-				output_stream.put_line ("%T%Tend")
 				output_stream.put_new_line
 			elseif a_wrapper.eiffel_type.same_string_general ("UNKOWN") then
 				output_stream.put_line (" ")
@@ -138,26 +158,32 @@ feature {NONE}
 				output_stream.put_string ("-- ")
 				output_stream.put_string (a_wrapper.header_file_name)
 				output_stream.put_new_line
+				output_stream.put_new_line
 			else
-					-- INTEGER_64, REAL_64
+					-- INTEGER_64, REAL_64, INTEGER
 				output_stream.put_string ("%T")
 				output_stream.put_string (eiffel_member_name)
 				output_stream.put_string (": ")
-				output_stream.put_line (a_wrapper.eiffel_type)
-				output_stream.put_line ("%T%Texternal")
+				output_stream.put_string (a_wrapper.eiffel_type)
 
-				output_stream.put_string ("%T%T%T%"C inline use <")
-				output_stream.put_string (directory_structure.config_system.header_file_name)
-				output_stream.put_string (">%"")
-				output_stream.put_new_line
-				output_stream.put_string ("%T%Talias")
-				output_stream.put_new_line
-				output_stream.put_string ("%T%T%T%"")
-				output_stream.put_string (a_wrapper.constant_name)
-				output_stream.put_string ("%"")
-				output_stream.put_new_line
-				output_stream.put_string ("%T%Tend")
-				output_stream.put_new_line
+				if a_wrapper.eiffel_value.is_empty then
+					output_stream.put_new_line
+					output_stream.put_line ("%T%Texternal")
+					output_stream.put_string ("%T%T%T%"C inline use <")
+					output_stream.put_string (directory_structure.config_system.header_file_name)
+					output_stream.put_string (">%"")
+					output_stream.put_new_line
+					output_stream.put_string ("%T%Talias")
+					output_stream.put_new_line
+					output_stream.put_string ("%T%T%T%"")
+					output_stream.put_string (a_wrapper.constant_name)
+					output_stream.put_string ("%"")
+					output_stream.put_new_line
+					output_stream.put_string ("%T%Tend")
+				else
+					output_stream.put_string (" = ")
+					output_stream.put_line (a_wrapper.eiffel_value)
+				end
 				output_stream.put_new_line
 			end
 		end
@@ -167,7 +193,9 @@ feature {NONE}
 			eiffel_member_name: STRING
 		do
 			eiffel_member_name := a_wrapper.mapped_eiffel_name
-			if a_wrapper.eiffel_type.same_string_general ("CHARACTER_32") or a_wrapper.eiffel_type.same_string_general ("STRING") then
+			if (a_wrapper.eiffel_type.same_string_general ("CHARACTER_32") or a_wrapper.eiffel_type.same_string_general ("STRING")) and then
+				(a_wrapper.eiffel_value.is_empty) then
+
 				output_stream.put_string ("%T")
 				output_stream.put_string ("c_")
 				output_stream.put_string (eiffel_member_name)
@@ -179,6 +207,7 @@ feature {NONE}
 					output_stream.put_line ("POINTER")
 				end
 
+				output_stream.put_new_line
 				output_stream.put_line ("%T%Texternal")
 
 				output_stream.put_string ("%T%T%T%"C inline use <")
