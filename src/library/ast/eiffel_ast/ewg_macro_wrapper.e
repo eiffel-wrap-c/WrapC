@@ -22,7 +22,8 @@ feature {NONE} -- Initialization
 			a_header_file_name: STRING;
 			a_class_name: STRING;
 			a_constant_name: STRING;
-			a_type: STRING
+			a_type: STRING;
+			a_value: detachable STRING
 			)
 		require
 			a_mapped_eiffel_name_not_void: a_mapped_eiffel_name /= Void
@@ -33,12 +34,12 @@ feature {NONE} -- Initialization
 			a_class_name_not_empty: a_class_name.count > 0
 			a_constant_name_not_void: a_constant_name /= Void
 			a_constant_name_not_empty: a_constant_name.count > 0
-
 		do
 			make_member_wrapper (a_mapped_eiffel_name, a_header_file_name)
 			class_name := a_class_name
 			constant_name := a_constant_name
 			eiffel_type := a_type
+			eiffel_value := a_value
 		ensure
 			mapped_eiffel_name_set: mapped_eiffel_name = a_mapped_eiffel_name
 			header_file_name_set: header_file_name = a_header_file_name
@@ -55,7 +56,10 @@ feature -- Access
 			-- Name of the C constant.
 
 	eiffel_type: STRING
-			-- Name of the proposed Eiffel type.				
+			-- Name of the proposed Eiffel type.
+
+	eiffel_value: detachable STRING
+			-- String representation of value.
 
 
 	proposed_feature_name_list: DS_LINEAR [STRING]

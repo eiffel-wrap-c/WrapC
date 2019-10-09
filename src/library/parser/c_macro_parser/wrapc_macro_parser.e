@@ -23,7 +23,7 @@ feature {NONE} -- Initialization
 
 feature -- Access
 
-	constants: STRING_TABLE [LIST [TUPLE [constant:STRING; type: STRING]]]
+	constants: STRING_TABLE [LIST [TUPLE [constant:STRING; type: STRING; value: STRING]]]
 		-- String table with header name and a list of tuples (contant and type)
 
 feature -- Parser

@@ -43,7 +43,7 @@ feature {NONE} -- Initialization
 			create last_constant.make_empty
 			create last_type.make_empty
 			create last_value.make_empty
-			create {ARRAYED_LIST [TUPLE [constant:STRING; type: STRING]]} constants.make (5)
+			create {ARRAYED_LIST [TUPLE [constant:STRING; type: STRING; value: STRING]]} constants.make (5)
 		end
 
 feature -- Parser
@@ -53,7 +53,7 @@ feature -- Parser
 			error_description := Void
 		end
 
-	constants: 	LIST [TUPLE [constant:STRING; type: STRING]]
+	constants: 	LIST [TUPLE [constant:STRING; type: STRING; value: STRING]]
 			-- List of macro definitions used to define constants
 			-- with constant name and type of the value.
 			-- [INTEGER_64, REAL_64, STRING, CHARACTER_32, UNKOWN]
@@ -132,7 +132,7 @@ feature {NONE} -- Parser implementation
 							parse_value
 							if is_value_supported then
 								last_constant.adjust
-								constants.force ([last_constant, last_type.twin])
+								constants.force ([last_constant, last_type.twin, last_value.twin])
 							end
 						end
 
@@ -207,10 +207,19 @@ feature {NONE} -- Parser implementation
 						last_type := "INTEGER"
 					elseif is_valid_integer_expression (last_value) then
 						last_type := "INTEGER_64"
+						last_value.wipe_out
 					elseif is_valid_double_expression (last_value) then
 						last_type := "REAL_64"
+						last_value.wipe_out
 					else
 						last_type := "UNKOWN"
+					end
+				else
+					if last_type.is_equal ("CHARACTER_32") then
+						last_value.replace_substring_all ("'", "")
+					end
+					if last_type.is_equal ("STRING") then
+						last_value.replace_substring_all ("%"", "")
 					end
 				end
 			else
@@ -235,7 +244,12 @@ feature {NONE} -- Parser implementation
 					last_value.append_character (last_line.at (cursor))
 					next
 				end
+				if last_line.at (cursor) = '\' then
+					is_multiline := True
+				end
+
 				if is_multiline and then has_next_line then
+					last_value.append_string ("%N")
 					next_line
 					skip_value
 				else
@@ -330,18 +344,30 @@ feature {NONE} -- Constants
 feature {NONE} -- Regex for Values.
 
 	is_valid_integer (a_string: STRING): BOOLEAN
+		local
+			l_str: STRING
 		do
-			Result := integer_regex.recognizes (a_string)
+			create l_str.make_from_string (a_string)
+			l_str.prune_all (' ')
+			Result := integer_regex.recognizes (l_str)
 		end
 
 	is_valid_double (a_string: STRING): BOOLEAN
+		local
+			l_str: STRING
 		do
-			Result := double_regex.recognizes (a_string)
+			create l_str.make_from_string (a_string)
+			l_str.prune_all (' ')
+			Result := double_regex.recognizes (l_str)
 		end
 
 	is_valid_hexa (a_string: STRING): BOOLEAN
+		local
+			l_str: STRING
 		do
-			Result := hexa_regex.recognizes (a_string)
+			create l_str.make_from_string (a_string)
+			l_str.prune_all (' ')
+			Result := hexa_regex.recognizes (l_str)
 		end
 
 	is_valid_integer_expression (a_string: STRING): BOOLEAN
@@ -409,13 +435,13 @@ feature {NONE} -- Regex for Values.
 
 	integer_pattern: STRING = "\d+"
 
-	double_pattern: STRING = "\d+.\d+"
+	double_pattern: STRING = "\d*\.\d+"
 
 	hexadecimal_pattern: STRING = "0([xX]{1})?[A-Fa-f0-9]+"
 
-	integer_expressions_pattern: STRING = "[-+(]*[\d]+[)]*([-+*/][-+(]*[\d]+[)]*)*"
+	integer_expressions_pattern: STRING = "[-+(]*[\d]+[)]*[>]*[<]*([-+*/][-+(]*[\d]+[)]*)*"
 
-	double_expressions_pattern: STRING = "[-+(]*[\d|\d+.\d*]+[)]*([-+*/][-+(]*[\d]+[)]*)*"
+	double_expressions_pattern: STRING = "[-+(]*[\d|\d*\.\d*]+[)]*[>]*[<]*([-+*/][-+(]*[\d]+[)]*)*"
 
 
 
