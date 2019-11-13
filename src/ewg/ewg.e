@@ -106,32 +106,34 @@ feature
 				error_handler.report_info_message ("expensive phase 2 assertions enabled")
 			end
 
-			preprocess_file
-				-- parsing (creates C AST)
-			c_parser.parse_file (cpp_header_file_name)
-			c_parser.print_summary
-			c_parser := Void
+			if attached cpp_header_file_name then
+				preprocess_file
+					-- parsing (creates C AST)
+				c_parser.parse_file (cpp_header_file_name)
+				c_parser.print_summary
+				c_parser := Void
 
-				-- parsing C macro header
-			create c_macro_parser.make (create {PATH}.make_from_string (cpp_header_file_name))
-			c_macro_parser.parse_macro
+					-- parsing C macro header
+				create c_macro_parser.make (create {PATH}.make_from_string (cpp_header_file_name))
+				c_macro_parser.parse_macro
 
-				-- post process C AST
-			post_parser_processor.post_process
+					-- post process C AST
+				post_parser_processor.post_process
 
-				-- build Eiffel AST from post processed C AST
-			eiffel_wrapper_builder.build
-			print_eiffel_wrapper_summary
-
-
-			eiffel_wrapper_builder.build_macros (c_macro_parser.constants)
+					-- build Eiffel AST from post processed C AST
+				eiffel_wrapper_builder.build
+				print_eiffel_wrapper_summary
 
 
-				-- generating
-			ewg_generator.generate
+				eiffel_wrapper_builder.build_macros (c_macro_parser.constants)
 
-				-- Post processing
-			execute_post_process
+
+					-- generating
+				ewg_generator.generate
+
+					-- Post processing
+				execute_post_process
+			end
 		end
 
 
@@ -142,20 +144,22 @@ feature
 			regex: RX_PCRE_REGULAR_EXPRESSION
 			count: INTEGER
 		do
-			create file.make_open_read_write (cpp_header_file_name)
-			if file.exists then
-				file.read_stream (file.count)
-				l_data := file.last_string
-				create regex.make
-				regex.compile ("\t*__pragma.*")
-				regex.match (l_data)
-				count := regex.match_count
-				l_data := regex.replace_all ("")
-				file.wipe_out
-				file.open_write
-				file.put_string (l_data)
-				file.flush
-				file.close
+			if cpp_header_file_name /= Void then
+				create file.make_open_read_write (cpp_header_file_name)
+				if file.exists then
+					file.read_stream (file.count)
+					l_data := file.last_string
+					create regex.make
+					regex.compile ("\t*__pragma.*")
+					regex.match (l_data)
+					count := regex.match_count
+					l_data := regex.replace_all ("")
+					file.wipe_out
+					file.open_write
+					file.put_string (l_data)
+					file.flush
+					file.close
+				end
 			end
 		end
 
@@ -305,7 +309,8 @@ feature
 	    local
 	    	l_cmd: STRING
 	    	l_path: PATH
-	    	l_name: STRING
+	    	l_name,
+	    	l_error_message: STRING
 	    	l_index: INTEGER
 	    	l_file: RAW_FILE
 	    	l_directory_name: STRING
@@ -319,6 +324,7 @@ feature
 					l_directory_name := output_directory_name
 					config_system.set_output_directory_name (output_directory_name)
 				else
+					l_directory_name := config_system.directory_structure.default_output_directory
 					config_system.set_output_directory_name (config_system.directory_structure.default_output_directory)
 				end
 
@@ -358,7 +364,10 @@ feature
 							l_file.close
 						else
 								-- Error
-							error_handler.report_info_message (l_result.error_output)
+							l_error_message := l_result.error_output.out
+							l_error_message.replace_substring_all ("%N", "")
+							l_error_message.replace_substring_all ("%B", "")
+							error_handler.report_info_message (l_error_message)
 						end
 					else
 						error_handler.report_info_message ("Command not found " + l_cmd )
