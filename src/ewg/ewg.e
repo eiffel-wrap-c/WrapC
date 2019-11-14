@@ -489,7 +489,7 @@ feature -- Access
 	output_directory_name: STRING
 
 
-	c_macro_parser: WRAPC_MARCO_PARSER
+	c_macro_parser: WRAPC_MACRO_PARSER
 			-- C header macro parser
 
 

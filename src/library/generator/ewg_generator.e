@@ -155,7 +155,7 @@ feature {NONE} -- Implementation
 		local
 			c_glue_code_generator: EWG_C_GLUE_CODE_ANSI_C_CALLBACK_WRAPPER_GENERATOR
 			c_glue_header_generator: EWG_C_GLUE_HEADER_ANSI_C_CALLBACK_WRAPPER_GENERATOR
-			eiffel_abstraction_ansi_wrapper_generator: EWG_EIFFEL_ABSTRACTION_ANSI_C_CALLBACK_WRAPPER_GENERATOR
+--			eiffel_abstraction_ansi_wrapper_generator: EWG_EIFFEL_ABSTRACTION_ANSI_C_CALLBACK_WRAPPER_GENERATOR
 --			eiffel_abstraction_ffcall_wrapper_generator: EWG_EIFFEL_ABSTRACTION_FFCALL_CALLBACK_WRAPPER_GENERATOR
 			eiffel_abstraction_dispatcher_generator: EWG_EIFFEL_ABSTRACTION_ANSI_C_CALLBACK_DISPATCHER_GENERATOR
 		do
@@ -213,7 +213,7 @@ feature {NONE} -- Implementation
 			l_raw_file: RAW_FILE
 		do
 
-			create l_raw_file.make_create_read_write ((create {PATH}.make_from_string (directory_structure.c_src_directory_name)).extended ("geant.eant").name)
+			create l_raw_file.make_create_read_write ((create {PATH}.make_from_string (directory_structure.c_src_directory_name)).extended ("build.eant").name)
 			l_raw_file.open_read_write
 			l_raw_file.put_string (finish_freezing_eant)
 			l_raw_file.flush

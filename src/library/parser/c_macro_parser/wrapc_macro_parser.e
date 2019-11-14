@@ -4,7 +4,7 @@ note
 	revision: "$Revision$"
 
 class
-	WRAPC_MARCO_PARSER
+	WRAPC_MACRO_PARSER
 
 
 create

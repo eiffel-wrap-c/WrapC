@@ -33,7 +33,7 @@ feature
 			a_name_not_void: a_name /= Void
 		do
 			name := a_name
-			definition := clone ("")
+			create definition.make_empty
 			create arguments.make
 		end
 
@@ -68,7 +68,7 @@ feature
 		do
 			name := a_name
 			arguments := a_arguments
-			definition := clone ("")
+			create definition.make_empty
 		end
 
 feature
@@ -84,7 +84,7 @@ feature
 
 feature
 
-	out: STRING 
+	out: STRING
 		local
 			cs: DS_LINKED_LIST_CURSOR [STRING]
 		do

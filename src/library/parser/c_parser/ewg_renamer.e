@@ -346,16 +346,16 @@ feature {NONE} -- Implementation
 		local
 			lower: STRING
 		do
-			lower := clone (a_name)
+			lower := a_name.twin
 			lower.to_lower
 			if eiffel_keywords.has (lower) then
-				Result := clone ("a_")
+				create Result.make_from_string ("a_")
 				Result.append_string (a_name)
 			else
 				Result := a_name
 			end
 			if any_feature_names.has (lower) then
-				Result := clone ("a_")
+				create Result.make_from_string ("a_")
 				Result.append_string (a_name)
 			else
 				Result := a_name
@@ -364,6 +364,7 @@ feature {NONE} -- Implementation
 			result_not_void: Result /= Void
 			resupt_not_empty: not (Result.count = 0)
 		end
+
 
 	escaped_struct_feature_name (a_name: STRING): STRING
 			-- Escaped version of `a_name' so that it does not clash with

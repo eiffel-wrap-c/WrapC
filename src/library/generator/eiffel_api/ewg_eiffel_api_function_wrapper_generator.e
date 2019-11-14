@@ -131,7 +131,7 @@ feature {NONE} -- Generate Eiffel High Level Access
 		local
 			cs: DS_BILINEAR_CURSOR [EWG_MEMBER_WRAPPER]
 			native_member_wrapper: EWG_NATIVE_MEMBER_WRAPPER
-			pimitive : EWG_C_AST_PRIMITIVE_TYPE
+--			pimitive : EWG_C_AST_PRIMITIVE_TYPE
 			flag: BOOLEAN
 			l_item: EWG_MEMBER_WRAPPER
 		do
@@ -757,9 +757,6 @@ feature {NONE} -- Generate Eiffel to C inline code.
 			a_function_declaration_list_not_has_void: not a_function_declaration_list.has (Void)
 		local
 			cs: DS_LINKED_LIST_CURSOR [EWG_FUNCTION_WRAPPER]
-			class_name: STRING
-			file_name: STRING
-			file: KL_TEXT_OUTPUT_FILE
 		do
 			output_stream.put_line ("feature -- Externals")
 			output_stream.put_new_line
@@ -784,9 +781,6 @@ feature {NONE} -- Generate Eiffel to C inline code.
 			a_function_declaration_list_not_has_void: not a_function_declaration_list.has (Void)
 		local
 			cs: DS_LINKED_LIST_CURSOR [EWG_FUNCTION_WRAPPER]
-			class_name: STRING
-			file_name: STRING
-			file: KL_TEXT_OUTPUT_FILE
 		do
 			output_stream.put_line ("feature -- Externals Address")
 			output_stream.put_new_line
