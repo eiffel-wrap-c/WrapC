@@ -215,9 +215,9 @@ feature {NONE}
 
 	reset
 		do
-			declarator := clone ("")
-			text_before_declarator := clone ("")
-			text_after_declarator := clone ("")
+			create declarator.make_empty
+			create text_after_declarator.make_empty
+			create text_before_declarator.make_empty
 			last_type := Void
 		ensure
 			declarator_not_void: declarator /= Void

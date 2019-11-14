@@ -99,7 +99,7 @@ feature
 			if a_n > 0 then
 				create Result.make_filled (a_char, a_n)
 			else
-				Result := clone ("")
+				create Result.make_empty
 			end
 		ensure
 			result_not_void: Result /= Void
@@ -129,7 +129,7 @@ feature
 		require
 			a_file_name_not_void: a_file_name /= Void
 		do
-			Result := file_system.basename (clone (a_file_name))
+			Result := file_system.basename (a_file_name.twin)
 			Result.remove_tail (file_system.extension (a_file_name).count)
 		ensure
 			result_not_void: Result /= Void
@@ -154,7 +154,7 @@ feature
 			end
 		end
 
-	remove_all (a_string: STRING; a_character: CHARACTER) 
+	remove_all (a_string: STRING; a_character: CHARACTER)
 		require
 			a_string_not_void: a_string /= Void
 		local
