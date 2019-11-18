@@ -14,6 +14,7 @@ feature {NONE} -- Initialization
 
 	default_create
 			--<Precursor>
+			-- A standard GUI application launcher.
 		do
 			create application
 			create main_window.make_with_title ("WrapC")
@@ -29,9 +30,13 @@ feature {NONE} -- Initialization
 feature {NONE} -- Application
 
 	application: EV_APPLICATION
+			-- An EV application.
 
 	main_window: WUI_MAIN_WINDOW
+			-- `application' `main_window'.
 
 	ewg: detachable EWG
+			-- Only here to bring EWG "in-system".
+			-- This can be removed.
 
 end

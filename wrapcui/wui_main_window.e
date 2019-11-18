@@ -28,6 +28,7 @@ feature {NONE} -- Initialization
 
 	create_interface_objects
 			--<Precursor>
+			-- Also has `force' calls for `actions'.
 		do
 			Precursor
 			create main_box
@@ -70,6 +71,8 @@ feature {NONE} -- Initialization
 
 	initialize
 			--<Precursor>
+			-- Mostly about extending, expanding, borders, and padding
+			-- and then putting it all in `main_box'
 		do
 			Precursor
 
@@ -149,23 +152,6 @@ feature {NONE} -- Initialization
 			main_box.disable_item_expand (cmd_box)
 
 			extend (main_box)
-		end
-
-feature {NONE} -- Implementation: Basic Operations
-
-	fully_formed_cmd: STRING_32
-			-- What is the `fully_formed_cmd' based on user settings?
-		do
-			create Result.make_empty
-			Result.append_string_general ("D:\Users\LJR19\Documents\GitHub\WrapC_ljr\wrapcui\wrap_c.exe ")
-
-				-- output-dir [optional]
-			if not output_dir_textbox.text.is_empty then
-				Result.append_string_general (" --output-dir=" + output_dir_textbox.text + " ")
-			end
-
-				-- full-header
-			Result.append_string_general (" --full-header=" + full_header_textbox.text + " ")
 		end
 
 feature {WUI_EWG} -- Implementation: Output
