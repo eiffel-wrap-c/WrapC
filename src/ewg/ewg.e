@@ -175,6 +175,11 @@ feature -- Basic Operations
 			create config_system.make (header_file_name)
 		end
 
+	exceptions_die
+		do
+			exceptions.die (1)
+		end
+
 feature {NONE} -- Implementation: Error Reporting
 
 	report_cannot_read_error (a_message: STRING)
