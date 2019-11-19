@@ -30,7 +30,7 @@
 				<exclude>/EIFGENs$</exclude>
 				<exclude>tests</exclude>
 			</file_rule>
-			<cluster name="ewg" location="D:\Users\LJR19\Documents\GitHub\WrapC_ljr\src\ewg\" recursive="true"/>
+			<cluster name="ewg" location="..\src\ewg\" recursive="true"/>
 		</cluster>
 	</target>
 	<target name="test" extends="wrapcui">
