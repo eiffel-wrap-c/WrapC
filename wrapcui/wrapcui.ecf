@@ -22,6 +22,7 @@
 		<library name="time" location="$ISE_LIBRARY\contrib\library\gobo\library\time\src\library.ecf"/>
 		<library name="vision2" location="$ISE_LIBRARY\library\vision2\vision2.ecf"/>
 		<library name="vision2_extension" location="$ISE_LIBRARY\library\vision2_extension\vision2_extension.ecf"/>
+		<library name="xml_parser" location="$ISE_LIBRARY\library\text\parser\xml\parser\xml_parser.ecf"/>
 		<cluster name="wrapcui" location=".\" recursive="true">
 			<file_rule>
 				<exclude>/.git$</exclude>

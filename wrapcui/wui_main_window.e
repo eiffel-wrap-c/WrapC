@@ -31,6 +31,7 @@ feature {NONE} -- Initialization
 			-- Also has `force' calls for `actions'.
 		do
 			Precursor
+
 			create main_box
 
 			create full_header_box
@@ -74,7 +75,7 @@ feature {NONE} -- Initialization
 			-- Mostly about extending, expanding, borders, and padding
 			-- and then putting it all in `main_box'
 		do
-			Precursor
+			Precursor {EV_TITLED_WINDOW}
 
 				-- full-header
 			main_box.extend (full_header_box)
@@ -323,7 +324,190 @@ feature {WUI_EWG} -- GUI Components
 	output_box: EV_VERTICAL_BOX
 	output_text: EV_RICH_TEXT
 
-;note
+feature {WUI_APP} -- Menu implementation
+
+	standard_menu_bar: EV_MENU_BAR -- Standard menu bar for this window.
+	file_menu: EV_MENU -- "File" menu for this window (contains Exit...)
+	help_menu: EV_MENU -- "Help" menu for this window (contains About...)
+
+	build_menu_bar
+			-- Create and populate standard_menu_bar.
+		require
+			menu_bar_not_yet_created: not attached standard_menu_bar
+		local
+			l_menu_item: EV_MENU_ITEM
+		do
+				-- Create the menu bar.
+			create standard_menu_bar
+
+				-- File Menu
+			create file_menu.make_with_text ("&File")
+			standard_menu_bar.extend (file_menu)
+				-- File->Open
+			create l_menu_item.make_with_text ("O&pen")
+			l_menu_item.select_actions.extend (agent on_file_open_click)
+			file_menu.extend (l_menu_item)
+				-- File->Save
+			create l_menu_item.make_with_text ("Save")
+			l_menu_item.select_actions.extend (agent on_file_save_click)
+			file_menu.extend (l_menu_item)
+				-- File->Close
+			create l_menu_item.make_with_text ("Close")
+			l_menu_item.select_actions.extend (agent on_file_close_click)
+			file_menu.extend (l_menu_item)
+				-- File->Exit
+			create l_menu_item.make_with_text ("E&xit")
+			l_menu_item.select_actions.extend (agent on_file_exit_click)
+			file_menu.extend (l_menu_item)
+
+				-- Help Menu
+			create help_menu.make_with_text ("&Help")
+			standard_menu_bar.extend (help_menu)
+				-- Help->About
+			create l_menu_item.make_with_text ("&About")
+			l_menu_item.select_actions.extend (agent on_help_about_click)
+			help_menu.extend (l_menu_item)
+
+			set_menu_bar (standard_menu_bar)
+		ensure
+			menu_bar_created: attached standard_menu_bar and then
+								not standard_menu_bar.is_empty
+		end
+
+feature -- Menu: GUI Actions
+
+	on_file_open_click
+			-- What happens when the user selects File->Open
+		local
+			l_file: PLAIN_TEXT_FILE
+			l_open: EV_FILE_OPEN_DIALOG
+			l_factory: XML_PARSER_FACTORY
+			l_content,
+			l_local_part,
+			l_local_part_content: STRING
+			l_parser: XML_STANDARD_PARSER
+			l_callbacks: WUI_XML_CALLBACKS
+		do
+				-- Identify WUI file
+			create l_open.make_with_title ("Open WUI configuration ...")
+			l_open.show_modal_to_window (Current)
+			if not l_open.file_name.is_empty then
+					-- fetch content
+				create l_file.make_open_read (l_open.file_name)
+				l_file.read_stream (l_file.count)
+				l_content := l_file.last_string
+				l_file.close
+					-- parse it
+				create l_factory
+				l_parser := l_factory.new_standard_parser
+				create l_callbacks
+				l_parser.set_callbacks (l_callbacks)
+				l_parser.parse_from_string (l_content)
+					-- store it
+				across
+					l_callbacks.contents as ic
+				loop
+					l_local_part := ic.item.local_part
+					l_local_part_content := ic.item.content
+					if l_local_part.same_string ("config") then
+						do_nothing
+					elseif l_local_part.same_string ("full_header") then
+						full_header_textbox.set_text (l_local_part_content)
+					elseif l_local_part.same_string ("output_dir") then
+						output_dir_textbox.set_text (l_local_part_content)
+					elseif l_local_part.same_string ("c_compile") then
+						c_compile_textbox.set_text (l_local_part_content)
+					elseif l_local_part.same_string ("script_pre_process") then
+						script_pre_textbox.set_text (l_local_part_content)
+					elseif l_local_part.same_string ("script_post_process") then
+						script_post_textbox.set_text (l_local_part_content)
+					elseif l_local_part.same_string ("config_file") then
+						config_file_textbox.set_text (l_local_part_content)
+					end
+				end
+			end
+		end
+
+	on_file_save_click
+			-- What happens when the user selects File->Save
+		local
+			l_dir: DIRECTORY
+			l_list: LIST [STRING_32]
+			l_file: PLAIN_TEXT_FILE
+			l_full_path,
+			l_file_name: STRING_32
+			l_save_as: EV_FILE_SAVE_DIALOG
+		do
+			create l_save_as.make_with_title ("Save configuration ...")
+			l_save_as.show_modal_to_window (Current)
+			if not l_save_as.file_name.is_empty then
+				create l_file.make_create_read_write (l_save_as.file_name)
+				l_file.put_string (config_file_content_as_xml)
+				l_file.flush
+				l_file.close
+			end
+		end
+
+	config_file_content_as_xml: STRING
+		do
+			create Result.make_empty
+			Result.append_string_general ("<config>%N%T")
+					-- full-header
+				Result.append_string_general ("<full_header>")
+				Result.append_string_general (full_header_textbox.text)
+				Result.append_string_general ("</full_header>%N%T")
+					-- output-dir
+				Result.append_string_general ("<output_dir>")
+				Result.append_string_general (output_dir_textbox.text)
+				Result.append_string_general ("</output_dir>%N%T")
+					-- c_compile
+				Result.append_string_general ("<c_compile>")
+				Result.append_string_general (c_compile_textbox.text)
+				Result.append_string_general ("</c_compile>%N%T")
+					-- script_pre_process
+				Result.append_string_general ("<script_pre_process>")
+				Result.append_string_general (script_pre_textbox.text)
+				Result.append_string_general ("</script_pre_process>%N%T")
+					-- script_post_process
+				Result.append_string_general ("<script_post_process>")
+				Result.append_string_general (script_post_textbox.text)
+				Result.append_string_general ("</script_post_process>%N%T")
+					-- config_file
+				Result.append_string_general ("<config_file>")
+				Result.append_string_general (config_file_textbox.text)
+				Result.append_string_general ("</config_file>%N")
+
+			Result.append_string_general ("</config>%N")
+		end
+
+	on_file_close_click
+			-- What happens when the user selects File->Close
+		do
+			full_header_textbox.set_text ("")
+			output_dir_textbox.set_text ("")
+			config_file_textbox.set_text ("")
+			script_pre_textbox.set_text ("")
+			script_post_textbox.set_text ("")
+			config_file_textbox.set_text ("")
+		end
+
+	on_file_exit_click
+			-- What happens when the user selects File->Exit
+		do
+			destroy_and_exit_if_last
+		end
+
+	on_help_about_click
+			-- What happens when the user selected Help->About
+		local
+			l_msg: EV_MESSAGE_DIALOG
+		do
+			create l_msg.make_with_text ("Eiffel Sotware WrapC-UI%NCopyright 2019 (c)")
+			l_msg.set_buttons_and_actions (<<"OK">>, <<agent l_msg.destroy_and_exit_if_last>>)
+			l_msg.show_modal_to_window (Current)
+		end
+
+note
 	command_line_help_example: "[
 		wrap_c --help
 		wrap_c: You must specify '--full-header=<...>'

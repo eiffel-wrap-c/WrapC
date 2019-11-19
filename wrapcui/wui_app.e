@@ -18,6 +18,7 @@ feature {NONE} -- Initialization
 		do
 			create application
 			create main_window.make_with_title ("WrapC")
+			main_window.build_menu_bar
 
 			main_window.set_size (800, 600)
 
