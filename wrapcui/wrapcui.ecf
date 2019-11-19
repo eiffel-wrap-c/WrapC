@@ -13,11 +13,10 @@
 		</capability>
 		<library name="base" location="$ISE_LIBRARY\library\base\base-safe.ecf"/>
 		<library name="encoding" location="$ISE_LIBRARY\library\encoding\encoding.ecf"/>
-		<library name="ewg_library" location="D:\Users\LJR19\Documents\GitHub\WrapC_ljr\src\library\library.ecf"/>
+		<library name="ewg_library" location="..\src\library\library.ecf"/>
 		<library name="kernel" location="$ISE_LIBRARY\contrib\library\gobo\library\kernel\src\library.ecf"/>
 		<library name="process" location="$ISE_LIBRARY\library\process\base\base_process.ecf"/>
 		<library name="regexp" location="$ISE_LIBRARY\contrib\library\gobo\library\regexp\src\library.ecf"/>
-		<library name="test_extension" location="..\..\test_extension\test_extension.ecf"/>
 		<library name="thread" location="$ISE_LIBRARY\library\thread\thread.ecf"/>
 		<library name="time" location="$ISE_LIBRARY\contrib\library\gobo\library\time\src\library.ecf"/>
 		<library name="vision2" location="$ISE_LIBRARY\library\vision2\vision2.ecf"/>
