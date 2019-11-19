@@ -201,12 +201,6 @@ feature {NONE} -- Implementation: Error Reporting
 			error_handler.report_usage_error
 		end
 
-	exceptions_die
-			--<Precursor>
-		do
-			exceptions.die (1)
-		end
-
 	report_quitting_because_of_config_file_errors_error (a_message: STRING)
 			--<Precursor>
 		do

@@ -99,7 +99,7 @@ feature
 			-- arrays from this direct declarator and (possibly recursivly nested)
 			-- direct declarators
 		do
-			Result := clone (arrays)
+			Result := arrays.twin
 			if declarator /= Void then
 				Result.extend_last (declarator.arrays_indirect)
 			end
@@ -264,7 +264,7 @@ feature {NONE} -- Implementation
 
 feature
 
-	c_code: STRING 
+	c_code: STRING
 		local
 			array_cs: DS_LINEAR_CURSOR [EWG_C_PHASE_1_ARRAY]
 			param_cs: DS_LINEAR_CURSOR [EWG_C_PHASE_1_DECLARATION]
