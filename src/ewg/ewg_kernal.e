@@ -101,12 +101,6 @@ feature -- Basic Ops: Primary
 			has_directory_structure: attached config_system.directory_structure as al_dir_structure
 		end
 
-	directory (dn: READABLE_STRING_GENERAL): DIRECTORY
-			-- A simple `directory' of `dn'
-		do
-			create Result.make_with_name (dn)
-		end
-
 	run
 			-- Run WrapC core logic.
 		note

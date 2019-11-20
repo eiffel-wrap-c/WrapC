@@ -33,7 +33,6 @@ feature {NONE} -- Initialization
 		local
 			l_dir_name: STRING
 			l_dir: DIRECTORY
-			l_path: PATH
 		do
 			l_dir_name := config_system.directory_structure.c_directory_name
 			create l_dir.make_with_name (l_dir_name)

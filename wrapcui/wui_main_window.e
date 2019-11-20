@@ -48,6 +48,7 @@ feature {NONE} -- Initialization
 
 			create cmd_box
 			create run_wrapc_cmd_button.make_with_text_and_action ("Run", agent on_run_wrapc_cmd_button_click)
+			create clean_generated_files_button.make_with_text_and_action ("Clean", agent on_clean_generated_files_button_click)
 
 			create c_compile_box
 			create c_compile_textbox
@@ -141,13 +142,18 @@ feature {NONE} -- Initialization
 			main_box.extend (output_box)
 			output_box.extend (output_text)
 
-				-- Run Cmd
+				-- Clean & Run buttons
 			main_box.extend (cmd_box)
 			cmd_box.extend (create {EV_CELL})
+				-- Clean
+			cmd_box.extend (clean_generated_files_button)
+			clean_generated_files_button.disable_sensitive
+				-- Run
 			cmd_box.extend (run_wrapc_cmd_button)
 			run_wrapc_cmd_button.disable_sensitive
 			cmd_box.extend (create {EV_CELL})
 			cmd_box.disable_item_expand (run_wrapc_cmd_button)
+			cmd_box.disable_item_expand (clean_generated_files_button)
 			cmd_box.set_border_width (3)
 			cmd_box.set_padding_width (3)
 			main_box.disable_item_expand (cmd_box)
@@ -204,15 +210,70 @@ feature {NONE} -- GUI Actions
 			config_file_textbox.set_text (l_file_open.file_name)
 		end
 
+	on_clean_generated_files_button_click
+			-- What happens when user clicks `clean_generated_files_button'.
+		note
+			design: "[
+				1. Delete generated files from previous WrapC `run'.
+					1a. Requires an output directory target.
+				2. Delete generated folders once files are deleted.
+				]"
+		local
+			l_dir_structure: EWG_DIRECTORY_STRUCTURE
+			l_config_system: EWG_CONFIG_SYSTEM
+			l_dir: DIRECTORY
+			l_message: STRING
+			l_msg: EV_MESSAGE_DIALOG
+			l_memory: MEMORY
+			l_file_utilities: FILE_UTILITIES
+		do
+			create l_memory
+			l_memory.collect
+			create l_message.make_empty
+			create l_config_system.make (full_header_textbox.text)
+			create l_dir_structure.make (l_config_system)
+				-- c
+			create l_dir.make_with_name (output_dir_textbox.text + {OPERATING_ENVIRONMENT}.Directory_separator.out + l_dir_structure.config_system.directory_structure.c_directory_name)
+			if l_dir.exists then
+				l_dir.recursive_delete
+				l_message.append_string_general ("Deleted output c/include and c/src folders.%N")
+			end
+				-- eiffel
+			create l_dir.make_with_name (output_dir_textbox.text + {OPERATING_ENVIRONMENT}.Directory_separator.out + l_dir_structure.config_system.directory_structure.eiffel_directory_name)
+			if l_dir.exists then
+				l_dir.recursive_delete
+				l_message.append_string_general ("Deleted output eiffel folders.%N")
+			end
+				-- Message
+			if l_message.is_empty then
+				l_message := "There was nothing to clean."
+			end
+			create l_msg.make_with_text (l_message)
+			l_msg.set_buttons_and_actions (<<"OK">>, <<agent l_msg.destroy_and_exit_if_last>>)
+			l_msg.show_modal_to_window (Current)
+			rescue
+				create l_msg.make_with_text (clean_exception_msg)
+				l_msg.set_buttons_and_actions (<<"OK">>, <<agent l_msg.destroy_and_exit_if_last>>)
+				l_msg.show_modal_to_window (Current)
+		end
 
 	on_run_wrapc_cmd_button_click
 			-- What happens when user clicks `run_wrapc_cmd'.
 			-- `run' is in the `make' from `make_with_window'
 		local
 			l_ewg: WUI_EWG
+			l_msg: EV_MESSAGE_DIALOG
 		do
 			create l_ewg.make_with_window (Current)
 		end
+
+	clean_exception_msg: STRING = "[
+		Due to a bug (file handles left open), you will not be able to run the Clean
+		operation after a Run options. 
+		
+		Save your current configuration (if needed) and then re-open the app and
+		then click Clean. Closing the app will release any open file-handles.
+		]"
 
 	on_full_header_textbox_focus_out
 			-- What happens on focus-out of `full_header_textbox'?
@@ -223,11 +284,7 @@ feature {NONE} -- GUI Actions
 				resolve that question.
 				]"
 		do
-			if full_header_textbox.text.is_empty then
-				run_wrapc_cmd_button.disable_sensitive
-			else
-				enable_disable_sensitive_on_run_wrapc_cmd_button
-			end
+			enable_disable_sensitive_on_cmd_buttons
 		end
 
 	on_output_dir_textbox_focus_out
@@ -238,20 +295,13 @@ feature {NONE} -- GUI Actions
 				not access clicking the Run button. This routine helps
 				resolve that question.
 				]"
-		local
-			l_dir: DIRECTORY
 		do
-			create l_dir.make (output_dir_textbox.text)
-			if l_dir.exists then
-				run_wrapc_cmd_button.enable_sensitive
-			else
-				run_wrapc_cmd_button.disable_sensitive
-			end
+			enable_disable_sensitive_on_cmd_buttons
 		end
 
 feature {NONE} -- GUI Actions Support
 
-	enable_disable_sensitive_on_run_wrapc_cmd_button
+	enable_disable_sensitive_on_cmd_buttons
 			-- Determine if Run button is sensitive or not.
 		note
 			design: "[
@@ -260,14 +310,20 @@ feature {NONE} -- GUI Actions Support
 				resolve that question.
 				]"
 		do
-			if dir_has_full_header_file then
+			if has_full_header_dir_and_file then
 				run_wrapc_cmd_button.enable_sensitive
 			else
 				run_wrapc_cmd_button.disable_sensitive
 			end
+
+			if has_output_dir then
+				clean_generated_files_button.enable_sensitive
+			else
+				clean_generated_files_button.disable_sensitive
+			end
 		end
 
-	dir_has_full_header_file: BOOLEAN
+	has_full_header_dir_and_file: BOOLEAN
 			-- Does `full_header_textbox' text directory exist and have file?
 		note
 			design: "[
@@ -287,6 +343,18 @@ feature {NONE} -- GUI Actions Support
 			Result := l_dir.exists and then l_dir.has_entry (l_list [l_list.count])
 		end
 
+	has_output_dir: BOOLEAN
+			-- Does `output_dir_textbox' have directory?
+		local
+			l_dir: DIRECTORY
+			l_path_string: STRING
+			l_list: LIST [STRING]
+		do
+			l_path_string := output_dir_textbox.text.twin
+			create l_dir.make (l_path_string)
+			Result := l_dir.exists
+		end
+
 feature {WUI_EWG} -- GUI Components
 
 	main_box: EV_VERTICAL_BOX
@@ -302,6 +370,7 @@ feature {WUI_EWG} -- GUI Components
 	output_dir_button: EV_BUTTON
 
 	cmd_box: EV_HORIZONTAL_BOX
+	clean_generated_files_button,
 	run_wrapc_cmd_button: EV_BUTTON
 
 	c_compile_box: EV_HORIZONTAL_BOX
@@ -425,6 +494,7 @@ feature -- Menu: GUI Actions
 						config_file_textbox.set_text (l_local_part_content)
 					end
 				end
+				enable_disable_sensitive_on_cmd_buttons
 			end
 		end
 
