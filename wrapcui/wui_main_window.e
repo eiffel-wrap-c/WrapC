@@ -519,6 +519,7 @@ feature -- Menu: GUI Actions
 		end
 
 	config_file_content_as_xml: STRING
+			-- The content of a "saved" configuration as XML.
 		do
 			create Result.make_empty
 			Result.append_string_general ("<config>%N%T")
