@@ -39,13 +39,6 @@ feature {NONE} -- Initialization
 			Precursor
 		end
 
-	mid_make_process
-			--<Precursor>
-			-- nothing to do
-		do
-			do_nothing
-		end
-
 feature -- Basic Operations
 
 	process_arguments

@@ -54,15 +54,8 @@ feature {NONE} -- Initialization
 		do
 			create error_handler.make
 			process_arguments
-			mid_make_process
 			parse_config_file
 			run
-		end
-
-	mid_make_process
-			-- What happens in the middle of `make'
-			-- (Sometimes it's nothing at all)
-		deferred
 		end
 
 feature -- Basic Ops: Primary

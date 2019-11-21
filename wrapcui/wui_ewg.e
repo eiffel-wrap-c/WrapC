@@ -27,46 +27,6 @@ feature {NONE} -- Initialization
 
 	main_window: WUI_MAIN_WINDOW
 
-	mid_make_process
-			--<Precursor>
-			-- create directory structure
-		local
-			l_dir_name: STRING
-			l_dir: DIRECTORY
-		do
-			l_dir_name := config_system.directory_structure.c_directory_name
-			create l_dir.make_with_name (l_dir_name)
-			if not l_dir.exists then
-				l_dir.recursive_create_dir
-				report_info_message ("Created " + l_dir_name)
-			end
-			check c_dir: l_dir.exists end
-
-			l_dir_name := config_system.directory_structure.c_src_directory_name
-			create l_dir.make_with_name (l_dir_name)
-			if not l_dir.exists then
-				l_dir.recursive_create_dir
-				report_info_message ("Created " + l_dir_name)
-			end
-			check stc_dir: l_dir.exists end
-
-			l_dir_name := config_system.directory_structure.c_include_directory_name
-			create l_dir.make_with_name (l_dir_name)
-			if not l_dir.exists then
-				l_dir.recursive_create_dir
-				report_info_message ("Created " + l_dir_name)
-			end
-			check include_dir: l_dir.exists end
-
-			l_dir_name := config_system.directory_structure.eiffel_directory_name
-			create l_dir.make_with_name (l_dir_name)
-			if not l_dir.exists then
-				l_dir.recursive_create_dir
-				report_info_message ("Created " + l_dir_name)
-			end
-			check include_dir: l_dir.exists end
-		end
-
 feature -- Basic Ops: Sub-supporting
 
 	process_c_compiler_options
