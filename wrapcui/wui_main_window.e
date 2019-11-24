@@ -37,12 +37,16 @@ feature {NONE} -- Initialization
 			create full_header_box
 			create full_header_textbox
 			create full_header_label.make_with_text ("--full_header=<...>")
+			full_header_label.select_actions.force (agent on_full_header_label_link_click)
+			full_header_label.set_tooltip ("Command Line Options Help - see full-header option")
 			create full_header_button.make_with_text_and_action ("...", agent on_full_header_click)
 			full_header_textbox.focus_out_actions.force (agent on_full_header_textbox_focus_out)
 
 			create output_dir_box
 			create output_dir_textbox
 			create output_dir_label.make_with_text ("--output-dir=<...>")
+			output_dir_label.select_actions.force (agent on_output_dir_label_link_click)
+			output_dir_label.set_tooltip ("Command Line Options Help - see output-dir option")
 			create output_dir_button.make_with_text_and_action ("...", agent on_output_dir_click)
 			output_dir_textbox.focus_out_actions.force (agent on_output_dir_textbox_focus_out)
 
@@ -53,18 +57,26 @@ feature {NONE} -- Initialization
 			create c_compile_box
 			create c_compile_textbox
 			create c_compile_label.make_with_text ("C-compile Options: ")
+			c_compile_label.select_actions.force (agent on_c_compile_label_link_click)
+			c_compile_label.set_tooltip ("Command Line Options Help - see c_compile_options option")
 
 			create script_pre_box
 			create script_pre_textbox
 			create script_pre_label.make_with_text ("Script pre-process Options: ")
+			script_pre_label.select_actions.force (agent on_script_pre_label_link_click)
+			script_pre_label.set_tooltip ("Command Line Options Help - see script_pre_process option")
 
 			create script_post_box
 			create script_post_textbox
 			create script_post_label.make_with_text ("Script post-process Options: ")
+			script_post_label.select_actions.force (agent on_script_post_label_link_click)
+			script_post_label.set_tooltip ("Command Line Options Help - see script_post_process option")
 
 			create config_file_box
 			create config_file_textbox
 			create config_file_label.make_with_text ("Config file: ")
+			config_file_label.select_actions.force (agent on_config_file_label_link_click)
+			config_file_label.set_tooltip ("Command Line Options Help - see config option")
 			create config_file_button.make_with_text_and_action ("...", agent on_config_file_click)
 
 			create output_box
@@ -87,6 +99,7 @@ feature {NONE} -- Initialization
 			full_header_box.disable_item_expand (full_header_button)
 			full_header_box.set_border_width (3)
 			full_header_box.set_padding_width (3)
+			full_header_textbox.set_tooltip ("Filename (including pathname) to the C header to be preprocessed,%Nand name of header file, that should be used in eiffel external clauses.")
 			main_box.disable_item_expand (full_header_box)
 
 				-- output-dir
@@ -98,6 +111,7 @@ feature {NONE} -- Initialization
 			output_dir_box.disable_item_expand (output_dir_button)
 			output_dir_box.set_border_width (3)
 			output_dir_box.set_padding_width (3)
+			output_dir_textbox.set_tooltip ("Directory where generated files will be placed.%NLocation of the target Eiffel application folder.")
 			main_box.disable_item_expand (output_dir_box)
 
 				-- Options: C-compile
@@ -107,6 +121,7 @@ feature {NONE} -- Initialization
 			c_compile_box.disable_item_expand (c_compile_label)
 			c_compile_box.set_border_width (3)
 			c_compile_box.set_padding_width (3)
+			c_compile_textbox.set_tooltip ("Optional c compile options.")
 			main_box.disable_item_expand (c_compile_box)
 
 				-- Options: Script-pre-process
@@ -116,6 +131,7 @@ feature {NONE} -- Initialization
 			script_pre_box.disable_item_expand (script_pre_label)
 			script_pre_box.set_border_width (3)
 			script_pre_box.set_padding_width (3)
+			script_pre_textbox.set_tooltip ("Optional pre-processing script, to be executed before C header preprocessing.")
 			main_box.disable_item_expand (script_pre_box)
 
 				-- Options: Script-post-process
@@ -125,6 +141,7 @@ feature {NONE} -- Initialization
 			script_post_box.disable_item_expand (script_post_label)
 			script_post_box.set_border_width (3)
 			script_post_box.set_padding_width (3)
+			script_post_textbox.set_tooltip ("Optional post-processing script, to be executed after Eiffel code wrapping.")
 			main_box.disable_item_expand (script_post_box)
 
 				-- Options: Config file
@@ -136,6 +153,7 @@ feature {NONE} -- Initialization
 			config_file_box.disable_item_expand (config_file_button)
 			config_file_box.set_border_width (3)
 			config_file_box.set_padding_width (3)
+			config_file_textbox.set_tooltip ("Name of config file to use. A config file allows to customize the wrapping process.")
 			main_box.disable_item_expand (config_file_box)
 
 				-- Output
@@ -299,6 +317,62 @@ feature {NONE} -- GUI Actions
 			enable_disable_sensitive_on_cmd_buttons
 		end
 
+feature -- GUI Actions: Link Labels
+
+	on_full_header_label_link_click
+			--
+		local
+			l_launcher: URI_LAUNCHER
+		do
+			create l_launcher
+			l_launcher.launch ("https://github.com/eiffel-wrap-c/WrapC/blob/master/doc/Readme.md#commands").do_nothing
+		end
+
+	on_output_dir_label_link_click
+			--
+		local
+			l_launcher: URI_LAUNCHER
+		do
+			create l_launcher
+			l_launcher.launch ("https://github.com/eiffel-wrap-c/WrapC/blob/master/doc/Readme.md#commands").do_nothing
+		end
+
+	on_c_compile_label_link_click
+			--
+		local
+			l_launcher: URI_LAUNCHER
+		do
+			create l_launcher
+			l_launcher.launch ("https://github.com/eiffel-wrap-c/WrapC/blob/master/doc/Readme.md#commands").do_nothing
+		end
+
+	on_script_pre_label_link_click
+			--
+		local
+			l_launcher: URI_LAUNCHER
+		do
+			create l_launcher
+			l_launcher.launch ("https://github.com/eiffel-wrap-c/WrapC/blob/master/doc/Readme.md#commands").do_nothing
+		end
+
+	on_script_post_label_link_click
+			--
+		local
+			l_launcher: URI_LAUNCHER
+		do
+			create l_launcher
+			l_launcher.launch ("https://github.com/eiffel-wrap-c/WrapC/blob/master/doc/Readme.md#commands").do_nothing
+		end
+
+	on_config_file_label_link_click
+			--
+		local
+			l_launcher: URI_LAUNCHER
+		do
+			create l_launcher
+			l_launcher.launch ("https://github.com/eiffel-wrap-c/WrapC/blob/master/doc/Readme.md#config_file").do_nothing
+		end
+
 feature {NONE} -- GUI Actions Support
 
 	enable_disable_sensitive_on_cmd_buttons
@@ -361,12 +435,12 @@ feature {WUI_EWG} -- GUI Components
 
 	full_header_box: EV_HORIZONTAL_BOX
 	full_header_textbox: EV_TEXT_FIELD
-	full_header_label: EV_LABEL
+	full_header_label: EVS_LINK_LABEL
 	full_header_button: EV_BUTTON
 
 	output_dir_box: EV_HORIZONTAL_BOX
 	output_dir_textbox: EV_TEXT_FIELD
-	output_dir_label: EV_LABEL
+	output_dir_label: EVS_LINK_LABEL
 	output_dir_button: EV_BUTTON
 
 	cmd_box: EV_HORIZONTAL_BOX
@@ -375,19 +449,19 @@ feature {WUI_EWG} -- GUI Components
 
 	c_compile_box: EV_HORIZONTAL_BOX
 	c_compile_textbox: EV_TEXT_FIELD
-	c_compile_label: EV_LABEL
+	c_compile_label: EVS_LINK_LABEL
 
 	script_pre_box: EV_HORIZONTAL_BOX
 	script_pre_textbox: EV_TEXT_FIELD
-	script_pre_label: EV_LABEL
+	script_pre_label: EVS_LINK_LABEL
 
 	script_post_box: EV_HORIZONTAL_BOX
 	script_post_textbox: EV_TEXT_FIELD
-	script_post_label: EV_LABEL
+	script_post_label: EVS_LINK_LABEL
 
 	config_file_box: EV_HORIZONTAL_BOX
 	config_file_textbox: EV_TEXT_FIELD
-	config_file_label: EV_LABEL
+	config_file_label: EVS_LINK_LABEL
 	config_file_button: EV_BUTTON
 
 	output_box: EV_VERTICAL_BOX
@@ -435,6 +509,10 @@ feature {WUI_APP} -- Menu implementation
 				-- Help->About
 			create l_menu_item.make_with_text ("&About")
 			l_menu_item.select_actions.extend (agent on_help_about_click)
+			help_menu.extend (l_menu_item)
+				-- Help->Documentation
+			create l_menu_item.make_with_text ("&Documentation")
+			l_menu_item.select_actions.extend (agent on_help_documentation_click)
 			help_menu.extend (l_menu_item)
 
 			set_menu_bar (standard_menu_bar)
@@ -576,6 +654,15 @@ feature -- Menu: GUI Actions
 			create l_msg.make_with_text ("Eiffel Sotware WrapC-UI%NCopyright 2019 (c)")
 			l_msg.set_buttons_and_actions (<<"OK">>, <<agent l_msg.destroy_and_exit_if_last>>)
 			l_msg.show_modal_to_window (Current)
+		end
+
+	on_help_documentation_click
+			-- What happens when the user selects Help->Documentation
+		local
+			l_launcher: URI_LAUNCHER
+		do
+			create l_launcher
+			l_launcher.launch ("https://github.com/eiffel-wrap-c/WrapC/blob/master/doc/Readme.md").do_nothing
 		end
 
 note
