@@ -54,15 +54,8 @@ feature {NONE} -- Initialization
 		do
 			create error_handler.make
 			process_arguments
-			mid_make_process
 			parse_config_file
 			run
-		end
-
-	mid_make_process
-			-- What happens in the middle of `make'
-			-- (Sometimes it's nothing at all)
-		deferred
 		end
 
 feature -- Basic Ops: Primary
@@ -99,12 +92,6 @@ feature -- Basic Ops: Primary
 			end
 		ensure
 			has_directory_structure: attached config_system.directory_structure as al_dir_structure
-		end
-
-	directory (dn: READABLE_STRING_GENERAL): DIRECTORY
-			-- A simple `directory' of `dn'
-		do
-			create Result.make_with_name (dn)
 		end
 
 	run

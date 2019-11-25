@@ -37,33 +37,46 @@ feature {NONE} -- Initialization
 			create full_header_box
 			create full_header_textbox
 			create full_header_label.make_with_text ("--full_header=<...>")
+			full_header_label.select_actions.force (agent on_full_header_label_link_click)
+			full_header_label.set_tooltip ("Command Line Options Help - see full-header option")
 			create full_header_button.make_with_text_and_action ("...", agent on_full_header_click)
 			full_header_textbox.focus_out_actions.force (agent on_full_header_textbox_focus_out)
 
 			create output_dir_box
 			create output_dir_textbox
 			create output_dir_label.make_with_text ("--output-dir=<...>")
+			output_dir_label.select_actions.force (agent on_output_dir_label_link_click)
+			output_dir_label.set_tooltip ("Command Line Options Help - see output-dir option")
 			create output_dir_button.make_with_text_and_action ("...", agent on_output_dir_click)
 			output_dir_textbox.focus_out_actions.force (agent on_output_dir_textbox_focus_out)
 
 			create cmd_box
 			create run_wrapc_cmd_button.make_with_text_and_action ("Run", agent on_run_wrapc_cmd_button_click)
+			create clean_generated_files_button.make_with_text_and_action ("Clean", agent on_clean_generated_files_button_click)
 
 			create c_compile_box
 			create c_compile_textbox
 			create c_compile_label.make_with_text ("C-compile Options: ")
+			c_compile_label.select_actions.force (agent on_c_compile_label_link_click)
+			c_compile_label.set_tooltip ("Command Line Options Help - see c_compile_options option")
 
 			create script_pre_box
 			create script_pre_textbox
 			create script_pre_label.make_with_text ("Script pre-process Options: ")
+			script_pre_label.select_actions.force (agent on_script_pre_label_link_click)
+			script_pre_label.set_tooltip ("Command Line Options Help - see script_pre_process option")
 
 			create script_post_box
 			create script_post_textbox
 			create script_post_label.make_with_text ("Script post-process Options: ")
+			script_post_label.select_actions.force (agent on_script_post_label_link_click)
+			script_post_label.set_tooltip ("Command Line Options Help - see script_post_process option")
 
 			create config_file_box
 			create config_file_textbox
 			create config_file_label.make_with_text ("Config file: ")
+			config_file_label.select_actions.force (agent on_config_file_label_link_click)
+			config_file_label.set_tooltip ("Command Line Options Help - see config option")
 			create config_file_button.make_with_text_and_action ("...", agent on_config_file_click)
 
 			create output_box
@@ -86,6 +99,7 @@ feature {NONE} -- Initialization
 			full_header_box.disable_item_expand (full_header_button)
 			full_header_box.set_border_width (3)
 			full_header_box.set_padding_width (3)
+			full_header_textbox.set_tooltip ("Filename (including pathname) to the C header to be preprocessed,%Nand name of header file, that should be used in eiffel external clauses.")
 			main_box.disable_item_expand (full_header_box)
 
 				-- output-dir
@@ -97,6 +111,7 @@ feature {NONE} -- Initialization
 			output_dir_box.disable_item_expand (output_dir_button)
 			output_dir_box.set_border_width (3)
 			output_dir_box.set_padding_width (3)
+			output_dir_textbox.set_tooltip ("Directory where generated files will be placed.%NLocation of the target Eiffel application folder.")
 			main_box.disable_item_expand (output_dir_box)
 
 				-- Options: C-compile
@@ -106,6 +121,7 @@ feature {NONE} -- Initialization
 			c_compile_box.disable_item_expand (c_compile_label)
 			c_compile_box.set_border_width (3)
 			c_compile_box.set_padding_width (3)
+			c_compile_textbox.set_tooltip ("Optional c compile options.")
 			main_box.disable_item_expand (c_compile_box)
 
 				-- Options: Script-pre-process
@@ -115,6 +131,7 @@ feature {NONE} -- Initialization
 			script_pre_box.disable_item_expand (script_pre_label)
 			script_pre_box.set_border_width (3)
 			script_pre_box.set_padding_width (3)
+			script_pre_textbox.set_tooltip ("Optional pre-processing script, to be executed before C header preprocessing.")
 			main_box.disable_item_expand (script_pre_box)
 
 				-- Options: Script-post-process
@@ -124,6 +141,7 @@ feature {NONE} -- Initialization
 			script_post_box.disable_item_expand (script_post_label)
 			script_post_box.set_border_width (3)
 			script_post_box.set_padding_width (3)
+			script_post_textbox.set_tooltip ("Optional post-processing script, to be executed after Eiffel code wrapping.")
 			main_box.disable_item_expand (script_post_box)
 
 				-- Options: Config file
@@ -135,19 +153,25 @@ feature {NONE} -- Initialization
 			config_file_box.disable_item_expand (config_file_button)
 			config_file_box.set_border_width (3)
 			config_file_box.set_padding_width (3)
+			config_file_textbox.set_tooltip ("Name of config file to use. A config file allows to customize the wrapping process.")
 			main_box.disable_item_expand (config_file_box)
 
 				-- Output
 			main_box.extend (output_box)
 			output_box.extend (output_text)
 
-				-- Run Cmd
+				-- Clean & Run buttons
 			main_box.extend (cmd_box)
 			cmd_box.extend (create {EV_CELL})
+				-- Clean
+			cmd_box.extend (clean_generated_files_button)
+			clean_generated_files_button.disable_sensitive
+				-- Run
 			cmd_box.extend (run_wrapc_cmd_button)
 			run_wrapc_cmd_button.disable_sensitive
 			cmd_box.extend (create {EV_CELL})
 			cmd_box.disable_item_expand (run_wrapc_cmd_button)
+			cmd_box.disable_item_expand (clean_generated_files_button)
 			cmd_box.set_border_width (3)
 			cmd_box.set_padding_width (3)
 			main_box.disable_item_expand (cmd_box)
@@ -204,15 +228,70 @@ feature {NONE} -- GUI Actions
 			config_file_textbox.set_text (l_file_open.file_name)
 		end
 
+	on_clean_generated_files_button_click
+			-- What happens when user clicks `clean_generated_files_button'.
+		note
+			design: "[
+				1. Delete generated files from previous WrapC `run'.
+					1a. Requires an output directory target.
+				2. Delete generated folders once files are deleted.
+				]"
+		local
+			l_dir_structure: EWG_DIRECTORY_STRUCTURE
+			l_config_system: EWG_CONFIG_SYSTEM
+			l_dir: DIRECTORY
+			l_message: STRING
+			l_msg: EV_MESSAGE_DIALOG
+			l_memory: MEMORY
+			l_file_utilities: FILE_UTILITIES
+		do
+			create l_memory
+			l_memory.collect
+			create l_message.make_empty
+			create l_config_system.make (full_header_textbox.text)
+			create l_dir_structure.make (l_config_system)
+				-- c
+			create l_dir.make_with_name (output_dir_textbox.text + {OPERATING_ENVIRONMENT}.Directory_separator.out + l_dir_structure.config_system.directory_structure.c_directory_name)
+			if l_dir.exists then
+				l_dir.recursive_delete
+				l_message.append_string_general ("Deleted output c/include and c/src folders.%N")
+			end
+				-- eiffel
+			create l_dir.make_with_name (output_dir_textbox.text + {OPERATING_ENVIRONMENT}.Directory_separator.out + l_dir_structure.config_system.directory_structure.eiffel_directory_name)
+			if l_dir.exists then
+				l_dir.recursive_delete
+				l_message.append_string_general ("Deleted output eiffel folders.%N")
+			end
+				-- Message
+			if l_message.is_empty then
+				l_message := "There was nothing to clean."
+			end
+			create l_msg.make_with_text (l_message)
+			l_msg.set_buttons_and_actions (<<"OK">>, <<agent l_msg.destroy_and_exit_if_last>>)
+			l_msg.show_modal_to_window (Current)
+			rescue
+				create l_msg.make_with_text (clean_exception_msg)
+				l_msg.set_buttons_and_actions (<<"OK">>, <<agent l_msg.destroy_and_exit_if_last>>)
+				l_msg.show_modal_to_window (Current)
+		end
 
 	on_run_wrapc_cmd_button_click
 			-- What happens when user clicks `run_wrapc_cmd'.
 			-- `run' is in the `make' from `make_with_window'
 		local
 			l_ewg: WUI_EWG
+			l_msg: EV_MESSAGE_DIALOG
 		do
 			create l_ewg.make_with_window (Current)
 		end
+
+	clean_exception_msg: STRING = "[
+		Due to a bug (file handles left open), you will not be able to run the Clean
+		operation after a Run options. 
+		
+		Save your current configuration (if needed) and then re-open the app and
+		then click Clean. Closing the app will release any open file-handles.
+		]"
 
 	on_full_header_textbox_focus_out
 			-- What happens on focus-out of `full_header_textbox'?
@@ -223,11 +302,7 @@ feature {NONE} -- GUI Actions
 				resolve that question.
 				]"
 		do
-			if full_header_textbox.text.is_empty then
-				run_wrapc_cmd_button.disable_sensitive
-			else
-				enable_disable_sensitive_on_run_wrapc_cmd_button
-			end
+			enable_disable_sensitive_on_cmd_buttons
 		end
 
 	on_output_dir_textbox_focus_out
@@ -238,20 +313,69 @@ feature {NONE} -- GUI Actions
 				not access clicking the Run button. This routine helps
 				resolve that question.
 				]"
-		local
-			l_dir: DIRECTORY
 		do
-			create l_dir.make (output_dir_textbox.text)
-			if l_dir.exists then
-				run_wrapc_cmd_button.enable_sensitive
-			else
-				run_wrapc_cmd_button.disable_sensitive
-			end
+			enable_disable_sensitive_on_cmd_buttons
+		end
+
+feature -- GUI Actions: Link Labels
+
+	on_full_header_label_link_click
+			--
+		local
+			l_launcher: URI_LAUNCHER
+		do
+			create l_launcher
+			l_launcher.launch ("https://github.com/eiffel-wrap-c/WrapC/blob/master/doc/Readme.md#commands").do_nothing
+		end
+
+	on_output_dir_label_link_click
+			--
+		local
+			l_launcher: URI_LAUNCHER
+		do
+			create l_launcher
+			l_launcher.launch ("https://github.com/eiffel-wrap-c/WrapC/blob/master/doc/Readme.md#commands").do_nothing
+		end
+
+	on_c_compile_label_link_click
+			--
+		local
+			l_launcher: URI_LAUNCHER
+		do
+			create l_launcher
+			l_launcher.launch ("https://github.com/eiffel-wrap-c/WrapC/blob/master/doc/Readme.md#commands").do_nothing
+		end
+
+	on_script_pre_label_link_click
+			--
+		local
+			l_launcher: URI_LAUNCHER
+		do
+			create l_launcher
+			l_launcher.launch ("https://github.com/eiffel-wrap-c/WrapC/blob/master/doc/Readme.md#commands").do_nothing
+		end
+
+	on_script_post_label_link_click
+			--
+		local
+			l_launcher: URI_LAUNCHER
+		do
+			create l_launcher
+			l_launcher.launch ("https://github.com/eiffel-wrap-c/WrapC/blob/master/doc/Readme.md#commands").do_nothing
+		end
+
+	on_config_file_label_link_click
+			--
+		local
+			l_launcher: URI_LAUNCHER
+		do
+			create l_launcher
+			l_launcher.launch ("https://github.com/eiffel-wrap-c/WrapC/blob/master/doc/Readme.md#config_file").do_nothing
 		end
 
 feature {NONE} -- GUI Actions Support
 
-	enable_disable_sensitive_on_run_wrapc_cmd_button
+	enable_disable_sensitive_on_cmd_buttons
 			-- Determine if Run button is sensitive or not.
 		note
 			design: "[
@@ -260,14 +384,20 @@ feature {NONE} -- GUI Actions Support
 				resolve that question.
 				]"
 		do
-			if dir_has_full_header_file then
+			if has_full_header_dir_and_file then
 				run_wrapc_cmd_button.enable_sensitive
 			else
 				run_wrapc_cmd_button.disable_sensitive
 			end
+
+			if has_output_dir then
+				clean_generated_files_button.enable_sensitive
+			else
+				clean_generated_files_button.disable_sensitive
+			end
 		end
 
-	dir_has_full_header_file: BOOLEAN
+	has_full_header_dir_and_file: BOOLEAN
 			-- Does `full_header_textbox' text directory exist and have file?
 		note
 			design: "[
@@ -287,38 +417,51 @@ feature {NONE} -- GUI Actions Support
 			Result := l_dir.exists and then l_dir.has_entry (l_list [l_list.count])
 		end
 
+	has_output_dir: BOOLEAN
+			-- Does `output_dir_textbox' have directory?
+		local
+			l_dir: DIRECTORY
+			l_path_string: STRING
+			l_list: LIST [STRING]
+		do
+			l_path_string := output_dir_textbox.text.twin
+			create l_dir.make (l_path_string)
+			Result := l_dir.exists
+		end
+
 feature {WUI_EWG} -- GUI Components
 
 	main_box: EV_VERTICAL_BOX
 
 	full_header_box: EV_HORIZONTAL_BOX
 	full_header_textbox: EV_TEXT_FIELD
-	full_header_label: EV_LABEL
+	full_header_label: EVS_LINK_LABEL
 	full_header_button: EV_BUTTON
 
 	output_dir_box: EV_HORIZONTAL_BOX
 	output_dir_textbox: EV_TEXT_FIELD
-	output_dir_label: EV_LABEL
+	output_dir_label: EVS_LINK_LABEL
 	output_dir_button: EV_BUTTON
 
 	cmd_box: EV_HORIZONTAL_BOX
+	clean_generated_files_button,
 	run_wrapc_cmd_button: EV_BUTTON
 
 	c_compile_box: EV_HORIZONTAL_BOX
 	c_compile_textbox: EV_TEXT_FIELD
-	c_compile_label: EV_LABEL
+	c_compile_label: EVS_LINK_LABEL
 
 	script_pre_box: EV_HORIZONTAL_BOX
 	script_pre_textbox: EV_TEXT_FIELD
-	script_pre_label: EV_LABEL
+	script_pre_label: EVS_LINK_LABEL
 
 	script_post_box: EV_HORIZONTAL_BOX
 	script_post_textbox: EV_TEXT_FIELD
-	script_post_label: EV_LABEL
+	script_post_label: EVS_LINK_LABEL
 
 	config_file_box: EV_HORIZONTAL_BOX
 	config_file_textbox: EV_TEXT_FIELD
-	config_file_label: EV_LABEL
+	config_file_label: EVS_LINK_LABEL
 	config_file_button: EV_BUTTON
 
 	output_box: EV_VERTICAL_BOX
@@ -366,6 +509,10 @@ feature {WUI_APP} -- Menu implementation
 				-- Help->About
 			create l_menu_item.make_with_text ("&About")
 			l_menu_item.select_actions.extend (agent on_help_about_click)
+			help_menu.extend (l_menu_item)
+				-- Help->Documentation
+			create l_menu_item.make_with_text ("&Documentation")
+			l_menu_item.select_actions.extend (agent on_help_documentation_click)
 			help_menu.extend (l_menu_item)
 
 			set_menu_bar (standard_menu_bar)
@@ -425,6 +572,7 @@ feature -- Menu: GUI Actions
 						config_file_textbox.set_text (l_local_part_content)
 					end
 				end
+				enable_disable_sensitive_on_cmd_buttons
 			end
 		end
 
@@ -449,6 +597,7 @@ feature -- Menu: GUI Actions
 		end
 
 	config_file_content_as_xml: STRING
+			-- The content of a "saved" configuration as XML.
 		do
 			create Result.make_empty
 			Result.append_string_general ("<config>%N%T")
@@ -505,6 +654,15 @@ feature -- Menu: GUI Actions
 			create l_msg.make_with_text ("Eiffel Sotware WrapC-UI%NCopyright 2019 (c)")
 			l_msg.set_buttons_and_actions (<<"OK">>, <<agent l_msg.destroy_and_exit_if_last>>)
 			l_msg.show_modal_to_window (Current)
+		end
+
+	on_help_documentation_click
+			-- What happens when the user selects Help->Documentation
+		local
+			l_launcher: URI_LAUNCHER
+		do
+			create l_launcher
+			l_launcher.launch ("https://github.com/eiffel-wrap-c/WrapC/blob/master/doc/Readme.md").do_nothing
 		end
 
 note
