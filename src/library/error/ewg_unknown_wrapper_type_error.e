@@ -37,7 +37,7 @@ feature {NONE} -- Initialization
 			a_name_attribute_not_empty: an_element.attribute_by_name (type_attribute_name).value.count > 0
 			a_position_not_void: a_position /= Void
 		do
-			create parameters.make (1, 2)
+			create parameters.make_filled ("", 1, 2)
 			parameters.put (an_element.attribute_by_name (type_attribute_name).value, 1)
 			parameters.put (a_position.out, 2)
 		end

@@ -28,7 +28,7 @@ feature {NONE} -- Initialization
 		require
 			a_parameter_name_not_void: a_parameter_name /= Void
 		do
-			create parameters.make (1, 1)
+			create parameters.make_filled ("", 1, 1)
 			parameters.put (a_parameter_name, 1)
 		end
 

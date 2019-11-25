@@ -87,7 +87,7 @@ feature
 			-- pointers from this declarator and (possibly recursivly nested)
 			-- direct declarators
 		do
-			Result := clone (pointers)
+			Result := pointers.twin
 			Result.extend_last (direct_declarator.pointers_indirect)
 		ensure
 			result_not_void: Result /= Void
@@ -131,7 +131,7 @@ feature
 
 feature
 
-	c_code: STRING 
+	c_code: STRING
 		local
 			cs: DS_LINEAR_CURSOR [EWG_C_PHASE_1_POINTER]
 		do

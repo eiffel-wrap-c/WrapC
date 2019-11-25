@@ -35,7 +35,7 @@ feature {NONE} -- Initialization
 			a_position_not_void: a_position /= Void
 			a_error_message_not_void: a_error_message /= Void
 		do
-			create parameters.make (1, 6)
+			create parameters.make_filled ("", 1, 6)
 			parameters.put (a_containing_element.name, 1)
 			parameters.put (an_attribute_name, 2)
 			parameters.put (a_position.out, 3)

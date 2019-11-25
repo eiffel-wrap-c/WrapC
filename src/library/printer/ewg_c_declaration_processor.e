@@ -257,7 +257,7 @@ feature {NONE}
 		ensure
 			text_before_declarator_size: text_before_declarator.count = a_string.count + old text_before_declarator.count
 			a_string_prepended: STRING_.same_string (text_before_declarator.substring (1, a_string.count), a_string)
-			old_string_follows: STRING_.same_string (text_before_declarator.substring (a_string.count + 1, text_before_declarator.count), old clone(text_before_declarator))
+			old_string_follows: STRING_.same_string (text_before_declarator.substring (a_string.count + 1, text_before_declarator.count), old text_before_declarator.twin)
 		end
 
 	append_to_declarator (a_string: STRING)
