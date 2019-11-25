@@ -189,15 +189,15 @@ create
 primary_expression
 	: TOK_IDENTIFIER
 		{
-			$$ := clone ($1)
+			$$ := $1
 		}
 	| TOK_CONSTANT
 		{
-			$$ := clone ($1)
+			$$ := $1
 		}
 	| TOK_STRING_LITERAL
 		{
-			$$ := clone ($1)
+			$$ := $1
 		}
 	| '(' expression ')'
 		{
@@ -275,12 +275,12 @@ unary_expression
 		}
 	| TOK_INC_OP unary_expression
 		{
-			$$ := clone ($1)
+			$$ := $1
 			$$.append_string ($2)
 		}
 	| TOK_DEC_OP unary_expression
 		{
-			$$ := clone ($1)
+			$$ := $1
 			$$.append_string ($2)
 		}
 	| unary_operator cast_expression
@@ -290,12 +290,12 @@ unary_expression
 		}
 	| TOK_SIZEOF unary_expression
 		{
-			$$ := clone ($1)
+			$$ := $1
 			$$.append_string ($2)
 		}
 	| TOK_SIZEOF '(' type_name pop_type_name_scope ')'
 		{
-			$$ := clone ($1)
+			$$ := $1
 			$$.append_character ('(')
 			$$.append_string ($3)
 			$$.append_character (')')
@@ -305,27 +305,27 @@ unary_expression
 unary_operator
 	: '&'
 		{
-			$$ := clone ("&")
+			$$ := "&"
 		}
 	| '*'
 		{
-			$$ := clone ("*")
+			$$ := "*"
 		}
 	| '+'
 		{
-			$$ := clone ("+")
+			$$ := "+"
 		}
 	| '-'
 		{
-			$$ := clone ("-")
+			$$ := "-"
 		}
 	| '~'
 		{
-			$$ := clone ("~")
+			$$ := "~"
 		}
 	| '!'
 		{
-			$$ := clone ("!")
+			$$ := "!"
 		}
 	;
 
@@ -552,47 +552,47 @@ assignment_expression
 assignment_operator
 	: '='
 		{
-			$$ := clone ("=")
+			$$ := "="
 		}
 	| TOK_MUL_ASSIGN
 		{
-			$$ := clone ($1)
+			$$ := $1
 		}
 	| TOK_DIV_ASSIGN
 		{
-			$$ := clone ($1)
+			$$ := $1
 		}
 	| TOK_MOD_ASSIGN
 		{
-			$$ := clone ($1)
+			$$ := $1
 		}
 	| TOK_ADD_ASSIGN
 		{
-			$$ := clone ($1)
+			$$ := $1
 		}
 	| TOK_SUB_ASSIGN
 		{
-			$$ := clone ($1)
+			$$ := $1
 		}
 	| TOK_LEFT_ASSIGN
 		{
-			$$ := clone ($1)
+			$$ := $1
 		}
 	| TOK_RIGHT_ASSIGN
 		{
-			$$ := clone ($1)
+			$$ := $1
 		}
 	| TOK_AND_ASSIGN
 		{
-			$$ := clone ($1)
+			$$ := $1
 		}
 	| TOK_XOR_ASSIGN
 		{
-			$$ := clone ($1)
+			$$ := $1
 		}
 	| TOK_OR_ASSIGN
 		{
-			$$ := clone ($1)
+			$$ := $1
 		}
 	;
 

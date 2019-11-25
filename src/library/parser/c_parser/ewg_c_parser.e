@@ -276,7 +276,7 @@ debug ("GEYACC")
 	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 190")
 end
 
-			yyval2 := clone (yyvs2.item (yyvsp2))
+			yyval2 := yyvs2.item (yyvsp2)
 		
 if yy_parsing_status >= yyContinue then
 	yyssp := yyssp - 1
@@ -288,7 +288,7 @@ debug ("GEYACC")
 	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 194")
 end
 
-			yyval2 := clone (yyvs2.item (yyvsp2))
+			yyval2 := yyvs2.item (yyvsp2)
 		
 if yy_parsing_status >= yyContinue then
 	yyssp := yyssp - 1
@@ -300,7 +300,7 @@ debug ("GEYACC")
 	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 198")
 end
 
-			yyval2 := clone (yyvs2.item (yyvsp2))
+			yyval2 := yyvs2.item (yyvsp2)
 		
 if yy_parsing_status >= yyContinue then
 	yyssp := yyssp - 1
@@ -486,7 +486,7 @@ debug ("GEYACC")
 	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 276")
 end
 
-			yyval2 := clone (yyvs2.item (yyvsp2 - 1))
+			yyval2 := yyvs2.item (yyvsp2 - 1)
 			yyval2.append_string (yyvs2.item (yyvsp2))
 		
 if yy_parsing_status >= yyContinue then
@@ -500,7 +500,7 @@ debug ("GEYACC")
 	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 281")
 end
 
-			yyval2 := clone (yyvs2.item (yyvsp2 - 1))
+			yyval2 := yyvs2.item (yyvsp2 - 1)
 			yyval2.append_string (yyvs2.item (yyvsp2))
 		
 if yy_parsing_status >= yyContinue then
@@ -528,7 +528,7 @@ debug ("GEYACC")
 	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 291")
 end
 
-			yyval2 := clone (yyvs2.item (yyvsp2 - 1))
+			yyval2 := yyvs2.item (yyvsp2 - 1)
 			yyval2.append_string (yyvs2.item (yyvsp2))
 		
 if yy_parsing_status >= yyContinue then
@@ -542,7 +542,7 @@ debug ("GEYACC")
 	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 296")
 end
 
-			yyval2 := clone (yyvs2.item (yyvsp2 - 1))
+			yyval2 := yyvs2.item (yyvsp2 - 1)
 			yyval2.append_character ('(')
 			yyval2.append_string (yyvs2.item (yyvsp2))
 			yyval2.append_character (')')
@@ -559,7 +559,7 @@ debug ("GEYACC")
 	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 306")
 end
 
-			yyval2 := clone ("&")
+			yyval2 := "&"
 		
 if yy_parsing_status >= yyContinue then
 	yyssp := yyssp - 1
@@ -580,7 +580,7 @@ debug ("GEYACC")
 	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 310")
 end
 
-			yyval2 := clone ("*")
+			yyval2 := "*"
 		
 if yy_parsing_status >= yyContinue then
 	yyssp := yyssp - 1
@@ -601,7 +601,7 @@ debug ("GEYACC")
 	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 314")
 end
 
-			yyval2 := clone ("+")
+			yyval2 := "+"
 		
 if yy_parsing_status >= yyContinue then
 	yyssp := yyssp - 1
@@ -622,7 +622,7 @@ debug ("GEYACC")
 	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 318")
 end
 
-			yyval2 := clone ("-")
+			yyval2 := "-"
 		
 if yy_parsing_status >= yyContinue then
 	yyssp := yyssp - 1
@@ -643,7 +643,7 @@ debug ("GEYACC")
 	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 322")
 end
 
-			yyval2 := clone ("~")
+			yyval2 := "~"
 		
 if yy_parsing_status >= yyContinue then
 	yyssp := yyssp - 1
@@ -664,7 +664,7 @@ debug ("GEYACC")
 	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 326")
 end
 
-			yyval2 := clone ("!")
+			yyval2 := "!"
 		
 if yy_parsing_status >= yyContinue then
 	yyssp := yyssp - 1
@@ -1171,7 +1171,7 @@ debug ("GEYACC")
 	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 553")
 end
 
-			yyval2 := clone ("=")
+			yyval2 := "="
 		
 if yy_parsing_status >= yyContinue then
 	yyssp := yyssp - 1
@@ -1192,7 +1192,7 @@ debug ("GEYACC")
 	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 557")
 end
 
-			yyval2 := clone (yyvs2.item (yyvsp2))
+			yyval2 := yyvs2.item (yyvsp2)
 		
 if yy_parsing_status >= yyContinue then
 	yyssp := yyssp - 1
@@ -1204,7 +1204,7 @@ debug ("GEYACC")
 	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 561")
 end
 
-			yyval2 := clone (yyvs2.item (yyvsp2))
+			yyval2 := yyvs2.item (yyvsp2)
 		
 if yy_parsing_status >= yyContinue then
 	yyssp := yyssp - 1
@@ -1216,7 +1216,7 @@ debug ("GEYACC")
 	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 565")
 end
 
-			yyval2 := clone (yyvs2.item (yyvsp2))
+			yyval2 := yyvs2.item (yyvsp2)
 		
 if yy_parsing_status >= yyContinue then
 	yyssp := yyssp - 1
@@ -1228,7 +1228,7 @@ debug ("GEYACC")
 	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 569")
 end
 
-			yyval2 := clone (yyvs2.item (yyvsp2))
+			yyval2 := yyvs2.item (yyvsp2)
 		
 if yy_parsing_status >= yyContinue then
 	yyssp := yyssp - 1
@@ -1240,7 +1240,7 @@ debug ("GEYACC")
 	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 573")
 end
 
-			yyval2 := clone (yyvs2.item (yyvsp2))
+			yyval2 := yyvs2.item (yyvsp2)
 		
 if yy_parsing_status >= yyContinue then
 	yyssp := yyssp - 1
@@ -1252,7 +1252,7 @@ debug ("GEYACC")
 	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 577")
 end
 
-			yyval2 := clone (yyvs2.item (yyvsp2))
+			yyval2 := yyvs2.item (yyvsp2)
 		
 if yy_parsing_status >= yyContinue then
 	yyssp := yyssp - 1
@@ -1264,7 +1264,7 @@ debug ("GEYACC")
 	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 581")
 end
 
-			yyval2 := clone (yyvs2.item (yyvsp2))
+			yyval2 := yyvs2.item (yyvsp2)
 		
 if yy_parsing_status >= yyContinue then
 	yyssp := yyssp - 1
@@ -1276,7 +1276,7 @@ debug ("GEYACC")
 	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 585")
 end
 
-			yyval2 := clone (yyvs2.item (yyvsp2))
+			yyval2 := yyvs2.item (yyvsp2)
 		
 if yy_parsing_status >= yyContinue then
 	yyssp := yyssp - 1
@@ -1288,7 +1288,7 @@ debug ("GEYACC")
 	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 589")
 end
 
-			yyval2 := clone (yyvs2.item (yyvsp2))
+			yyval2 := yyvs2.item (yyvsp2)
 		
 if yy_parsing_status >= yyContinue then
 	yyssp := yyssp - 1
@@ -1300,7 +1300,7 @@ debug ("GEYACC")
 	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 593")
 end
 
-			yyval2 := clone (yyvs2.item (yyvsp2))
+			yyval2 := yyvs2.item (yyvsp2)
 		
 if yy_parsing_status >= yyContinue then
 	yyssp := yyssp - 1

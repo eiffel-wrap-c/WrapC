@@ -522,7 +522,7 @@ feature {NONE} -- Progress bar implementation
 
 	spinn_characters: ARRAY [CHARACTER]
 		once
-			create Result.make (0, 3)
+			create Result.make_filled (' ',0, 3)
 			Result.put ('/', 0)
 			Result.put ('|', 1)
 			Result.put ('\', 2)

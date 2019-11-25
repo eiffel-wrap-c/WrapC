@@ -190,7 +190,7 @@ feature {NONE} -- Implementation
 			output_stream.put_new_line
 		end
 
-	generate_caller_definition (a_callback_wrapper: EWG_CALLBACK_WRAPPER) 
+	generate_caller_definition (a_callback_wrapper: EWG_CALLBACK_WRAPPER)
 		require
 			a_callback_wrapper_not_void: a_callback_wrapper /= Void
 		local
@@ -220,7 +220,7 @@ feature {NONE} -- Implementation
 										 a_callback_wrapper.c_pointer_type.function_type.return_type,
 										 members)
 
-			declarator := clone ("call_")
+			declarator := "call_"
 			declarator.append_string (a_callback_wrapper.mapped_eiffel_name)
 			declaration_printer.print_declaration_from_type (function, declarator)
 			output_stream.put_new_line

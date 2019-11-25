@@ -24,7 +24,7 @@ create
 
 feature {NONE} -- Initialization
 
-	make (an_expected_element_name: STRING; an_element: XM_ELEMENT; a_position: XM_POSITION) 
+	make (an_expected_element_name: STRING; an_element: XM_ELEMENT; a_position: XM_POSITION)
 			-- Create an error reporting that instead of `an_element' an
 			-- element with the name `an_expected_element_name' was
 			-- expected.
@@ -35,7 +35,7 @@ feature {NONE} -- Initialization
 			a_position_not_void: a_position /= Void
 			an_element_is_not_expected: STRING_.same_string (an_expected_element_name, an_element.name)
 		do
-			create parameters.make (1, 3)
+			create parameters.make_filled ("",1, 3)
 			parameters.put (an_expected_element_name, 1)
 			parameters.put (an_element.name, 2)
 			parameters.put (a_position.out, 3)
