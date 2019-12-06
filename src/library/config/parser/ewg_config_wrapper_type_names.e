@@ -32,7 +32,7 @@ feature -- Constants
 			Result.put_new (none_name)
 		ensure
 			name_set_not_void: Result /= Void
-			no_void_name: not Result.has (Void)
+--			no_void_name: not Result.has (Void)
 		end
 
 

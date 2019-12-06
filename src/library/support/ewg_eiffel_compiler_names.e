@@ -71,6 +71,7 @@ feature {ANY} -- Status
 		local
 			cs: DS_HASH_TABLE_CURSOR [INTEGER, STRING]
 		do
+			Result := ise_name
 			from
 				cs := eiffel_compiler_name_table.new_cursor
 				cs.start

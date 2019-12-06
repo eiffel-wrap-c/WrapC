@@ -49,11 +49,8 @@ feature
 
 
 	is_same_type (other: EWG_C_AST_TYPE): BOOLEAN
-		local
-			other_enum: EWG_C_AST_ENUM_TYPE
 		do
-			other_enum ?= other
-			if other_enum /= Void then
+			if attached {EWG_C_AST_ENUM_TYPE} other as other_enum then
 				Result := Current = other_enum or else is_same_composite_type (other_enum)
 			end
 		end

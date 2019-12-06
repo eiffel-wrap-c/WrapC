@@ -204,22 +204,22 @@ feature {ANY} -- Get cursors for wrappers
 
 feature {ANY} -- Latest wrappers
 
-	last_enum_wrapper: EWG_ENUM_WRAPPER
+	last_enum_wrapper: detachable EWG_ENUM_WRAPPER
 			-- Last enum wrapper added to `enum_wrapper_table'
 
-	last_struct_wrapper: EWG_STRUCT_WRAPPER
+	last_struct_wrapper: detachable EWG_STRUCT_WRAPPER
 			-- Last struct wrapper added to `struct_wrapper_table'
 
-	last_union_wrapper: EWG_UNION_WRAPPER
+	last_union_wrapper: detachable EWG_UNION_WRAPPER
 			-- Last union wrapper added to `union_wrapper_table'
 
-	last_function_wrapper: EWG_FUNCTION_WRAPPER
+	last_function_wrapper: detachable EWG_FUNCTION_WRAPPER
 			-- Last function wrapper added to `function_wrapper_table'
 
-	last_callback_wrapper: EWG_CALLBACK_WRAPPER
+	last_callback_wrapper: detachable EWG_CALLBACK_WRAPPER
 			-- Last callback wrapper added to `callback_wrapper_table'
 
-	last_macro_wrapper: EWG_MACRO_WRAPPER
+	last_macro_wrapper: detachable EWG_MACRO_WRAPPER
 			-- Last macro wrapper added to `macro_wrapper_table'
 
 feature {ANY} -- Helper queries
@@ -228,27 +228,14 @@ feature {ANY} -- Helper queries
 			-- Does `Current' contain a wrapper for `a_type'?
 		require
 			a_type_not_void: a_type /= Void
-		local
-			enum_type: EWG_C_AST_ENUM_TYPE
-			struct_type: EWG_C_AST_STRUCT_TYPE
-			union_type: EWG_C_AST_UNION_TYPE
-			pointer_type: EWG_C_AST_POINTER_TYPE
 		do
-			enum_type ?= a_type
-			struct_type ?= a_type
-			union_type ?= a_type
-
-			if a_type.is_callback then
-				pointer_type ?= a_type.skip_consts_and_aliases
-			end
-
-			if enum_type /= Void then
+			if attached {EWG_C_AST_ENUM_TYPE} a_type as enum_type then
 				Result := enum_wrapper_table.has (enum_type)
-			elseif struct_type /= Void then
+			elseif attached {EWG_C_AST_STRUCT_TYPE} a_type as struct_type then
 				Result := struct_wrapper_table.has (struct_type)
-			elseif union_type /= Void then
+			elseif  attached {EWG_C_AST_UNION_TYPE} a_type as union_type  then
 				Result := union_wrapper_table.has (union_type)
-			elseif pointer_type /= Void then
+			elseif a_type.is_callback and then attached  {EWG_C_AST_POINTER_TYPE}a_type.skip_consts_and_aliases as pointer_type then
 				Result := callback_wrapper_table.has (pointer_type)
 			else
 				Result := False
@@ -259,14 +246,10 @@ feature {ANY} -- Helper queries
 			-- Has `Current' a wrapper for `a_declaration'?
 		require
 			a_declaration_not_void: a_declaration /= Void
-		local
-			function_declaration: EWG_C_AST_FUNCTION_DECLARATION
 		do
-			function_declaration ?= a_declaration
-				check
-					no_other_declaration_wrappable_yet: function_declaration /= Void
-				end
-			Result := function_wrapper_table.has (function_declaration)
+			if attached {EWG_C_AST_FUNCTION_DECLARATION} a_declaration as function_declaration then
+				Result := function_wrapper_table.has (function_declaration)
+			end
 		end
 
 	has_wrapper_for_macro (a_macro: STRING): BOOLEAN
@@ -281,22 +264,16 @@ feature {ANY} -- Helper queries
 			-- Does this set already contain a wrapper for the type that `a_wrapper' wraps?
 		require
 			a_wrapper_not_void: a_wrapper /= Void
-		local
-			type_wrapper: EWG_ABSTRACT_TYPE_WRAPPER
-			declaration_wrapper: EWG_ABSTRACT_DECLARATION_WRAPPER
 		do
 			if attached {EWG_MACRO_WRAPPER} a_wrapper as l_wrapper then
 				Result := has_wrapper_for_macro (l_wrapper.constant_name)
 			else
-				type_wrapper ?= a_wrapper
-				declaration_wrapper ?= a_wrapper
-					check
-						exactly_one_not_void: (type_wrapper = Void) xor (declaration_wrapper = Void)
-					end
-				if type_wrapper /= Void then
+				if attached {EWG_ABSTRACT_TYPE_WRAPPER} a_wrapper as type_wrapper  then
 					Result := has_wrapper_for_type (type_wrapper.type)
-				else
+				elseif attached {EWG_ABSTRACT_DECLARATION_WRAPPER} a_wrapper as declaration_wrapper then
 					Result := has_wrapper_for_declaration (declaration_wrapper.declaration)
+				else
+					--TODO check
 				end
 			end
 		end
@@ -318,33 +295,25 @@ feature {ANY} -- Query existing wrappers
 		require
 			a_type_not_void: a_type /= Void
 			has_wrapper_for_a_type: has_wrapper_for_type (a_type)
-		local
-			enum_type: EWG_C_AST_ENUM_TYPE
-			struct_type: EWG_C_AST_STRUCT_TYPE
-			union_type: EWG_C_AST_UNION_TYPE
-			pointer_type: EWG_C_AST_POINTER_TYPE
 		do
-			enum_type ?= a_type
-			struct_type ?= a_type
-			union_type ?= a_type
-			pointer_type ?= a_type
-
+			check attached {EWG_C_AST_ENUM_TYPE} a_type as enum_type then
+				Result := enum_wrapper_table.item (enum_type)
+			end
+			check attached {EWG_C_AST_STRUCT_TYPE} a_type as struct_type then
+				Result := struct_wrapper_table.item (struct_type)
+			end
+			check attached {EWG_C_AST_UNION_TYPE} a_type as union_type then
+				Result := union_wrapper_table.item (union_type)
+			end
+			check attached {EWG_C_AST_POINTER_TYPE} a_type as pointer_type then
 				check
 					pointer_type_not_void_implies_is_callback: pointer_type /= Void implies pointer_type.is_callback
 				end
 
-			if enum_type /= Void then
-				Result := enum_wrapper_table.item (enum_type)
-			elseif struct_type /= Void then
-				Result := struct_wrapper_table.item (struct_type)
-			elseif union_type /= Void then
-				Result := union_wrapper_table.item (union_type)
-			elseif pointer_type /= Void then
 				Result := callback_wrapper_table.item (pointer_type)
-			else
-					check
-						dead_end: False
-					end
+--					check
+--						dead_end: False
+--					end
 			end
 		ensure
 			result_not_void: Result /= Void
@@ -354,26 +323,23 @@ feature {ANY} -- Query existing wrappers
 		require
 			a_composite_data_type_not_void: a_composite_data_type /= Void
 			has_wrapper_for_a_composite_type: has_wrapper_for_type (a_composite_data_type)
-		local
-			enum_type: EWG_C_AST_ENUM_TYPE
-			struct_type: EWG_C_AST_STRUCT_TYPE
-			union_type: EWG_C_AST_UNION_TYPE
 		do
-			enum_type ?= a_composite_data_type
-			struct_type ?= a_composite_data_type
-			union_type ?= a_composite_data_type
-
-			if enum_type /= Void then
-				Result := enum_wrapper_table.item (enum_type)
-			elseif struct_type /= Void then
-				Result := struct_wrapper_table.item (struct_type)
-			elseif union_type /= Void then
-				Result := union_wrapper_table.item (union_type)
-			else
-					check
-						dead_end: False
-					end
+			check
+				attached {EWG_C_AST_ENUM_TYPE} a_composite_data_type or else attached {EWG_C_AST_STRUCT_TYPE} a_composite_data_type or else
+				attached {EWG_C_AST_UNION_TYPE} a_composite_data_type
+			then
+				if attached {EWG_C_AST_ENUM_TYPE} a_composite_data_type as enum_type then
+					Result := enum_wrapper_table.item (enum_type)
+				elseif attached {EWG_C_AST_STRUCT_TYPE} a_composite_data_type as struct_type  then
+					Result := struct_wrapper_table.item (struct_type)
+				else
+				    check attached {EWG_C_AST_UNION_TYPE} a_composite_data_type as union_type then
+				   		Result := union_wrapper_table.item (union_type)
+				   	end
+				end
 			end
+			-- TODO check
+			-- if there is no option
 		ensure
 			result_not_void: Result /= Void
 		end
@@ -416,36 +382,22 @@ feature {ANY} -- Add new wrappers to set
 			a_wrapper_not_void: a_wrapper /= Void
 			has_a_wrapper: not has_wrapper (a_wrapper)
 		local
-			enum_wrapper: EWG_ENUM_WRAPPER
-			struct_wrapper: EWG_STRUCT_WRAPPER
-			union_wrapper: EWG_UNION_WRAPPER
-			function_wrapper: EWG_FUNCTION_WRAPPER
-			callback_wrapper: EWG_CALLBACK_WRAPPER
 			function_wrapper_list: DS_LINKED_LIST [EWG_FUNCTION_WRAPPER]
 			callback_wrapper_list: DS_LINKED_LIST [EWG_CALLBACK_WRAPPER]
 			macro_wrapper_list: DS_LINKED_LIST [EWG_MACRO_WRAPPER]
-			macro_wrapper: EWG_MACRO_WRAPPER
 		do
-			enum_wrapper ?= a_wrapper
-			struct_wrapper ?= a_wrapper
-			union_wrapper ?= a_wrapper
-			function_wrapper ?= a_wrapper
-			callback_wrapper ?= a_wrapper
-			macro_wrapper ?= a_wrapper
-
-			if enum_wrapper /= Void then
+			if attached {EWG_ENUM_WRAPPER} a_wrapper as enum_wrapper then
 				enum_wrapper_table.force_new (enum_wrapper, enum_wrapper.c_enum_type)
 				last_enum_wrapper := enum_wrapper
-			elseif struct_wrapper /= Void then
+			elseif attached {EWG_STRUCT_WRAPPER} a_wrapper as struct_wrapper then
 				struct_wrapper_table.force_new (struct_wrapper, struct_wrapper.c_struct_type)
 				last_struct_wrapper := struct_wrapper
-			elseif union_wrapper /= Void then
+			elseif attached {EWG_UNION_WRAPPER} a_wrapper as union_wrapper then
 				union_wrapper_table.force_new (union_wrapper, union_wrapper.c_union_type)
 				last_union_wrapper := union_wrapper
-			elseif function_wrapper /= Void then
+			elseif attached {EWG_FUNCTION_WRAPPER} a_wrapper as function_wrapper then
 				function_wrapper_table.force_new (function_wrapper, function_wrapper.function_declaration)
 				last_function_wrapper := function_wrapper
-
 				if function_wrapper_groups.has (function_wrapper.class_name) then
 					function_wrapper_list := function_wrapper_groups.item (function_wrapper.class_name)
 				else
@@ -453,7 +405,7 @@ feature {ANY} -- Add new wrappers to set
 					function_wrapper_groups.force (function_wrapper_list, function_wrapper.class_name)
 				end
 				function_wrapper_list.put_last (function_wrapper)
-			elseif callback_wrapper /= Void then
+			elseif attached {EWG_CALLBACK_WRAPPER} a_wrapper as callback_wrapper then
 				callback_wrapper_table.force_new (callback_wrapper, callback_wrapper.c_pointer_type)
 				last_callback_wrapper := callback_wrapper
 
@@ -464,7 +416,7 @@ feature {ANY} -- Add new wrappers to set
 					callback_wrapper_groups.force (callback_wrapper_list, callback_wrapper.c_pointer_type.header_file_name)
 				end
 				callback_wrapper_list.put_last (callback_wrapper)
-			elseif macro_wrapper /= Void then
+			elseif attached {EWG_MACRO_WRAPPER} a_wrapper as macro_wrapper then
 				macro_wrapper_table.force_new (macro_wrapper, macro_wrapper.constant_name)
 				last_macro_wrapper := macro_wrapper
 
@@ -507,7 +459,7 @@ feature {ANY} -- Resolve Name clashes
 feature {NONE} -- Function declaration name clash resolving implementation
 	-- TODO: refactore into separate class
 
-	last_wrapper_clash_table: DS_HASH_TABLE [DS_LINKED_LIST [EWG_ABSTRACT_WRAPPER], STRING]
+	last_wrapper_clash_table: detachable DS_HASH_TABLE [DS_LINKED_LIST [EWG_ABSTRACT_WRAPPER], STRING]
 
 	build_clash_table_for_wrapper_group (a_cs: DS_LINEAR_CURSOR [EWG_ABSTRACT_WRAPPER])
 		require
@@ -515,19 +467,20 @@ feature {NONE} -- Function declaration name clash resolving implementation
 		local
 			clash_list: DS_LINKED_LIST [EWG_ABSTRACT_WRAPPER]
 			ct_cs: DS_HASH_TABLE_CURSOR [DS_LINKED_LIST [EWG_ABSTRACT_WRAPPER], STRING]
+			l_last_wrapper_clash_table: like last_wrapper_clash_table
 		do
 			from
 				a_cs.start
-				create last_wrapper_clash_table.make_map (Initial_wrapper_clash_table_size)
-				last_wrapper_clash_table.set_key_equality_tester (string_equality_tester)
+				create l_last_wrapper_clash_table.make_map (Initial_wrapper_clash_table_size)
+				l_last_wrapper_clash_table.set_key_equality_tester (string_equality_tester)
 			until
 				a_cs.off
 			loop
-				if last_wrapper_clash_table.has (a_cs.item.mapped_eiffel_name) then
-					clash_list := last_wrapper_clash_table.item (a_cs.item.mapped_eiffel_name)
+				if l_last_wrapper_clash_table.has (a_cs.item.mapped_eiffel_name) then
+					clash_list := l_last_wrapper_clash_table.item (a_cs.item.mapped_eiffel_name)
 				else
 					create clash_list.make
-					last_wrapper_clash_table.force (clash_list, a_cs.item.mapped_eiffel_name)
+					l_last_wrapper_clash_table.force (clash_list, a_cs.item.mapped_eiffel_name)
 				end
 				clash_list.put_last (a_cs.item)
 				a_cs.forth
@@ -537,18 +490,19 @@ feature {NONE} -- Function declaration name clash resolving implementation
 			-- (Only lists with more than one element indicate a clash)
 
 			from
-				ct_cs := last_wrapper_clash_table.new_cursor
+				ct_cs := l_last_wrapper_clash_table.new_cursor
 				ct_cs.start
 			until
 				ct_cs.off
 			loop
 				if ct_cs.item.count < 2 then
-					last_wrapper_clash_table.remove (ct_cs.key)
+					l_last_wrapper_clash_table.remove (ct_cs.key)
 					-- moves cursor forth automaticaly
 				else
 					ct_cs.forth
 				end
 			end
+			last_wrapper_clash_table := l_last_wrapper_clash_table
 		ensure
 			last_wrapper_clash_table_not_void: last_wrapper_clash_table /= Void
 		end
@@ -559,17 +513,19 @@ feature {NONE} -- Function declaration name clash resolving implementation
 		local
 			ct_cs: DS_HASH_TABLE_CURSOR [DS_LINKED_LIST [EWG_ABSTRACT_WRAPPER], STRING]
 		do
-			from
-				ct_cs := last_wrapper_clash_table.new_cursor
-				ct_cs.start
-			until
-				ct_cs.off
-			loop
-					check
-						clash_means_at_least_two_features: ct_cs.item.count > 1
-					end
-				ct_cs.item.first.rename_mapped_eiffel_name
-				ct_cs.forth
+			if attached last_wrapper_clash_table as l_last_wrapper_clash_table then
+				from
+					ct_cs := l_last_wrapper_clash_table.new_cursor
+					ct_cs.start
+				until
+					ct_cs.off
+				loop
+						check
+							clash_means_at_least_two_features: ct_cs.item.count > 1
+						end
+					ct_cs.item.first.rename_mapped_eiffel_name
+					ct_cs.forth
+				end
 			end
 		end
 
@@ -580,7 +536,7 @@ feature {NONE} -- Function declaration name clash resolving implementation
 			from
 				build_clash_table_for_wrapper_group (a_cs)
 			until
-				last_wrapper_clash_table.count = 0
+				attached last_wrapper_clash_table as l_last_wrapper_clash_table and then l_last_wrapper_clash_table.count = 0
 			loop
 				rename_wrapper_clashes
 				build_clash_table_for_wrapper_group (a_cs)
@@ -643,13 +599,13 @@ feature {NONE} -- Implementation Constants
 invariant
 
 	enum_wrapper_table_not_void: enum_wrapper_table /= Void
-	enum_wrapper_table_does_not_contain_void: not enum_wrapper_table.has (Void)
+--	enum_wrapper_table_does_not_contain_void: not enum_wrapper_table.has (Void)
 	struct_wrapper_table_not_void: struct_wrapper_table /= Void
-	struct_wrapper_table_does_not_contain_void: not struct_wrapper_table.has (Void)
+--	struct_wrapper_table_does_not_contain_void: not struct_wrapper_table.has (Void)
 	union_wrapper_table_not_void: union_wrapper_table /= Void
-	union_wrapper_table_does_not_contain_void: not union_wrapper_table.has (Void)
-	function_wrapper_groups_not_void: function_wrapper_groups /= Void
-	callback_wrapper_groups_not_void: callback_wrapper_groups /= Void
+--	union_wrapper_table_does_not_contain_void: not union_wrapper_table.has (Void)
+--	function_wrapper_groups_not_void: function_wrapper_groups /= Void
+--	callback_wrapper_groups_not_void: callback_wrapper_groups /= Void
 
 	macro_wrapper_groups_not_void: macro_wrapper_groups /= Void
 

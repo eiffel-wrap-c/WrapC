@@ -45,7 +45,7 @@ feature {NONE} -- Initialization
 			union_wrapper_set: union_wrapper = a_union_wrapper
 		end
 
-feature
+feature -- Access
 
 	c_declaration: EWG_C_AST_DECLARATION
 			-- C declaration to wrap

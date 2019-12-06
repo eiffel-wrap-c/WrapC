@@ -24,14 +24,11 @@ create
 
 	make
 
-feature
+feature -- Status Report
 
 	is_same_type (other: EWG_C_AST_TYPE): BOOLEAN
-		local
-			other_struct: EWG_C_AST_STRUCT_TYPE
 		do
-			other_struct ?= other
-			if other_struct /= Void then
+			if attached {EWG_C_AST_STRUCT_TYPE} other as other_struct then
 				Result := Current = other_struct or else is_same_composite_type (other_struct)
 			end
 		end
@@ -43,7 +40,7 @@ feature
 
 feature -- Visitor Pattern
 
-	process (a_processor: EWG_C_AST_TYPE_PROCESSOR) 
+	process (a_processor: EWG_C_AST_TYPE_PROCESSOR)
 			-- Process `Current' using `a_processor'.
 		do
 			a_processor.process_struct_type (Current)

@@ -439,7 +439,7 @@ feature -- Progress indication
 	current_task_ticks: INTEGER
 			-- Current task has already done `current_task_ticks'.
 
-	current_task_name: STRING
+	current_task_name: detachable STRING
 			-- Name of the current_task
 
 
@@ -461,26 +461,28 @@ feature {NONE} -- Progress bar implementation
 		local
 			percent: INTEGER
 		do
-			if current_task_total_ticks > 0 then
-				percent := DOUBLE_.floor_to_integer ((current_task_ticks * 100) / current_task_total_ticks)
-			end
-			create Result.make (12 + current_task_name.count)
-			Result.append_character ('[')
-			if percent < 10 then
-				Result.append_string (" ")
-			elseif percent < 100 then
+			check attached current_task_name as l_current_task_name then
+				if current_task_total_ticks > 0 then
+					percent := DOUBLE_.floor_to_integer ((current_task_ticks * 100) / current_task_total_ticks)
+				end
+				create Result.make (12 + l_current_task_name.count)
+				Result.append_character ('[')
+				if percent < 10 then
+					Result.append_string (" ")
+				elseif percent < 100 then
+					Result.append_character (' ')
+				end
+				Result.append_string (percent.out)
+				Result.append_string ("%%]")
 				Result.append_character (' ')
-			end
-			Result.append_string (percent.out)
-			Result.append_string ("%%]")
-			Result.append_character (' ')
-			if current_task_ticks = current_task_total_ticks then
+				if current_task_ticks = current_task_total_ticks then
+					Result.append_character (' ')
+				else
+					Result.append_character (spinn_characters.item (current_task_ticks \\ (spinn_characters.count)))
+				end
 				Result.append_character (' ')
-			else
-				Result.append_character (spinn_characters.item (current_task_ticks \\ (spinn_characters.count)))
+				Result.append_string (l_current_task_name)
 			end
-			Result.append_character (' ')
-			Result.append_string (current_task_name)
 		ensure
 			result_not_void: Result /= Void
 		end

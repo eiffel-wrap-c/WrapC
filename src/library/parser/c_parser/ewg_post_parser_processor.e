@@ -73,16 +73,13 @@ feature {NONE}
 			end
 		end
 
-	set_closest_alias (a_top_alias_type: EWG_C_AST_ALIAS_TYPE; a_base: EWG_C_AST_TYPE) 
+	set_closest_alias (a_top_alias_type: EWG_C_AST_ALIAS_TYPE; a_base: EWG_C_AST_TYPE)
 		require
 			a_top_alias_type_not_void: a_top_alias_type /= Void
 			a_base_not_void: a_base /= Void
 			a_top_alias_type_has_base_indirect: a_top_alias_type.has_type_as_base_indirect (a_base)
-		local
-			closer_based_type: EWG_C_AST_BASED_TYPE
 		do
-			closer_based_type ?= a_base
-			if closer_based_type /= Void then
+			if attached {EWG_C_AST_BASED_TYPE} a_base as closer_based_type then
 				set_closest_alias (a_top_alias_type, closer_based_type.base)
 			end
 

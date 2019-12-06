@@ -107,7 +107,7 @@ feature {ANY} -- Basic Routines
 feature {NONE} -- Implementation
 
 
-	eiffel_identifier_template: STRING
+	eiffel_identifier_template: detachable STRING
 			-- Template that when evaluated yields the name for the
 			-- wrapper for the type which is being wrapped.  If `Void'
 			-- the default name will be used.
@@ -118,8 +118,8 @@ feature {NONE} -- Implementation
 			a_type_not_void: a_type /= Void
 			accepts_a_type: accepts_type (a_type)
 		do
-			if eiffel_identifier_template /= Void then
-				Result := eiffel_identifier_template -- TODO: eval variables, etc.
+			if attached eiffel_identifier_template as l_eiffel_identifier_template  then
+				Result := l_eiffel_identifier_template -- TODO: eval variables, etc.
 			else
 				Result := default_eiffel_identifier_for_type (a_type)
 			end
@@ -134,8 +134,8 @@ feature {NONE} -- Implementation
 			a_declaration_not_void: a_declaration /= Void
 			accepts_a_declaration: accepts_declaration (a_declaration)
 		do
-			if eiffel_identifier_template /= Void then
-				Result := eiffel_identifier_template -- TODO: eval variables, etc.
+			if attached eiffel_identifier_template as l_eiffel_identifier_template then
+				Result := l_eiffel_identifier_template -- TODO: eval variables, etc.
 			else
 				Result := default_eiffel_identifier_for_declaration (a_declaration)
 			end
@@ -172,7 +172,7 @@ feature {NONE} -- Implementation
 
 invariant
 
-	eiffel_identifier_template_not_void_implies_not_empty: eiffel_identifier_template /= Void implies eiffel_identifier_template.count > 0
+	eiffel_identifier_template_not_void_implies_not_empty: attached eiffel_identifier_template as l_eiffel_identifier_template  implies l_eiffel_identifier_template.count > 0
 
 end
 

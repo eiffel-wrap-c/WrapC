@@ -41,19 +41,19 @@ feature
 
 feature
 
-	size: STRING
+	size: detachable STRING
 			-- Size of current array as unparsed string
 
-	is_size_defined: BOOLEAN 
+	is_size_defined: BOOLEAN
 			-- Does current array have a defined size ?
 		do
-			Result := size /= Void
+			Result := attached size
 		end
 
 invariant
 
 	size_defined_equals_size_not_void: is_size_defined = (size /= Void)
 
-	size_defined_implies_size_not_empty: is_size_defined implies size.count > 0
+	size_defined_implies_size_not_empty: is_size_defined implies attached size as l_size and then l_size.count > 0
 
 end

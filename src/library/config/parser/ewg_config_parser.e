@@ -72,10 +72,13 @@ feature {ANY} -- Parsing
 					a_root_element := a_document.root_element
 					a_root_name := a_root_element.name
 					a_position_table := tree_pipe.tree.last_position_table
-					xml_validator.validate_config_system_doc (a_document, a_position_table)
-					if not xml_validator.has_error then
-						fill_config_system (a_config_system, a_root_element, a_position_table)
+					if attached a_position_table then
+						xml_validator.validate_config_system_doc (a_document, a_position_table)
+						if not xml_validator.has_error then
+							fill_config_system (a_config_system, a_root_element, a_position_table)
+						end
 					end
+						-- TODO check what happens if a_position_table is Void
 				else
 					error_handler.report_parser_error (tree_pipe.last_error)
 				end
@@ -114,8 +117,8 @@ feature {NONE} -- Implementation
 			cs: DS_BILINEAR_CURSOR [XM_NODE]
 			child: XM_ELEMENT
 		do
-			if an_element.has_attribute_by_name (name_attribute_name) then
-				a_config_system.set_name (an_element.attribute_by_name (name_attribute_name).value)
+			if attached an_element.attribute_by_name (name_attribute_name) as l_name_attribute_name then
+				a_config_system.set_name (l_name_attribute_name.value)
 			end
 			cs := an_element.new_cursor
 			from
@@ -168,52 +171,57 @@ feature {NONE} -- Implementation
 			is_rule_element: STRING_.same_string (a_rule_element.name, rule_element_name)
 			a_position_table_not_void: a_position_table /= Void
 		local
-			match_element: XM_ELEMENT
-			wrapper_element: XM_ELEMENT
-			matching_clause: EWG_CONFIG_MATCHING_CLAUSE
 			wrapper_clause: EWG_CONFIG_WRAPPER_CLAUSE
 			rule: EWG_CONFIG_RULE
 		do
-			if attached a_rule_element.element_by_name (function_element_name) as l_function_excludes and then
-				l_function_excludes.has_attribute_by_name (name_attribute_name) then
+			if
+				attached a_rule_element.element_by_name (function_element_name) as l_function_excludes and then
+				attached l_function_excludes.attribute_by_name (name_attribute_name) as l_name_attribute_name
+			then
 					-- functions_excludes
-				a_config_system.function_excludes.force (l_function_excludes.attribute_by_name (name_attribute_name).value)
+				a_config_system.function_excludes.force (l_name_attribute_name.value)
 			elseif attached  a_rule_element.element_by_name (function_element_address_name) as l_function_address and then
-				l_function_address.has_attribute_by_name (name_attribute_name)
+				attached l_function_address.attribute_by_name (name_attribute_name) as l_name_attribute_name
 					-- function address
 			then
-				a_config_system.function_address.force (l_function_address.attribute_by_name (name_attribute_name).value)
+				a_config_system.function_address.force (l_name_attribute_name.value)
 			else
 					-- Wrapping clause
-				match_element := a_rule_element.element_by_name (match_element_name)
-				wrapper_element := a_rule_element.element_by_name (wrapper_element_name)
-				matching_clause := new_matching_clause (a_config_system, match_element, a_position_table)
-				if matching_clause.construct_type_code = construct_type_names.any_code then
-					wrapper_clause := new_any_wrapper_clause (a_config_system, wrapper_element, a_position_table)
-				elseif matching_clause.construct_type_code = construct_type_names.none_code then
-					wrapper_clause := new_none_wrapper_clause (a_config_system, wrapper_element, a_position_table)
-				elseif matching_clause.construct_type_code = construct_type_names.struct_code then
-					wrapper_clause := new_struct_wrapper_clause (a_config_system, wrapper_element, a_position_table)
-				elseif matching_clause.construct_type_code = construct_type_names.union_code then
-					wrapper_clause := new_union_wrapper_clause (a_config_system, wrapper_element, a_position_table)
-				elseif matching_clause.construct_type_code = construct_type_names.enum_code then
-					wrapper_clause := new_enum_wrapper_clause (a_config_system, wrapper_element, a_position_table)
-				elseif matching_clause.construct_type_code = construct_type_names.function_code then
-					wrapper_clause := new_function_wrapper_clause (a_config_system, wrapper_element, a_position_table)
-				elseif matching_clause.construct_type_code = construct_type_names.callback_code then
-					wrapper_clause := new_callback_wrapper_clause (a_config_system, wrapper_element, a_position_table)
-				elseif matching_clause.construct_type_code = construct_type_names.macro_code then
-					wrapper_clause := new_macro_wrapper_clause (a_config_system, wrapper_element, a_position_table)
-				else
-					check
-						dead_end: False
+				if
+					attached a_rule_element.element_by_name (match_element_name) as match_element and then
+					attached a_rule_element.element_by_name (wrapper_element_name) as wrapper_element and then
+					attached new_matching_clause (a_config_system, match_element, a_position_table) as matching_clause
+				then
+
+					if  matching_clause.construct_type_code = construct_type_names.any_code then
+						wrapper_clause := new_any_wrapper_clause (a_config_system, wrapper_element, a_position_table)
+					elseif matching_clause.construct_type_code = construct_type_names.none_code then
+						wrapper_clause := new_none_wrapper_clause (a_config_system, wrapper_element, a_position_table)
+					elseif matching_clause.construct_type_code = construct_type_names.struct_code then
+						wrapper_clause := new_struct_wrapper_clause (a_config_system, wrapper_element, a_position_table)
+					elseif matching_clause.construct_type_code = construct_type_names.union_code then
+						wrapper_clause := new_union_wrapper_clause (a_config_system, wrapper_element, a_position_table)
+					elseif matching_clause.construct_type_code = construct_type_names.enum_code then
+						wrapper_clause := new_enum_wrapper_clause (a_config_system, wrapper_element, a_position_table)
+					elseif matching_clause.construct_type_code = construct_type_names.function_code then
+						wrapper_clause := new_function_wrapper_clause (a_config_system, wrapper_element, a_position_table)
+					elseif matching_clause.construct_type_code = construct_type_names.callback_code then
+						wrapper_clause := new_callback_wrapper_clause (a_config_system, wrapper_element, a_position_table)
+					elseif matching_clause.construct_type_code = construct_type_names.macro_code then
+						wrapper_clause := new_macro_wrapper_clause (a_config_system, wrapper_element, a_position_table)
+					else
+						check
+							dead_end: False
+						end
 					end
-				end
-				create rule.make (matching_clause, wrapper_clause)
-				if matching_clause.construct_type_code = construct_type_names.macro_code then
-					a_config_system.append_macro_rule (rule)
-				else
-					a_config_system.append_rule (rule)
+					if attached wrapper_clause then
+						create rule.make (matching_clause, wrapper_clause)
+						if matching_clause.construct_type_code = construct_type_names.macro_code then
+							a_config_system.append_macro_rule (rule)
+						else
+							a_config_system.append_rule (rule)
+						end
+					end
 				end
 			end
 		end
@@ -226,31 +234,36 @@ feature {NONE} -- Implementation
 			is_match_element: STRING_.same_string (a_match_element.name, match_element_name)
 			a_position_table: a_position_table /= Void
 		local
-			child: XM_ELEMENT
 			construct_type_name: STRING
 			construct_type_code: INTEGER
 		do
 			create Result.make
-			if a_match_element.has_element_by_name (identifier_element_name) then
-				child := a_match_element.element_by_name (identifier_element_name)
-				Result.set_c_identifier_regexp (child.attribute_by_name (name_attribute_name).value)
+			if
+				attached a_match_element.element_by_name (identifier_element_name) as child and then
+				attached child.attribute_by_name (name_attribute_name) as l_name_attribute_name
+			then
+				Result.set_c_identifier_regexp (l_name_attribute_name.value)
 			end
 
-			if a_match_element.has_element_by_name (header_element_name) then
-				child := a_match_element.element_by_name (header_element_name)
-				Result.set_header_file_name_regexp (child.attribute_by_name (name_attribute_name).value)
+			if
+				attached a_match_element.element_by_name (header_element_name) as child and then
+				attached child.attribute_by_name (name_attribute_name) as l_name_attribute_name
+			then
+				Result.set_header_file_name_regexp (l_name_attribute_name.value)
 			end
 
-			if a_match_element.has_element_by_name (type_element_name) then
-				child := a_match_element.element_by_name (type_element_name)
-				construct_type_name := child.attribute_by_name (name_attribute_name).value
+			if
+				attached a_match_element.element_by_name (type_element_name) as child and then
+				attached child.attribute_by_name (name_attribute_name) as l_name_attribute_name
+			then
+				construct_type_name := l_name_attribute_name.value
 				construct_type_code := construct_type_names.construct_type_code_from_name (construct_type_name)
 				Result.set_construct_type_code (construct_type_code)
 			end
 
 		end
 
-	new_any_wrapper_clause (a_config_system: EWG_CONFIG_SYSTEM; a_wrapper_element: XM_ELEMENT; a_position_table: XM_POSITION_TABLE): EWG_CONFIG_WRAPPER_CLAUSE
+	new_any_wrapper_clause (a_config_system: EWG_CONFIG_SYSTEM; a_wrapper_element: XM_ELEMENT; a_position_table: XM_POSITION_TABLE): detachable EWG_CONFIG_WRAPPER_CLAUSE
 			-- New wrapper clause from `a_wrapper_element'
 		require
 			a_config_system_not_void: a_config_system /= Void
@@ -260,8 +273,8 @@ feature {NONE} -- Implementation
 		local
 			wrapper_type_name: STRING
 		do
-			if a_wrapper_element.has_attribute_by_name (type_attribute_name) then
-				wrapper_type_name := a_wrapper_element.attribute_by_name (type_attribute_name).value
+			if attached a_wrapper_element.attribute_by_name (type_attribute_name) as l_type_attribute_name then
+				wrapper_type_name := l_type_attribute_name.value
 			else
 				wrapper_type_name := default_name
 			end
@@ -329,13 +342,14 @@ feature {NONE} -- Implementation
 			is_wrapper_element: STRING_.same_string (a_wrapper_element.name, wrapper_element_name)
 			a_position_table: a_position_table /= Void
 		local
-			class_name_element: XM_ELEMENT
 			class_name: STRING
 		do
 			create Result.make
-			if a_wrapper_element.has_element_by_name (class_name_element_name) then
-				class_name_element := a_wrapper_element.element_by_name (class_name_element_name)
-				class_name := class_name_element.attribute_by_name (name_attribute_name).value
+			if
+				attached a_wrapper_element.element_by_name (class_name_element_name) as class_name_element and then
+				attached class_name_element.attribute_by_name (name_attribute_name) as l_name_attribute_name
+			then
+				class_name := l_name_attribute_name.value
 				Result.set_class_name (class_name)
 			end
 		end
@@ -359,13 +373,14 @@ feature {NONE} -- Implementation
 			is_wrapper_element: STRING_.same_string (a_wrapper_element.name, wrapper_element_name)
 			a_position_table: a_position_table /= Void
 		local
-			class_name_element: XM_ELEMENT
 			class_name: STRING
 		do
 			create Result.make
-			if a_wrapper_element.has_element_by_name (class_name_element_name) then
-				class_name_element := a_wrapper_element.element_by_name (class_name_element_name)
-				class_name := class_name_element.attribute_by_name (name_attribute_name).value
+			if
+				attached a_wrapper_element.element_by_name (class_name_element_name) as class_name_element and then
+				attached class_name_element.attribute_by_name (name_attribute_name) as l_name_attribute_name
+			then
+				class_name := l_name_attribute_name.value
 				Result.set_class_name (class_name)
 			end
 		end

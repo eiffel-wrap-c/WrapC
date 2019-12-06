@@ -48,11 +48,8 @@ feature
 feature
 
 	is_same_type (other: EWG_C_AST_TYPE): BOOLEAN
-		local
-			other_eiffel: EWG_C_AST_EIFFEL_OBJECT_TYPE
 		do
-			other_eiffel ?= other
-			if other_eiffel /= Void then
+			if attached {EWG_C_AST_EIFFEL_OBJECT_TYPE} other as other_eiffel then
 				Result := Current = other_eiffel or else equal (eiffel_class_name, other_eiffel.eiffel_class_name)
 			end
 		end

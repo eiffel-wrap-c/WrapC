@@ -22,6 +22,9 @@ inherit
 	EWG_SHARED_STRING_EQUALITY_TESTER
 		export {NONE} all end
 
+create
+	make
+
 feature {NONE} -- Initialization
 
 	make (a_mapped_eiffel_name: STRING; a_header_file_name: STRING; a_members: like members)
@@ -33,27 +36,26 @@ feature {NONE} -- Initialization
 			a_members_not_void: a_members /= Void
 		do
 			make_abstract_wrapper (a_mapped_eiffel_name, a_header_file_name)
-			create members.make_default
-			adopt_members (a_members)
 			members := a_members
+			adopt_members (a_members)
 		ensure
 			mapped_eiffel_name_set: mapped_eiffel_name = a_mapped_eiffel_name
 			header_file_name_set: header_file_name = a_header_file_name
 			members_set: members = a_members
 		end
 
-feature
+feature -- Acccess
 
 	members: DS_ARRAYED_LIST [EWG_MEMBER_WRAPPER]
 			-- The member wrapper of the composite.
 			-- This does not need to be a 1:1 mapping onto
-			-- the composite to wrap. For example, some members
+	 		-- the composite to wrap. For example, some members
 			-- of a struct might be ignored. Or a runlength string
 			-- consisting of a "char*" and a "int" might be wrapped
 			-- using a single EWG_MEMBER_WRAPPER object.
 
 
-feature {ANY}
+feature {ANY} -- Access
 
 	extend_members (a_members: DS_BILINEAR [EWG_MEMBER_WRAPPER])
 			-- Extend `members' with `a_members'
@@ -111,9 +113,9 @@ feature {ANY}
 			-- Does `a_set' have an item name equal to an item name from `a_list' ?
 		require
 			a_set_not_void: a_set /= Void
-			a_set_has_no_void_item: not a_set.has (Void)
+--			a_set_has_no_void_item: not a_set.has (Void)
 			a_list_not_void: a_list /= Void
-			a_list_has_no_void_item: not a_list.has (Void)
+--			a_list_has_no_void_item: not a_list.has (Void)
 		local
 			cs: DS_LINEAR_CURSOR [STRING]
 		do
@@ -132,7 +134,7 @@ feature {ANY}
 			end
 		end
 
-feature {NONE}
+feature {NONE} -- Members
 
 	adopt_members (a_members: DS_BILINEAR [EWG_MEMBER_WRAPPER])
 		require
@@ -156,7 +158,7 @@ feature {NONE}
 
 feature {ANY} -- Assertions
 
-	members_have_current_as_composite_wrapper (a_members: DS_BILINEAR [EWG_MEMBER_WRAPPER]): BOOLEAN 
+	members_have_current_as_composite_wrapper (a_members: DS_BILINEAR [EWG_MEMBER_WRAPPER]): BOOLEAN
 			-- All items in `members' have member.composite_wrapper = Current
 		local
 			cs: DS_BILINEAR_CURSOR [EWG_MEMBER_WRAPPER]

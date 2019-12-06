@@ -45,7 +45,7 @@ feature {NONE} -- Initialization
 			c_declaration_set: c_declaration = a_c_declaration
 		end
 
-feature
+feature -- Access
 
 	proposed_feature_name_list: DS_LINEAR [STRING]
 		local
@@ -71,7 +71,7 @@ feature
 	c_declaration: EWG_C_AST_DECLARATION
 			-- C declaration to wrap
 
-	eiffel_type: STRING 
+	eiffel_type: STRING
 		do
 			Result := c_declaration.type.corresponding_eiffel_type
 		ensure

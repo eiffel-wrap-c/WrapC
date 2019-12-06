@@ -2525,7 +2525,7 @@ debug ("GEYACC")
 	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 850")
 end
 
-
+create yyval5.make_default
 if yy_parsing_status >= yyContinue then
 	yyssp := yyssp - 2
 	yyvsp5 := yyvsp5 + 1
@@ -2541,9 +2541,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines5.force (yyvs5, yyval5, yyvsp5)
 end
 when 140 then
---|#line 855 "ewg_c_parser.y"
+--|#line 856 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 855")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 856")
 end
 
 yyval5 := yyvs5.item (yyvsp5) 
@@ -2554,9 +2554,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines5.force (yyvs5, yyval5, yyvsp5)
 end
 when 141 then
---|#line 860 "ewg_c_parser.y"
+--|#line 861 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 860")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 861")
 end
 
 create yyval10.make_enum (Void, yyvs13.item (yyvsp13)) 
@@ -2576,9 +2576,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines10.force (yyvs10, yyval10, yyvsp10)
 end
 when 142 then
---|#line 862 "ewg_c_parser.y"
+--|#line 863 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 862")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 863")
 end
 
 create yyval10.make_enum (yyvs2.item (yyvsp2), yyvs13.item (yyvsp13)) 
@@ -2598,9 +2598,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines10.force (yyvs10, yyval10, yyvsp10)
 end
 when 143 then
---|#line 864 "ewg_c_parser.y"
+--|#line 865 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 864")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 865")
 end
 
 create yyval10.make_enum (yyvs2.item (yyvsp2), Void) 
@@ -2618,9 +2618,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines10.force (yyvs10, yyval10, yyvsp10)
 end
 when 144 then
---|#line 871 "ewg_c_parser.y"
+--|#line 872 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 871")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 872")
 end
 
 yyval13 := yyvs13.item (yyvsp13) 
@@ -2630,9 +2630,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines13.force (yyvs13, yyval13, yyvsp13)
 end
 when 145 then
---|#line 876 "ewg_c_parser.y"
+--|#line 877 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 876")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 877")
 end
 
 create yyval13.make; yyval13.put_last (yyvs3.item (yyvsp3)) 
@@ -2650,9 +2650,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines13.force (yyvs13, yyval13, yyvsp13)
 end
 when 146 then
---|#line 878 "ewg_c_parser.y"
+--|#line 879 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 878")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 879")
 end
 
 yyvs13.item (yyvsp13).put_last (yyvs3.item (yyvsp3)); yyval13 := yyvs13.item (yyvsp13) 
@@ -2663,9 +2663,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines13.force (yyvs13, yyval13, yyvsp13)
 end
 when 147 then
---|#line 883 "ewg_c_parser.y"
+--|#line 884 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 883")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 884")
 end
 
 
@@ -2682,9 +2682,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines1.force (yyvs1, yyval1, yyvsp1)
 end
 when 148 then
---|#line 884 "ewg_c_parser.y"
+--|#line 885 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 884")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 885")
 end
 
 
@@ -2693,9 +2693,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines1.force (yyvs1, yyval1, yyvsp1)
 end
 when 149 then
---|#line 888 "ewg_c_parser.y"
+--|#line 889 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 888")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 889")
 end
 
 yyval3 := new_enum_declaration (yyvs2.item (yyvsp2), last_header_file_name) 
@@ -2713,9 +2713,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines3.force (yyvs3, yyval3, yyvsp3)
 end
 when 150 then
---|#line 890 "ewg_c_parser.y"
+--|#line 891 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 890")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 891")
 end
 
 yyval3 := new_enum_declaration (yyvs2.item (yyvsp2 - 1), last_header_file_name) 
@@ -2734,9 +2734,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines3.force (yyvs3, yyval3, yyvsp3)
 end
 when 151 then
---|#line 895 "ewg_c_parser.y"
+--|#line 896 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 895")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 896")
 end
 
 create yyval9.make; yyval9.set_const 
@@ -2754,9 +2754,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines9.force (yyvs9, yyval9, yyvsp9)
 end
 when 152 then
---|#line 897 "ewg_c_parser.y"
+--|#line 898 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 897")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 898")
 end
 
 create yyval9.make; yyval9.set_volatile 
@@ -2774,9 +2774,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines9.force (yyvs9, yyval9, yyvsp9)
 end
 when 153 then
---|#line 902 "ewg_c_parser.y"
+--|#line 903 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 902")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 903")
 end
 
 create yyval5.make_with_pointers (yyvs6.item (yyvsp6), yyvs14.item (yyvsp14), last_header_file_name)
@@ -2795,9 +2795,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines5.force (yyvs5, yyval5, yyvsp5)
 end
 when 154 then
---|#line 904 "ewg_c_parser.y"
+--|#line 905 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 904")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 905")
 end
 
 create yyval5.make (yyvs6.item (yyvsp6), last_header_file_name)
@@ -2815,9 +2815,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines5.force (yyvs5, yyval5, yyvsp5)
 end
 when 155 then
---|#line 906 "ewg_c_parser.y"
+--|#line 907 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 906")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 907")
 end
 
 			create yyval5.make_with_pointers (yyvs6.item (yyvsp6), yyvs14.item (yyvsp14), last_header_file_name)
@@ -2839,9 +2839,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines5.force (yyvs5, yyval5, yyvsp5)
 end
 when 156 then
---|#line 912 "ewg_c_parser.y"
+--|#line 913 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 912")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 913")
 end
 
 		  create yyval5.make_with_pointers (yyvs6.item (yyvsp6), yyvs14.item (yyvsp14), last_header_file_name)
@@ -2863,9 +2863,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines5.force (yyvs5, yyval5, yyvsp5)
 end
 when 157 then
---|#line 918 "ewg_c_parser.y"
+--|#line 919 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 918")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 919")
 end
 
 			create yyval5.make (yyvs6.item (yyvsp6), last_header_file_name)
@@ -2886,9 +2886,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines5.force (yyvs5, yyval5, yyvsp5)
 end
 when 158 then
---|#line 927 "ewg_c_parser.y"
+--|#line 928 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 927")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 928")
 end
 
 create yyval6.make (yyvs2.item (yyvsp2))
@@ -2906,9 +2906,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines6.force (yyvs6, yyval6, yyvsp6)
 end
 when 159 then
---|#line 929 "ewg_c_parser.y"
+--|#line 930 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 929")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 930")
 end
 
 create yyval6.make_anonymous (yyvs5.item (yyvsp5)) 
@@ -2927,9 +2927,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines6.force (yyvs6, yyval6, yyvsp6)
 end
 when 160 then
---|#line 931 "ewg_c_parser.y"
+--|#line 932 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 931")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 932")
 end
 
 yyval6 := yyvs6.item (yyvsp6); yyval6.add_array_last (new_array_with_size (yyvs2.item (yyvsp2))); 
@@ -2940,9 +2940,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines6.force (yyvs6, yyval6, yyvsp6)
 end
 when 161 then
---|#line 935 "ewg_c_parser.y"
+--|#line 936 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 935")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 936")
 end
 
 yyval6 := yyvs6.item (yyvsp6); yyval6.add_array_last (new_array) 
@@ -2952,9 +2952,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines6.force (yyvs6, yyval6, yyvsp6)
 end
 when 162 then
---|#line 937 "ewg_c_parser.y"
+--|#line 938 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 937")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 938")
 end
 
 yyval6 := yyvs6.item (yyvsp6); yyval6.set_parameters (yyvs15.item (yyvsp15)) 
@@ -2965,9 +2965,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines6.force (yyvs6, yyval6, yyvsp6)
 end
 when 163 then
---|#line 939 "ewg_c_parser.y"
+--|#line 940 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 939")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 940")
 end
 
 yyval6 := yyvs6.item (yyvsp6); yyval6.set_parameters (new_empty_elipsis_parameter_type_list) 
@@ -2977,9 +2977,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines6.force (yyvs6, yyval6, yyvsp6)
 end
 when 164 then
---|#line 941 "ewg_c_parser.y"
+--|#line 942 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 941")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 942")
 end
 
 yyval6 := yyvs6.item (yyvsp6); yyval6.set_parameters (new_empty_elipsis_parameter_type_list) 
@@ -2989,9 +2989,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines6.force (yyvs6, yyval6, yyvsp6)
 end
 when 165 then
---|#line 946 "ewg_c_parser.y"
+--|#line 947 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 946")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 947")
 end
 
 create yyval14.make; yyval14.put_last (new_pointer) 
@@ -3009,9 +3009,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines14.force (yyvs14, yyval14, yyvsp14)
 end
 when 166 then
---|#line 948 "ewg_c_parser.y"
+--|#line 949 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 948")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 949")
 end
 
 create yyval14.make; yyval14.put_last (new_pointer_with_type_qualifier_list (yyvs8.item (yyvsp8))) 
@@ -3030,9 +3030,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines14.force (yyvs14, yyval14, yyvsp14)
 end
 when 167 then
---|#line 950 "ewg_c_parser.y"
+--|#line 951 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 950")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 951")
 end
 
 yyval14 := yyvs14.item (yyvsp14); yyval14.put_first (new_pointer) 
@@ -3042,9 +3042,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines14.force (yyvs14, yyval14, yyvsp14)
 end
 when 168 then
---|#line 952 "ewg_c_parser.y"
+--|#line 953 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 952")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 953")
 end
 
 yyval14 := yyvs14.item (yyvsp14); yyval14.put_first (new_pointer_with_type_qualifier_list (yyvs8.item (yyvsp8))) 
@@ -3055,9 +3055,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines14.force (yyvs14, yyval14, yyvsp14)
 end
 when 169 then
---|#line 957 "ewg_c_parser.y"
+--|#line 958 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 957")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 958")
 end
 
 create yyval8.make; yyval8.put_last (yyvs9.item (yyvsp9)) 
@@ -3075,9 +3075,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines8.force (yyvs8, yyval8, yyvsp8)
 end
 when 170 then
---|#line 959 "ewg_c_parser.y"
+--|#line 960 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 959")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 960")
 end
 
 yyval8 := yyvs8.item (yyvsp8); yyval8.put_last (yyvs9.item (yyvsp9)) 
@@ -3087,9 +3087,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines8.force (yyvs8, yyval8, yyvsp8)
 end
 when 171 then
---|#line 964 "ewg_c_parser.y"
+--|#line 965 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 964")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 965")
 end
 
 create yyval15.make (yyvs13.item (yyvsp13)) 
@@ -3107,9 +3107,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines15.force (yyvs15, yyval15, yyvsp15)
 end
 when 172 then
---|#line 966 "ewg_c_parser.y"
+--|#line 967 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 966")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 967")
 end
 
 create yyval15.make_with_ellipsis (yyvs13.item (yyvsp13)) 
@@ -3129,15 +3129,15 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines15.force (yyvs15, yyval15, yyvsp15)
 end
 when 173 then
---|#line 971 "ewg_c_parser.y"
+--|#line 972 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 971")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 972")
 end
 
 			create yyval13.make
 			check
 				every_parameter_has_exactly_one_name: yyvs3.item (yyvsp3).declarators.count = 1 or
-										yyvs3.item (yyvsp3).type_specifier.is_void
+										(attached yyvs3.item (yyvsp3).type_specifier as l_type_specifier and then  l_type_specifier.is_void)
 			end
 			yyval13.put_last (yyvs3.item (yyvsp3))
 		
@@ -3155,9 +3155,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines13.force (yyvs13, yyval13, yyvsp13)
 end
 when 174 then
---|#line 980 "ewg_c_parser.y"
+--|#line 981 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 980")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 981")
 end
 
 			yyval13 := yyvs13.item (yyvsp13)
@@ -3173,9 +3173,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines13.force (yyvs13, yyval13, yyvsp13)
 end
 when 175 then
---|#line 991 "ewg_c_parser.y"
+--|#line 992 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 991")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 992")
 end
 
 create yyval3.make_with_one_declarator (yyvs7.item (yyvsp7), yyvs5.item (yyvsp5), last_header_file_name) 
@@ -3195,9 +3195,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines3.force (yyvs3, yyval3, yyvsp3)
 end
 when 176 then
---|#line 993 "ewg_c_parser.y"
+--|#line 994 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 993")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 994")
 end
 
 create yyval3.make_with_one_declarator (yyvs7.item (yyvsp7), yyvs5.item (yyvsp5), last_header_file_name) 
@@ -3217,9 +3217,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines3.force (yyvs3, yyval3, yyvsp3)
 end
 when 177 then
---|#line 995 "ewg_c_parser.y"
+--|#line 996 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 995")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 996")
 end
 
 create yyval3.make_with_one_declarator (yyvs7.item (yyvsp7), new_abstract_declarator (last_header_file_name), last_header_file_name) 
@@ -3238,9 +3238,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines3.force (yyvs3, yyval3, yyvsp3)
 end
 when 178 then
---|#line 1000 "ewg_c_parser.y"
+--|#line 1001 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1000")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1001")
 end
 
 
@@ -3258,9 +3258,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines1.force (yyvs1, yyval1, yyvsp1)
 end
 when 179 then
---|#line 1001 "ewg_c_parser.y"
+--|#line 1002 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1001")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1002")
 end
 
 
@@ -3271,9 +3271,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines1.force (yyvs1, yyval1, yyvsp1)
 end
 when 180 then
---|#line 1005 "ewg_c_parser.y"
+--|#line 1006 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1005")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1006")
 end
 
 			yyval2 := c_code_from_specifier_qualifier_list (yyvs7.item (yyvsp7))
@@ -3292,9 +3292,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines2.force (yyvs2, yyval2, yyvsp2)
 end
 when 181 then
---|#line 1009 "ewg_c_parser.y"
+--|#line 1010 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1009")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1010")
 end
 
 			yyval2 := c_code_from_specifier_qualifier_list (yyvs7.item (yyvsp7))
@@ -3315,9 +3315,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines2.force (yyvs2, yyval2, yyvsp2)
 end
 when 182 then
---|#line 1018 "ewg_c_parser.y"
+--|#line 1019 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1018")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1019")
 end
 
 			create yyval5.make_with_pointers (new_direct_abstract_declarator,
@@ -3337,9 +3337,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines5.force (yyvs5, yyval5, yyvsp5)
 end
 when 183 then
---|#line 1023 "ewg_c_parser.y"
+--|#line 1024 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1023")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1024")
 end
 
 			create yyval5.make (yyvs6.item (yyvsp6), last_header_file_name)
@@ -3358,9 +3358,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines5.force (yyvs5, yyval5, yyvsp5)
 end
 when 184 then
---|#line 1027 "ewg_c_parser.y"
+--|#line 1028 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1027")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1028")
 end
 
 			create yyval5.make_with_pointers (yyvs6.item (yyvsp6), yyvs14.item (yyvsp14), last_header_file_name)
@@ -3380,9 +3380,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines5.force (yyvs5, yyval5, yyvsp5)
 end
 when 185 then
---|#line 1031 "ewg_c_parser.y"
+--|#line 1032 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1031")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1032")
 end
 
 			create yyval5.make_with_pointers (yyvs6.item (yyvsp6), yyvs14.item (yyvsp14), last_header_file_name)
@@ -3404,9 +3404,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines5.force (yyvs5, yyval5, yyvsp5)
 end
 when 186 then
---|#line 1037 "ewg_c_parser.y"
+--|#line 1038 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1037")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1038")
 end
 
 			create yyval5.make_with_pointers (yyvs6.item (yyvsp6), yyvs14.item (yyvsp14), last_header_file_name)
@@ -3428,9 +3428,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines5.force (yyvs5, yyval5, yyvsp5)
 end
 when 187 then
---|#line 1043 "ewg_c_parser.y"
+--|#line 1044 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1043")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1044")
 end
 
 			create yyval5.make (yyvs6.item (yyvsp6), last_header_file_name)
@@ -3451,9 +3451,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines5.force (yyvs5, yyval5, yyvsp5)
 end
 when 188 then
---|#line 1049 "ewg_c_parser.y"
+--|#line 1050 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1049")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1050")
 end
 
 			create yyval5.make_with_pointers (new_direct_abstract_declarator,
@@ -3474,9 +3474,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines5.force (yyvs5, yyval5, yyvsp5)
 end
 when 189 then
---|#line 1058 "ewg_c_parser.y"
+--|#line 1059 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1058")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1059")
 end
 
 			create yyval6.make_anonymous (yyvs5.item (yyvsp5))
@@ -3499,9 +3499,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines6.force (yyvs6, yyval6, yyvsp6)
 end
 when 190 then
---|#line 1065 "ewg_c_parser.y"
+--|#line 1066 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1065")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1066")
 end
 
 			create yyval6.make_abstract
@@ -3521,9 +3521,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines6.force (yyvs6, yyval6, yyvsp6)
 end
 when 191 then
---|#line 1070 "ewg_c_parser.y"
+--|#line 1071 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1070")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1071")
 end
 
 			create yyval6.make_abstract
@@ -3544,9 +3544,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines6.force (yyvs6, yyval6, yyvsp6)
 end
 when 192 then
---|#line 1077 "ewg_c_parser.y"
+--|#line 1078 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1077")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1078")
 end
 
 			yyval6 := yyvs6.item (yyvsp6)
@@ -3558,9 +3558,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines6.force (yyvs6, yyval6, yyvsp6)
 end
 when 193 then
---|#line 1082 "ewg_c_parser.y"
+--|#line 1083 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1082")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1083")
 end
 
 			yyval6 := yyvs6.item (yyvsp6)
@@ -3573,9 +3573,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines6.force (yyvs6, yyval6, yyvsp6)
 end
 when 194 then
---|#line 1087 "ewg_c_parser.y"
+--|#line 1088 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1087")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1088")
 end
 
 			create yyval6.make_abstract
@@ -3595,9 +3595,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines6.force (yyvs6, yyval6, yyvsp6)
 end
 when 195 then
---|#line 1092 "ewg_c_parser.y"
+--|#line 1093 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1092")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1093")
 end
 
 			create yyval6.make_abstract
@@ -3618,9 +3618,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines6.force (yyvs6, yyval6, yyvsp6)
 end
 when 196 then
---|#line 1097 "ewg_c_parser.y"
+--|#line 1098 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1097")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1098")
 end
 
 			yyval6 := yyvs6.item (yyvsp6)
@@ -3632,9 +3632,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines6.force (yyvs6, yyval6, yyvsp6)
 end
 when 197 then
---|#line 1102 "ewg_c_parser.y"
+--|#line 1103 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1102")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1103")
 end
 
 			yyval6 := yyvs6.item (yyvsp6)
@@ -3647,9 +3647,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines6.force (yyvs6, yyval6, yyvsp6)
 end
 when 198 then
---|#line 1110 "ewg_c_parser.y"
+--|#line 1111 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1110")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1111")
 end
 
 
@@ -3667,9 +3667,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines1.force (yyvs1, yyval1, yyvsp1)
 end
 when 199 then
---|#line 1111 "ewg_c_parser.y"
+--|#line 1112 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1111")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1112")
 end
 
 
@@ -3679,9 +3679,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines1.force (yyvs1, yyval1, yyvsp1)
 end
 when 200 then
---|#line 1112 "ewg_c_parser.y"
+--|#line 1113 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1112")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1113")
 end
 
 
@@ -3691,9 +3691,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines1.force (yyvs1, yyval1, yyvsp1)
 end
 when 201 then
---|#line 1116 "ewg_c_parser.y"
+--|#line 1117 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1116")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1117")
 end
 
 
@@ -3702,9 +3702,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines1.force (yyvs1, yyval1, yyvsp1)
 end
 when 202 then
---|#line 1117 "ewg_c_parser.y"
+--|#line 1118 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1117")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1118")
 end
 
 
@@ -3714,9 +3714,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines1.force (yyvs1, yyval1, yyvsp1)
 end
 when 203 then
---|#line 1121 "ewg_c_parser.y"
+--|#line 1122 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1121")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1122")
 end
 
 
@@ -3726,9 +3726,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines1.force (yyvs1, yyval1, yyvsp1)
 end
 when 204 then
---|#line 1127 "ewg_c_parser.y"
+--|#line 1128 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1127")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1128")
 end
 
 
@@ -3746,9 +3746,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines1.force (yyvs1, yyval1, yyvsp1)
 end
 when 205 then
---|#line 1128 "ewg_c_parser.y"
+--|#line 1129 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1128")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1129")
 end
 
 
@@ -3758,9 +3758,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines1.force (yyvs1, yyval1, yyvsp1)
 end
 when 206 then
---|#line 1132 "ewg_c_parser.y"
+--|#line 1133 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1132")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1133")
 end
 
 
@@ -3769,9 +3769,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines1.force (yyvs1, yyval1, yyvsp1)
 end
 when 207 then
---|#line 1133 "ewg_c_parser.y"
+--|#line 1134 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1133")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1134")
 end
 
 
@@ -3781,9 +3781,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines1.force (yyvs1, yyval1, yyvsp1)
 end
 when 208 then
---|#line 1138 "ewg_c_parser.y"
+--|#line 1139 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1138")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1139")
 end
 
 
@@ -3792,9 +3792,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines1.force (yyvs1, yyval1, yyvsp1)
 end
 when 209 then
---|#line 1139 "ewg_c_parser.y"
+--|#line 1140 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1139")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1140")
 end
 
 
@@ -3812,9 +3812,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines1.force (yyvs1, yyval1, yyvsp1)
 end
 when 210 then
---|#line 1143 "ewg_c_parser.y"
+--|#line 1144 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1143")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1144")
 end
 
 disable_implementation_mode
@@ -3826,9 +3826,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines1.force (yyvs1, yyval1, yyvsp1)
 end
 when 211 then
---|#line 1143 "ewg_c_parser.y"
+--|#line 1144 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1143")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1144")
 end
 
 enable_implementation_mode
@@ -3845,9 +3845,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines1.force (yyvs1, yyval1, yyvsp1)
 end
 when 212 then
---|#line 1144 "ewg_c_parser.y"
+--|#line 1145 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1144")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1145")
 end
 
 disable_implementation_mode
@@ -3859,9 +3859,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines1.force (yyvs1, yyval1, yyvsp1)
 end
 when 213 then
---|#line 1144 "ewg_c_parser.y"
+--|#line 1145 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1144")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1145")
 end
 
 enable_implementation_mode
@@ -3878,9 +3878,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines1.force (yyvs1, yyval1, yyvsp1)
 end
 when 214 then
---|#line 1145 "ewg_c_parser.y"
+--|#line 1146 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1145")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1146")
 end
 
 disable_implementation_mode
@@ -3891,9 +3891,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines1.force (yyvs1, yyval1, yyvsp1)
 end
 when 215 then
---|#line 1145 "ewg_c_parser.y"
+--|#line 1146 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1145")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1146")
 end
 
 enable_implementation_mode
@@ -3910,9 +3910,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines1.force (yyvs1, yyval1, yyvsp1)
 end
 when 216 then
---|#line 1146 "ewg_c_parser.y"
+--|#line 1147 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1146")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1147")
 end
 
 disable_implementation_mode
@@ -3923,9 +3923,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines1.force (yyvs1, yyval1, yyvsp1)
 end
 when 217 then
---|#line 1146 "ewg_c_parser.y"
+--|#line 1147 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1146")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1147")
 end
 
 enable_implementation_mode
@@ -3942,9 +3942,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines1.force (yyvs1, yyval1, yyvsp1)
 end
 when 218 then
---|#line 1154 "ewg_c_parser.y"
+--|#line 1155 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1154")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1155")
 end
 
 			push_reporting_type_name_scope
@@ -3962,9 +3962,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines1.force (yyvs1, yyval1, yyvsp1)
 end
 when 219 then
---|#line 1161 "ewg_c_parser.y"
+--|#line 1162 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1161")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1162")
 end
 
 			if type_name_scope_stack.count > 0 then
@@ -3989,9 +3989,9 @@ if yy_parsing_status >= yyContinue then
 	yyspecial_routines1.force (yyvs1, yyval1, yyvsp1)
 end
 when 220 then
---|#line 1175 "ewg_c_parser.y"
+--|#line 1176 "ewg_c_parser.y"
 debug ("GEYACC")
-	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1175")
+	std.error.put_line ("Executing parser user-code from file 'ewg_c_parser.y' at line 1176")
 end
 
 			pop_type_name_scope

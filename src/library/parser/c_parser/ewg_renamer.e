@@ -84,10 +84,12 @@ feature
 			a_type_not_void: a_type /= Void
 			a_type_not_anonymous: not a_type.is_anonymous
 		do
-			Result := upper_lower_to_underscore (a_type.name)
-			Result.to_upper
-			remove_leading_underscores_from_string (Result)
-			Result := escape_keywords (Result)
+			check attached a_type.name as l_name then
+				Result := upper_lower_to_underscore (l_name)
+				Result.to_upper
+				remove_leading_underscores_from_string (Result)
+				Result := escape_keywords (Result)
+			end
 		ensure
 			result_not_void: Result /= Void
 			result_is_valid_eiffel_identifier: is_valid_eiffel_identifier (Result)
@@ -198,9 +200,11 @@ feature
 		require
 			a_function_declaration_not_void: a_function_declaration /= Void
 		do
-			Result := upper_lower_to_underscore(a_function_declaration.declarator)
-			remove_leading_underscores_from_string (Result)
-			Result := escape_keywords (Result)
+			check attached a_function_declaration.declarator as l_declarator then
+				Result := upper_lower_to_underscore(l_declarator)
+				remove_leading_underscores_from_string (Result)
+				Result := escape_keywords (Result)
+			end
 		ensure
 			result_not_void: Result /= Void
 			result_is_valid_eiffel_identifier: is_valid_eiffel_identifier (Result)
@@ -231,10 +235,10 @@ feature
 			declaration_printer.print_declaration_from_type (a_function_type.return_type, "")
 			create declaration_list_printer.make_string (Result, declaration_printer)
 			Result.append_string ("_")
-			if a_function_type.members.count = 0 then
+			if attached  a_function_type.members  as l_members and then l_members.count = 0 then
 				Result.append_string ("void")
-			else
-				declaration_list_printer.print_declaration_list (a_function_type.members)
+			elseif attached  a_function_type.members  as l_members then
+				declaration_list_printer.print_declaration_list (l_members)
 			end
 			Result.to_lower
 			-- TODO: optimize

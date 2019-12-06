@@ -10,12 +10,13 @@ note
 	date: "$Date: 2008-05-14 22:48:16 +0900 (Wed, 14 May 2008) $"
 	revision: "$Revision: 3 $"
 
-class EWG_ABSTRACT_WRAPPER
+deferred class EWG_ABSTRACT_WRAPPER
 
 inherit
 
 	KL_IMPORTED_STRING_ROUTINES
 		export {NONE} all end
+
 
 feature {NONE} -- Initialization
 
@@ -37,7 +38,7 @@ feature {NONE} -- Initialization
 			header_file_name_set: header_file_name = a_header_file_name
 		end
 
-feature
+feature -- Access
 
 	mapped_eiffel_name: STRING
 			-- A name (which must be a valid Eiffel identifier),
@@ -48,7 +49,7 @@ feature
 			-- The header which must be included to have the wrapped C construct
 			-- declared.
 
-feature
+feature -- Rename mapped names
 
 	rename_mapped_eiffel_name
 			-- Rename Eiffel name of wrapper.

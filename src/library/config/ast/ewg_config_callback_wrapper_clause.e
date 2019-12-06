@@ -40,26 +40,19 @@ feature {ANY} -- Basic Routines
 
 	shallow_wrap_type (a_type: EWG_C_AST_TYPE;
 							 a_include_header_file_name: STRING;
-							 a_eiffel_wrapper_set: EWG_EIFFEL_WRAPPER_SET) 
+							 a_eiffel_wrapper_set: EWG_EIFFEL_WRAPPER_SET)
 		local
 			member_list: DS_ARRAYED_LIST [EWG_MEMBER_WRAPPER]
-			pointer_type: EWG_C_AST_POINTER_TYPE
 			callback_wrapper: EWG_CALLBACK_WRAPPER
 		do
-			pointer_type ?= a_type.skip_wrapper_irrelevant_types
-				check
-					pointer_type_not_void: pointer_type /= Void
-				end
-			create member_list.make_default
-
-
-
-			create {EWG_ANSI_C_CALLBACK_WRAPPER} callback_wrapper.make (eiffel_identifier_for_type (pointer_type),
-																							a_include_header_file_name,
-																							pointer_type,
-																							member_list)
-
-			a_eiffel_wrapper_set.add_wrapper (callback_wrapper)
+			if attached {EWG_C_AST_POINTER_TYPE} a_type.skip_wrapper_irrelevant_types as pointer_type then
+				create member_list.make_default
+				create {EWG_ANSI_C_CALLBACK_WRAPPER} callback_wrapper.make (eiffel_identifier_for_type (pointer_type),
+																								a_include_header_file_name,
+																								pointer_type,
+																								member_list)
+				a_eiffel_wrapper_set.add_wrapper (callback_wrapper)
+			end
 		end
 
 	shallow_wrap_declaration (a_declaration: EWG_C_AST_DECLARATION;
@@ -76,42 +69,41 @@ feature {ANY} -- Basic Routines
 						 a_eiffel_wrapper_set: EWG_EIFFEL_WRAPPER_SET;
 						 a_config_system: EWG_CONFIG_SYSTEM)
 		local
-			pointer_type: EWG_C_AST_POINTER_TYPE
 			callback_wrapper: EWG_CALLBACK_WRAPPER
 			function_type: EWG_C_AST_FUNCTION_TYPE
 			cs: DS_BILINEAR_CURSOR [EWG_C_AST_DECLARATION]
 			i: INTEGER
 		do
-			pointer_type ?= a_type.skip_wrapper_irrelevant_types
-				check
-					pointer_type_not_void: pointer_type /= Void
+			if attached {EWG_C_AST_POINTER_TYPE} a_type.skip_wrapper_irrelevant_types as pointer_type then
+				-- TODO:
+				callback_wrapper := a_eiffel_wrapper_set.callback_wrapper_from_callback (pointer_type)
+				function_type := pointer_type.function_type
+				if attached function_type.members as l_members then
+					from
+						cs := l_members.new_cursor
+						cs.start
+					until
+						cs.off
+					loop
+						i := i + 1
+						wrap_callback_parameter (callback_wrapper,
+														 cs.item,
+														 i,
+														 a_include_header_file_name,
+														 a_eiffel_wrapper_set,
+														 a_config_system)
+						cs.forth
+					end
 				end
-			-- TODO:
-			callback_wrapper := a_eiffel_wrapper_set.callback_wrapper_from_callback (pointer_type)
-			function_type := pointer_type.function_type
-			from
-				cs := function_type.members.new_cursor
-				cs.start
-			until
-				cs.off
-			loop
-				i := i + 1
-				wrap_callback_parameter (callback_wrapper,
-												 cs.item,
-												 i,
-												 a_include_header_file_name,
-												 a_eiffel_wrapper_set,
-												 a_config_system)
-				cs.forth
-			end
 
-			if c_system.types.void_type /= function_type.return_type.skip_consts_and_aliases then
-				wrap_callback_return_type (callback_wrapper,
-													a_include_header_file_name,
-													a_eiffel_wrapper_set,
-													a_config_system)
+				if c_system.types.void_type /= function_type.return_type.skip_consts_and_aliases then
+					wrap_callback_return_type (callback_wrapper,
+														a_include_header_file_name,
+														a_eiffel_wrapper_set,
+														a_config_system)
+				end
+				a_config_system.mark_type_completely_wrapped (a_type)
 			end
-			a_config_system.mark_type_completely_wrapped (a_type)
 		end
 
 	deep_wrap_declaration (a_declaration: EWG_C_AST_DECLARATION;
@@ -135,7 +127,7 @@ feature {NONE}
 		require
 			a_callback_wrapper_not_void: a_callback_wrapper /= Void
 			a_parameter_not_void: a_parameter /= Void
-			a_parameter_is_member_of_callback: a_callback_wrapper.c_pointer_type.function_type.members.has (a_parameter)
+			a_parameter_is_member_of_callback: attached a_callback_wrapper.c_pointer_type.function_type.members as l_members and then l_members.has (a_parameter)
 			a_index_greater_equal_one: a_index >= 1
 			a_include_header_file_name_not_void: a_include_header_file_name /= Void
 			a_eiffel_wrapper_set_not_void: a_eiffel_wrapper_set /= Void
@@ -145,12 +137,12 @@ feature {NONE}
 			member_wrapper: EWG_MEMBER_WRAPPER
 			wrappable_type: EWG_C_AST_TYPE
 		do
-			if a_parameter.declarator = Void then
+			if attached a_parameter.declarator as l_declarator then
+				mapped_eiffel_name := eiffel_parameter_name_from_c_parameter_name (l_declarator)
+			else
 				create mapped_eiffel_name.make (("anonymous_").count + 3)
 				mapped_eiffel_name.append_string ("anonymous_")
 				mapped_eiffel_name.append_string (a_index.out)
-			else
-				mapped_eiffel_name := eiffel_parameter_name_from_c_parameter_name (a_parameter.declarator)
 			end
 			wrappable_type := a_parameter.type.skip_wrapper_irrelevant_types
 			a_config_system.force_shallow_wrap_type (a_parameter.type,
@@ -196,25 +188,23 @@ feature {NONE}
 		end
 
 	default_eiffel_identifier_for_type (a_type: EWG_C_AST_TYPE): STRING
-		local
-			pointer_type: EWG_C_AST_POINTER_TYPE
 		do
-			pointer_type ?= a_type
-				check
-					is_pointer_type: pointer_type /= Void
+			check attached {EWG_C_AST_POINTER_TYPE} a_type as pointer_type then
+				if attached pointer_type.closest_alias_type as l_closest_alias_type and then attached l_closest_alias_type.name as l_name then
+					Result := eiffel_feature_name_from_c_function_name (l_name)
+				else
+					Result := eiffel_feature_name_from_c_function_parameters (pointer_type.function_type)
 				end
-			if pointer_type.closest_alias_type /= Void then
-				Result := eiffel_feature_name_from_c_function_name (pointer_type.closest_alias_type.name)
-			else
-				Result := eiffel_feature_name_from_c_function_parameters (pointer_type.function_type)
 			end
 		end
 
 	default_eiffel_identifier_for_declaration (a_declaration: EWG_C_AST_DECLARATION): STRING
 		do
-				check
-					dead_end: False
-				end
+				-- TODO check
+			check
+				dead_end: False
+			end
+			create Result.make_empty
 		end
 
 end

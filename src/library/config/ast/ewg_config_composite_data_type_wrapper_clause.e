@@ -41,38 +41,36 @@ feature {ANY} -- Basic Routines
 						 a_eiffel_wrapper_set: EWG_EIFFEL_WRAPPER_SET;
 						 a_config_system: EWG_CONFIG_SYSTEM)
 		local
-			composite_data_type: EWG_C_AST_COMPOSITE_DATA_TYPE
-			composite_data_wrapper: EWG_COMPOSITE_DATA_WRAPPER
 			cs: DS_BILINEAR_CURSOR [EWG_C_AST_DECLARATION]
 			i: INTEGER
 		do
-			composite_data_type ?= a_type.skip_wrapper_irrelevant_types
-				check
-					composite_data_type_not_void: composite_data_type /= Void
-				end
-			composite_data_wrapper := a_eiffel_wrapper_set.composite_data_wrapper_from_composite_data_type (composite_data_type)
-				check
-					composite_data_wrapper_not_void: composite_data_wrapper /= Void
-				end
+			if
+				attached {EWG_C_AST_COMPOSITE_DATA_TYPE} a_type.skip_wrapper_irrelevant_types as composite_data_type and then
+				attached {EWG_COMPOSITE_DATA_WRAPPER}a_eiffel_wrapper_set.composite_data_wrapper_from_composite_data_type (composite_data_type) as composite_data_wrapper
+			then
+				if composite_data_type.is_complete and then
+					attached composite_data_type.members as l_members
+				then
 
-			if composite_data_type.is_complete then
-				from
-					cs := composite_data_type.members.new_cursor
-					cs.start
-				until
-					cs.off
-				loop
-					i := i + 1
-					wrap_composite_data_type_member (composite_data_wrapper,
-																cs.item,
-																i,
-																a_include_header_file_name,
-																a_eiffel_wrapper_set,
-																a_config_system)
-					cs.forth
+					from
+						cs := l_members.new_cursor
+						cs.start
+					until
+						cs.off
+					loop
+						i := i + 1
+						wrap_composite_data_type_member (composite_data_wrapper,
+																	cs.item,
+																	i,
+																	a_include_header_file_name,
+																	a_eiffel_wrapper_set,
+																	a_config_system)
+						cs.forth
+					end
 				end
+				a_config_system.mark_type_completely_wrapped (a_type)
 			end
-			a_config_system.mark_type_completely_wrapped (a_type)
+
 		end
 
 	deep_wrap_declaration (a_declaration: EWG_C_AST_DECLARATION;
@@ -98,14 +96,13 @@ feature {NONE}
 		require
 			a_composite_data_wrapper_not_void: a_composite_data_wrapper /= Void
 			a_member_not_void: a_member /= Void
-			a_member_is_member_of_composite_data_type: a_composite_data_wrapper.c_composite_data_type.members.has (a_member)
+			a_member_is_member_of_composite_data_type: attached a_composite_data_wrapper.c_composite_data_type.members as l_members and then l_members.has (a_member)
 			a_index_greater_equal_one: a_index >= 1
 			a_include_header_file_name_not_void: a_include_header_file_name /= Void
 			a_eiffel_wrapper_set_not_void: a_eiffel_wrapper_set /= Void
 			a_config_system_not_void: a_config_system /= Void
 		local
 			member_wrapper: EWG_MEMBER_WRAPPER
-			struct_type: EWG_C_AST_STRUCT_TYPE
 			struct_wrapper: EWG_STRUCT_WRAPPER
 			union_wrapper: EWG_UNION_WRAPPER
 			wrappable_type: EWG_C_AST_TYPE
@@ -117,20 +114,20 @@ feature {NONE}
 					a_member.type.based_type_recursive.is_struct_type and
 						a_member.type.total_pointer_indirections = 1
 				then
-					struct_type ?= a_member.type.based_type_recursive
-						check
-							base_must_be_struct: struct_type /= Void
+					if attached {EWG_C_AST_STRUCT_TYPE} a_member.type.based_type_recursive as struct_type  then
+						a_config_system.force_shallow_wrap_type (a_member.type,
+																			  a_include_header_file_name,
+																			  a_eiffel_wrapper_set)
+						-- we have a pointer to a struct (+/- consts and aliases)
+						struct_wrapper := a_eiffel_wrapper_set.struct_wrapper_from_struct_type (struct_type)
+						if attached a_member.declarator as l_declarator then
+							create {EWG_STRUCT_MEMBER_WRAPPER} member_wrapper.make (eiffel_parameter_name_from_c_parameter_name (l_declarator),
+																									  a_include_header_file_name,
+																									  a_member,
+																									  struct_wrapper)
+							a_composite_data_wrapper.add_member (member_wrapper)
 						end
-					a_config_system.force_shallow_wrap_type (a_member.type,
-																		  a_include_header_file_name,
-																		  a_eiffel_wrapper_set)
-					-- we have a pointer to a struct (+/- consts and aliases)
-					struct_wrapper := a_eiffel_wrapper_set.struct_wrapper_from_struct_type (struct_type)
-					create {EWG_STRUCT_MEMBER_WRAPPER} member_wrapper.make (eiffel_parameter_name_from_c_parameter_name (a_member.declarator),
-																							  a_include_header_file_name,
-																							  a_member,
-																							  struct_wrapper)
-					a_composite_data_wrapper.add_member (member_wrapper)
+					end
 				elseif 	a_member.type.based_type_recursive.is_union_type and
 						a_member.type.total_pointer_indirections = 1 then
 					if attached {EWG_C_AST_UNION_TYPE} a_member.type.based_type_recursive as union_type then
@@ -139,11 +136,14 @@ feature {NONE}
 																							  a_eiffel_wrapper_set)
 											-- we have a pointer to a union (+/- consts and aliases)
 						union_wrapper := a_eiffel_wrapper_set.union_wrapper_from_union_type (union_type)
-						create {EWG_UNION_MEMBER_WRAPPER} member_wrapper.make (eiffel_parameter_name_from_c_parameter_name (a_member.declarator),
+						if attached a_member.declarator as l_declarator then
+
+							create {EWG_UNION_MEMBER_WRAPPER} member_wrapper.make (eiffel_parameter_name_from_c_parameter_name (l_declarator),
 																												  a_include_header_file_name,
 																												  a_member,
 																												  union_wrapper)
-						a_composite_data_wrapper.add_member (member_wrapper)
+							a_composite_data_wrapper.add_member (member_wrapper)
+						end
 					end
 				else
 						-- default mapping
@@ -156,10 +156,12 @@ feature {NONE}
 																			  a_include_header_file_name,
 																			  a_eiffel_wrapper_set)
 
-						create {EWG_NATIVE_MEMBER_WRAPPER} member_wrapper.make (eiffel_parameter_name_from_c_parameter_name (a_member.declarator),
+						if attached a_member.declarator as l_declarator then
+							create {EWG_NATIVE_MEMBER_WRAPPER} member_wrapper.make (eiffel_parameter_name_from_c_parameter_name (l_declarator),
 																								  a_include_header_file_name,
 																								  a_member)
-						a_composite_data_wrapper.add_member (member_wrapper)
+							a_composite_data_wrapper.add_member (member_wrapper)
+						end
 					end
 				end
 			else
@@ -172,29 +174,34 @@ feature {NONE}
 					a_config_system.force_shallow_wrap_type (a_member.type,
 																		  a_include_header_file_name,
 																		  a_eiffel_wrapper_set)
+					if attached a_member.declarator as l_declarator then
 
-					create {EWG_NATIVE_MEMBER_WRAPPER} member_wrapper.make (eiffel_parameter_name_from_c_parameter_name (a_member.declarator),
+						create {EWG_NATIVE_MEMBER_WRAPPER} member_wrapper.make (eiffel_parameter_name_from_c_parameter_name (l_declarator),
 																							  a_include_header_file_name,
 																							  a_member)
-					a_composite_data_wrapper.add_member (member_wrapper)
+						a_composite_data_wrapper.add_member (member_wrapper)
+					end
 				end
 			end
 		end
 
 	default_eiffel_identifier_for_type (a_type: EWG_C_AST_TYPE): STRING
 		do
-			if a_type.is_anonymous then
-				Result := eiffel_class_name_from_c_type (a_type.closest_alias_type)
+			if a_type.is_anonymous and then attached a_type.closest_alias_type as l_closest_alias_type then
+				Result := eiffel_class_name_from_c_type (l_closest_alias_type)
 			else
 				Result := eiffel_class_name_from_c_type (a_type)
 			end
 		end
 
-	default_eiffel_identifier_for_declaration (a_declaration: EWG_C_AST_DECLARATION): STRING
+	default_eiffel_identifier_for_declaration (a_declaration: EWG_C_AST_DECLARATION):  STRING
 		do
+					-- TODO check
 				check
 					dead_end: False
 				end
+				create Result.make_empty
+
 		end
 
 end

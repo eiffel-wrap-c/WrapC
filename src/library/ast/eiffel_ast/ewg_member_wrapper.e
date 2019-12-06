@@ -51,17 +51,17 @@ feature {EWG_COMPOSITE_WRAPPER}
 		deferred
 		ensure
 			proposed_feature_name_list_not_void: Result /= Void
-			proposed_feature_name_list_not_has_void: not Result.has (Void)
+--			proposed_feature_name_list_not_has_void: not Result.has (Void)
 			proposed_feature_names_unique: are_names_unique (Result)
 		end
 
 feature {ANY} -- Assertion helpers
 
-	are_names_unique (a_list: DS_LINEAR [STRING]): BOOLEAN 
+	are_names_unique (a_list: DS_LINEAR [STRING]): BOOLEAN
 			-- Are there no two items in `a_list' who have equal names?
 		require
 			a_list_not_void: a_list /= Void
-			a_list_not_has_void: not a_list.has (Void)
+--			a_list_not_has_void: not a_list.has (Void)
 		local
 			name_set: DS_HASH_SET [STRING]
 			cs: DS_LINEAR_CURSOR [STRING]
@@ -87,7 +87,7 @@ feature {ANY} -- Assertion helpers
 
 feature
 
-	composite_wrapper: EWG_COMPOSITE_WRAPPER
+	composite_wrapper: detachable EWG_COMPOSITE_WRAPPER
 			-- Composite wrapper this member belongs to
 
 end

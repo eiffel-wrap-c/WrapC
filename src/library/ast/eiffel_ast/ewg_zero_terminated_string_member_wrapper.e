@@ -43,7 +43,7 @@ feature {NONE} -- Initialization
 			c_declaration_set: c_declaration = a_c_declaration
 		end
 
-feature
+feature -- Access
 
 	c_declaration: EWG_C_AST_DECLARATION
 			-- C declaration to wrap
@@ -55,7 +55,7 @@ feature
 			result_not_void: Result /= Void
 		end
 
-	proposed_feature_name_list: DS_LINEAR [STRING] 
+	proposed_feature_name_list: DS_LINEAR [STRING]
 		local
 			list: DS_LINKED_LIST [STRING]
 		do

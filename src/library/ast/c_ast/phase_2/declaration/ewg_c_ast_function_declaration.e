@@ -39,6 +39,7 @@ feature {NONE} -- Initialisation
 			a_header_file_name_not_empty: a_header_file_name.count > 0
 		do
 			make_declaration (a_declarator, a_function_type, a_header_file_name)
+			internal_type := a_function_type
 		ensure
 			a_declarator_set: declarator = a_declarator
 			a_function_type_set: function_type = a_function_type
@@ -50,12 +51,17 @@ feature {ANY} -- Basic Access
 	function_type: EWG_C_AST_FUNCTION_TYPE
 			-- function type
 		do
-			Result ?= type
+			Result := internal_type
 		ensure
 			function_type_not_void: Result /= Void
-			function_type_is_type: function_type = type
+			function_type_is_type: function_type = internal_type
 		end
 
+feature  {NONE}-- Access
+
+		internal_type: EWG_C_AST_FUNCTION_TYPE
+				-- Workaround
+				-- using anchoring type cause a Cat-Call.
 feature {ANY}
 
 	is_function_declaration: BOOLEAN
@@ -65,15 +71,12 @@ feature {ANY}
 
 feature {ANY} -- Comparsion
 
-	is_same_declaration  (other: EWG_C_AST_DECLARATION): BOOLEAN 
+	is_same_declaration  (other: EWG_C_AST_DECLARATION): BOOLEAN
 			-- Two function declarations are considered equal if their name is
 			-- equal. This simplification can be made, because there is no
 			-- function overloading in C.
-		local
-			other_function_declaration: EWG_C_AST_FUNCTION_DECLARATION
 		do
-			other_function_declaration ?= other
-			if other_function_declaration /= Void then
+			if attached {EWG_C_AST_FUNCTION_DECLARATION} other as other_function_declaration then
 				Result := string_equality_tester.test (declarator, other_function_declaration.declarator)
 			end
 		end

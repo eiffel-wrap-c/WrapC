@@ -39,7 +39,9 @@ feature {NONE} -- Initialization
 			parameters.put (a_containing_element.name, 1)
 			parameters.put (an_attribute_name, 2)
 			parameters.put (a_position.out, 3)
-			parameters.put (a_containing_element.attribute_by_name (an_attribute_name).value, 4)
+			if attached a_containing_element.attribute_by_name (an_attribute_name) as l_an_attribute_name then
+				parameters.put (l_an_attribute_name.value, 4)
+			end
 			parameters.put (a_error_message, 5)
 			parameters.put (a_error_position.out, 6)
 		end

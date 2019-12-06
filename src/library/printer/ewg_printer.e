@@ -12,9 +12,13 @@ note
 
 class EWG_PRINTER
 
+create
+	make,
+	make_string
+
 feature {NONE} -- Initialization
 
-	make (an_output_stream: like output_stream) 
+	make (an_output_stream: like output_stream)
 			-- Create new printer with `a_output_stream' as output stream.
 		require
 			an_output_stream_not_void: an_output_stream /= Void
@@ -48,7 +52,7 @@ feature -- Setting
 		do
 			output_stream := an_output_stream
 		ensure
-			ssssoutput_stream_set: output_stream = an_output_stream
+			output_stream_set: output_stream = an_output_stream
 		end
 
 	set_string (an_output_string: STRING)

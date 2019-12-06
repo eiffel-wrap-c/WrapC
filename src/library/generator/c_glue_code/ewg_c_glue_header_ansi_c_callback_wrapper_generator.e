@@ -113,33 +113,35 @@ feature {NONE} -- Implementation
 			declaration: EWG_C_AST_DECLARATION
 			cs: DS_LINEAR_CURSOR [EWG_C_AST_DECLARATION]
 		do
-			create members.make (a_callback_wrapper.c_pointer_type.function_type.members.count + 1)
-			create declaration.make ("a_class",
-											 c_system.types.void_pointer_type,
-											 directory_structure.relative_callback_c_glue_header_file_name)
-			members.force_last (declaration)
-			from
-				cs := a_callback_wrapper.c_pointer_type.function_type.members.new_cursor
-				cs.start
-			until
-				cs.off
-			loop
-				create declaration.make (cs.item.declarator, cs.item.type,
+			if attached a_callback_wrapper.c_pointer_type.function_type.members as l_members then
+				create members.make (l_members.count + 1)
+				create declaration.make ("a_class",
+												 c_system.types.void_pointer_type,
 												 directory_structure.relative_callback_c_glue_header_file_name)
 				members.force_last (declaration)
-				cs.forth
+				from
+					cs := l_members.new_cursor
+					cs.start
+				until
+					cs.off
+				loop
+					create declaration.make (cs.item.declarator, cs.item.type,
+													 directory_structure.relative_callback_c_glue_header_file_name)
+					members.force_last (declaration)
+					cs.forth
+				end
+				create function.make (directory_structure.relative_callback_c_glue_header_file_name,
+											 a_callback_wrapper.c_pointer_type.function_type.return_type,
+											 members)
+				create function_pointer.make (directory_structure.relative_callback_c_glue_header_file_name,
+														function)
+				declarator := a_callback_wrapper.mapped_eiffel_name.twin
+				declarator.append_string ("_eiffel_feature")
+				output_stream.put_string ("typedef ")
+				declaration_printer.print_declaration_from_type (function_pointer, declarator)
+				output_stream.put_line (";")
+				output_stream.put_new_line
 			end
-			create function.make (directory_structure.relative_callback_c_glue_header_file_name,
-										 a_callback_wrapper.c_pointer_type.function_type.return_type,
-										 members)
-			create function_pointer.make (directory_structure.relative_callback_c_glue_header_file_name,
-													function)
-			declarator := a_callback_wrapper.mapped_eiffel_name.twin
-			declarator.append_string ("_eiffel_feature")
-			output_stream.put_string ("typedef ")
-			declaration_printer.print_declaration_from_type (function_pointer, declarator)
-			output_stream.put_line (";")
-			output_stream.put_new_line
 		end
 
 	generate_stub_getter_prototype (a_callback_wrapper: EWG_CALLBACK_WRAPPER)
@@ -188,31 +190,33 @@ feature {NONE} -- Implementation
 			declaration: EWG_C_AST_DECLARATION
 			cs: DS_LINEAR_CURSOR [EWG_C_AST_DECLARATION]
 		do
-			create members.make (a_callback_wrapper.c_pointer_type.function_type.members.count + 1)
-			create declaration.make ("a_function",
-											 c_system.types.void_pointer_type,
-											 directory_structure.relative_callback_c_glue_header_file_name)
-			members.force_last (declaration)
-			from
-				cs := a_callback_wrapper.c_pointer_type.function_type.members.new_cursor
-				cs.start
-			until
-				cs.off
-			loop
-				create declaration.make (cs.item.declarator, cs.item.type,
+			if attached a_callback_wrapper.c_pointer_type.function_type.members as l_members  then
+				create members.make (l_members.count + 1)
+				create declaration.make ("a_function",
+												 c_system.types.void_pointer_type,
 												 directory_structure.relative_callback_c_glue_header_file_name)
 				members.force_last (declaration)
-				cs.forth
-			end
-			create function.make (directory_structure.relative_callback_c_glue_header_file_name,
-										 a_callback_wrapper.c_pointer_type.function_type.return_type,
-										 members)
+				from
+					cs := l_members.new_cursor
+					cs.start
+				until
+					cs.off
+				loop
+					create declaration.make (cs.item.declarator, cs.item.type,
+													 directory_structure.relative_callback_c_glue_header_file_name)
+					members.force_last (declaration)
+					cs.forth
+				end
+				create function.make (directory_structure.relative_callback_c_glue_header_file_name,
+											 a_callback_wrapper.c_pointer_type.function_type.return_type,
+											 members)
 
-			declarator := "call_"
-			declarator.append_string (a_callback_wrapper.mapped_eiffel_name)
-			declaration_printer.print_declaration_from_type (function, declarator)
-			output_stream.put_line (";")
-			output_stream.put_new_line
+				declarator := "call_"
+				declarator.append_string (a_callback_wrapper.mapped_eiffel_name)
+				declaration_printer.print_declaration_from_type (function, declarator)
+				output_stream.put_line (";")
+				output_stream.put_new_line
+			end
 		end
 
 	parameter_list_printer: EWG_C_DECLARATION_LIST_PRINTER

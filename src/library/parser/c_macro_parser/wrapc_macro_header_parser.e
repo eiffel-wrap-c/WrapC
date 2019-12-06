@@ -44,6 +44,11 @@ feature {NONE} -- Initialization
 			create last_type.make_empty
 			create last_value.make_empty
 			create {ARRAYED_LIST [TUPLE [constant:STRING; type: STRING; value: STRING]]} constants.make (5)
+			compile_integer_regex
+			compile_double_regex
+			compile_hexa_regex
+			compile_integer_expression
+			compile_double_expression
 		end
 
 feature -- Parser
@@ -92,11 +97,6 @@ feature {NONE} -- Parser implementation
 			else
 				create error_description.make_from_string ("File is not readable or does not exist at path: " + path.out)
 			end
-			compile_integer_regex
-			compile_double_regex
-			compile_hexa_regex
-			compile_integer_expression
-			compile_double_expression
 		end
 
 	finalize

@@ -75,7 +75,7 @@ feature {NONE} -- Initialisation
 
 feature {ANY} -- Basic Access
 
-	last_type: EWG_C_AST_TYPE
+	last_type: detachable EWG_C_AST_TYPE
 			-- Last type added to the set
 
 feature {ANY} -- Status checkers
@@ -90,7 +90,7 @@ feature {ANY} -- Status checkers
 		end
 
 
-	find_struct_by_name (a_name: STRING): EWG_C_AST_STRUCT_TYPE
+	find_struct_by_name (a_name: STRING): detachable EWG_C_AST_STRUCT_TYPE
 			-- Looks if a struct with the name `a_name' is already
 			-- in the set. If this is the case, return that type.
 			-- otherwise return `Void'.
@@ -103,7 +103,7 @@ feature {ANY} -- Status checkers
 			end
 		end
 
-	find_enum_by_name (a_name: STRING): EWG_C_AST_ENUM_TYPE
+	find_enum_by_name (a_name: STRING): detachable EWG_C_AST_ENUM_TYPE
 			-- Looks if a enum with the name `a_name' is already
 			-- in the set. If this is the case, return that type.
 			-- otherwise return `Void'.
@@ -116,7 +116,7 @@ feature {ANY} -- Status checkers
 			end
 		end
 
-	find_union_by_name (a_name: STRING): EWG_C_AST_UNION_TYPE
+	find_union_by_name (a_name: STRING): detachable EWG_C_AST_UNION_TYPE
 			-- Looks if a union with the name `a_name' is already
 			-- in the set. If this is the case, return that type.
 			-- otherwise return `Void'.
@@ -129,7 +129,7 @@ feature {ANY} -- Status checkers
 			end
 		end
 
-	find_primitive_by_name (a_name: STRING): EWG_C_AST_PRIMITIVE_TYPE
+	find_primitive_by_name (a_name: STRING): detachable EWG_C_AST_PRIMITIVE_TYPE
 			-- Looks if a primitive with the name `a_name' is already
 			-- in the set. If this is the case, return that type.
 			-- otherwise return `Void'.
@@ -143,7 +143,7 @@ feature {ANY} -- Status checkers
 		end
 
 
-	find_alias_by_name (a_name: STRING): EWG_C_AST_ALIAS_TYPE
+	find_alias_by_name (a_name: STRING): detachable EWG_C_AST_ALIAS_TYPE
 			-- Looks if a alias with the name `a_name' is already
 			-- in the set. If this is the case, return that type.
 			-- otherwise return `Void'.
@@ -156,7 +156,7 @@ feature {ANY} -- Status checkers
 			end
 		end
 
-	find_function_by_name (a_name: STRING): EWG_C_AST_FUNCTION_TYPE
+	find_function_by_name (a_name: STRING): detachable EWG_C_AST_FUNCTION_TYPE
 			-- Looks if a function with the name `a_name' is already
 			-- in the set. If this is the case, return that type.
 			-- otherwise return `Void'.
@@ -336,7 +336,7 @@ feature {ANY} -- Expensive Status checkers that may be disabled
 			-- enabled.
 		require
 			a_list_not_void: a_list /= Void
-			a_list_not_has_void: not a_list.has (Void)
+--			a_list_not_has_void: not a_list.has (Void)
 		local
 			a_already_checked: DS_LINKED_LIST [EWG_C_AST_TYPE]
 		do
@@ -384,17 +384,6 @@ feature {ANY} -- Add/Remove types
 		require
 			a_type_not_void: a_type /= Void
 			nested_types_in_set: nested_types_of_type_in_set_recursive (a_type)
-		local
-			struct: EWG_C_AST_STRUCT_TYPE
-			enum: EWG_C_AST_ENUM_TYPE
-			union: EWG_C_AST_UNION_TYPE
-			primitive: EWG_C_AST_PRIMITIVE_TYPE
-			a_alias: EWG_C_AST_ALIAS_TYPE
-			array: EWG_C_AST_ARRAY_TYPE
-			const: EWG_C_AST_CONST_TYPE
-			pointer: EWG_C_AST_POINTER_TYPE
-			function: EWG_C_AST_FUNCTION_TYPE
-			eiffel: EWG_C_AST_EIFFEL_OBJECT_TYPE
 		do
 			type_table.search (a_type)
 			if type_table.found then
@@ -409,42 +398,33 @@ feature {ANY} -- Add/Remove types
 				-- TODO: now what if because of a redefinition a type gets removed from
 				-- the system, that is references by another type... this will bring trouble:
 				-- investigate further
-				if not a_type.is_anonymous then
-					struct ?= a_type
-					union ?= a_type
-					enum ?= a_type
-					primitive ?= a_type
-					a_alias ?= a_type
-					array ?= a_type
-					const ?= a_type
-					pointer ?= a_type
-					function ?= a_type
-					eiffel ?= a_type
-					if struct /= Void then
-						named_struct_table.force (struct, a_type.name)
-					elseif union /= Void then
-						named_union_table.force (union, a_type.name)
-					elseif enum /= Void then
-						named_enum_table.force (enum, a_type.name)
-					elseif primitive /= Void then
-						named_primitive_table.force (primitive, a_type.name)
-					elseif a_alias /= Void then
-						named_alias_table.force (a_alias, a_type.name)
-					elseif array /= Void then
+--				if not a_type.is_anonymous then
+				if attached a_type.name as l_name then -- not a_type.is_anonymous
+					if attached {EWG_C_AST_STRUCT_TYPE} a_type as struct then
+						named_struct_table.force (struct, l_name)
+					elseif attached {EWG_C_AST_UNION_TYPE} a_type as union then
+						named_union_table.force (union, l_name)
+					elseif attached {EWG_C_AST_ENUM_TYPE} a_type as enum then
+						named_enum_table.force (enum, l_name)
+					elseif attached {EWG_C_AST_PRIMITIVE_TYPE} a_type as primitive then
+						named_primitive_table.force (primitive, l_name)
+					elseif attached {EWG_C_AST_ALIAS_TYPE} a_type as a_alias then
+						named_alias_table.force (a_alias, l_name)
+					elseif attached {EWG_C_AST_ARRAY_TYPE} a_type as array then
 							check
 								arrays_are_anonymous: False
 							end
-					elseif const /= Void then
+					elseif attached {EWG_C_AST_CONST_TYPE} a_type as const then
 							check
 								consts_are_anonymous: False
 							end
-					elseif pointer /= Void then
+					elseif attached {EWG_C_AST_POINTER_TYPE} a_type as pointer then
 							check
 								pointers_are_anonymous: False
 							end
-					elseif function /= Void then
-						named_function_table.force (function, a_type.name)
-					elseif eiffel /= Void then
+					elseif attached {EWG_C_AST_FUNCTION_TYPE} a_type as function then
+						named_function_table.force (function, l_name)
+					elseif attached {EWG_C_AST_EIFFEL_OBJECT_TYPE} a_type as eiffel then
 							check
 								eiffel_object_types_are_anonymous: False
 							end
@@ -453,9 +433,9 @@ feature {ANY} -- Add/Remove types
 			end
 		ensure
 			last_type_not_void: last_type /= Void
-			last_type_in_set: has (last_type)
-			type_type_in_set_recursive: has_recursive (last_type)
-			last_type_equal_to_a_type: type_equality_tester.test (last_type, a_type)
+			last_type_in_set: attached last_type as l_type implies has (l_type)
+			type_type_in_set_recursive: attached last_type as l_type implies has_recursive (l_type)
+			last_type_equal_to_a_type: attached last_type as l_type implies type_equality_tester.test (l_type, a_type)
 		end
 
 	remove_type (a_type: EWG_C_AST_TYPE)
@@ -466,55 +446,34 @@ feature {ANY} -- Add/Remove types
 			a_type_not_void: a_type /= Void
 			a_type_in_set: has (a_type)
 			a_type_removable: is_type_removable (a_type)
-		local
-			struct: EWG_C_AST_STRUCT_TYPE
-			enum: EWG_C_AST_ENUM_TYPE
-			union: EWG_C_AST_UNION_TYPE
-			primitive: EWG_C_AST_PRIMITIVE_TYPE
-			a_alias: EWG_C_AST_ALIAS_TYPE
-			array: EWG_C_AST_ARRAY_TYPE
-			const: EWG_C_AST_CONST_TYPE
-			pointer: EWG_C_AST_POINTER_TYPE
-			function: EWG_C_AST_FUNCTION_TYPE
-			eiffel: EWG_C_AST_EIFFEL_OBJECT_TYPE
 		do
 			type_table.remove (a_type)
-			if not a_type.is_anonymous then
-				struct ?= a_type
-				union ?= a_type
-				enum ?= a_type
-				primitive ?= a_type
-				a_alias ?= a_type
-				array ?= a_type
-				const ?= a_type
-				pointer ?= a_type
-				function ?= a_type
-				eiffel ?= a_type
-				if struct /= Void then
-					named_struct_table.remove (a_type.name)
-				elseif union /= Void then
-					named_union_table.remove (a_type.name)
-				elseif enum /= Void then
-					named_enum_table.remove (a_type.name)
-				elseif primitive /= Void then
-					named_primitive_table.remove (a_type.name)
-				elseif a_alias /= Void then
-					named_alias_table.remove (a_type.name)
-				elseif array /= Void then
+			if attached a_type.name as l_name then  -- not not a_type.is_anonymous
+				if attached {EWG_C_AST_STRUCT_TYPE} a_type as struct then
+					named_struct_table.remove (l_name)
+				elseif attached {EWG_C_AST_UNION_TYPE} a_type as union then
+					named_union_table.remove (l_name)
+				elseif attached {EWG_C_AST_ENUM_TYPE} a_type as enum then
+					named_enum_table.remove (l_name)
+				elseif attached {EWG_C_AST_PRIMITIVE_TYPE} a_type as primitive  then
+					named_primitive_table.remove (l_name)
+				elseif attached {EWG_C_AST_ALIAS_TYPE} a_type as a_alias then
+					named_alias_table.remove (l_name)
+				elseif attached {EWG_C_AST_ARRAY_TYPE} a_type as array then
 							check
 								arrays_are_anonymous: False
 							end
-				elseif const /= Void then
+				elseif attached {EWG_C_AST_CONST_TYPE} a_type as const then
 							check
 								consts_are_anonymous: False
 							end
-				elseif pointer /= Void then
+				elseif attached {EWG_C_AST_POINTER_TYPE} a_type as pointer then
 							check
 								pointers_are_anonymous: False
 							end
-				elseif function /= Void then
-					named_function_table.remove (a_type.name)
-				elseif eiffel /= Void then
+				elseif attached {EWG_C_AST_FUNCTION_TYPE} a_type as function /= Void then
+					named_function_table.remove (l_name)
+				elseif attached {EWG_C_AST_EIFFEL_OBJECT_TYPE} a_type as eiffel then
 						check
 							eiffel_object_types_are_anonymous: False
 						end
@@ -538,14 +497,14 @@ feature {NONE} -- Implementation helpers for queries
 			until
 				cs.off
 			loop
-				if not cs.item.is_anonymous then
+				if not cs.item.is_anonymous and then attached cs.item.name as l_name then
 					if
-						not named_struct_table.has (cs.item.name) and
-										named_enum_table.has (cs.item.name) and
-										named_union_table.has (cs.item.name) and
-										named_primitive_table.has (cs.item.name) and
-										named_alias_table.has (cs.item.name) and
-										named_function_table.has (cs.item.name)
+						not named_struct_table.has (l_name) and
+										named_enum_table.has (l_name) and
+										named_union_table.has (l_name) and
+										named_primitive_table.has (l_name) and
+										named_alias_table.has (l_name) and
+										named_function_table.has (l_name)
 					then
 						Result := False
 						cs.go_after
@@ -596,7 +555,7 @@ feature {NONE} -- Implementation helpers for queries
 			-- the set. This is to avoid infinite recursion.
 		require
 			a_already_checked_not_void: a_already_checked /= Void
-			a_already_checked_not_has_void: not a_already_checked.has (Void)
+--			a_already_checked_not_has_void: not a_already_checked.has (Void)
 		local
 			cs: DS_BILINEAR_CURSOR [EWG_C_AST_TYPE]
 		do
@@ -627,9 +586,9 @@ feature {NONE} -- Implementation helpers for queries
 			-- the set. This is to avoid infinite recursion.
 		require
 			a_list_not_void: a_list /= Void
-			a_list_not_has_void: not a_list.has (Void)
+--			a_list_not_has_void: not a_list.has (Void)
 			a_already_checked_not_void: a_already_checked /= Void
-			a_already_checked_not_has_void: not a_already_checked.has (Void)
+--			a_already_checked_not_has_void: not a_already_checked.has (Void)
 		local
 			cs: DS_BILINEAR_CURSOR [EWG_C_AST_TYPE]
 		do
@@ -714,7 +673,7 @@ invariant
 	named_enum_table_not_void: named_enum_table /= Void
 	named_primitve_table_not_void: named_primitive_table /= Void
 	named_alias_table_not_void: named_alias_table /= Void
-	has_not_void: not type_table.has (Void)
+--	has_not_void: not type_table.has (Void)
 	all_items_of_all_named_tables_in_type_table: all_items_of_all_named_tables_in_type_table
 	all_named_items_of_type_table_in_named_table: all_named_items_of_type_table_in_named_table
 

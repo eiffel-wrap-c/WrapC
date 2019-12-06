@@ -28,7 +28,7 @@ inherit
 
 feature {NONE} -- Creation
 
-	make (a_name: STRING; a_header_file_name: STRING; a_base: EWG_C_AST_TYPE)
+	make (a_name: detachable STRING; a_header_file_name: STRING; a_base: EWG_C_AST_TYPE)
 		require
 			a_header_file_name_not_void: a_header_file_name /= Void
 			a_base_not_void: a_base /= Void
@@ -96,14 +96,11 @@ feature {ANY}
 			-- indirect base of `Current'.
 		require
 			a_type_not_void: a_type /= Void
-		local
-			base_based_type: EWG_C_AST_BASED_TYPE
 		do
 			if base = a_type then
 				Result := True
 			else
-				base_based_type ?= base
-				if base_based_type /= Void then
+				if attached {EWG_C_AST_BASED_TYPE} base as base_based_type then
 					Result := base_based_type.has_type_as_base_indirect (a_type)
 				end
 			end
@@ -117,14 +114,11 @@ feature {ANY}
 			-- array or pointer types "in between".
 		require
 			a_type_not_void: a_type /= Void
-		local
-			base_based_type: EWG_C_AST_BASED_TYPE
 		do
 			if base = a_type then
 				Result := True
 			else
-				base_based_type ?= base
-				if base_based_type /= Void then
+				if attached {EWG_C_AST_BASED_TYPE} base as base_based_type then
 					Result := base_based_type.has_type_as_base_indirect (a_type)
 				end
 			end
@@ -138,14 +132,11 @@ feature {ANY}
 		require
 			a_type_not_void: a_type /= Void
 			a_type_has_current_as_base_indirect: has_type_as_base_indirect (a_type)
-		local
-			base_based_type: EWG_C_AST_BASED_TYPE
 		do
 			if base = a_type then
 				Result := 0
 			else
-				base_based_type ?= base
-				if base_based_type /= Void then
+				if attached {EWG_C_AST_BASED_TYPE} base as base_based_type then
 					Result := number_of_pointer_or_array_types_between_current_and_type_recursive (a_type, 0)
 				end
 			end
@@ -155,7 +146,7 @@ feature {ANY}
 
 feature {EWG_C_AST_BASED_TYPE} -- Implementation
 
-	number_of_pointer_or_array_types_between_current_and_type_recursive (a_type: EWG_C_AST_TYPE; a_indirections: INTEGER): INTEGER 
+	number_of_pointer_or_array_types_between_current_and_type_recursive (a_type: EWG_C_AST_TYPE; a_indirections: INTEGER): INTEGER
 		require
 			a_type_not_void: a_type /= Void
 			a_type_has_current_as_base_indirect: has_type_as_base_indirect (a_type)

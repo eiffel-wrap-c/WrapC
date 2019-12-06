@@ -1,5 +1,17 @@
-#ifndef __EWG_SIMPLE_HEADER__
+﻿#ifndef __EWG_SIMPLE_HEADER__
 #define __EWG_SIMPLE_HEADER__
+
+typedef union
+{
+  int a;
+} foo1;
+
+typedef enum
+{
+  red,
+  blue,
+  green
+} colors;
 
 struct preferences {
 	const char * food;
@@ -17,17 +29,6 @@ struct foo
   int a,b,*pc;
 };
 
-typedef union
-{
-  int a;
-} foo1;
-
-typedef enum
-{
-  red,
-  blue,
-  green
-} colors;
 
 void func1 (int a, int b);
 

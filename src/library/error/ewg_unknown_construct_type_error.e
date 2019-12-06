@@ -34,11 +34,13 @@ feature {NONE} -- Initialization
 			an_element_not_void: an_element /= Void
 			an_element_has_option_as_name: STRING_.same_string (an_element.name, type_element_name)
 			an_element_has_name_attribute: an_element.has_attribute_by_name (name_attribute_name)
-			a_name_attribute_not_empty: an_element.attribute_by_name (name_attribute_name).value.count > 0
+			a_name_attribute_not_empty: attached an_element.attribute_by_name (name_attribute_name) as l_name_attribute_name implies l_name_attribute_name.value.count > 0
 			a_position_not_void: a_position /= Void
 		do
 			create parameters.make_filled ("", 1, 2)
-			parameters.put (an_element.attribute_by_name (name_attribute_name).value, 1)
+			if attached an_element.attribute_by_name (name_attribute_name) as l_name_attribute_name then
+				parameters.put (l_name_attribute_name.value, 1)
+			end
 			parameters.put (a_position.out, 2)
 		end
 

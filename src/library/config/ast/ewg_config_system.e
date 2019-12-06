@@ -37,11 +37,11 @@ feature {NONE} -- Initialization
 			create rule_macro_list.make_default
 			create shallow_wrapped_type_table.make_map_default
 			create deeply_wrapped_table.make_default
-			create directory_structure.make (Current)
 			create function_address.make (10)
 			function_address.compare_objects
 			create function_excludes.make (10)
 			function_excludes.compare_objects
+			create directory_structure.make (Current)
 		end
 
 feature {ANY} -- Access
@@ -547,7 +547,7 @@ invariant
 	output_directory_name_not_void: output_directory_name /= Void
 	rule_list_not_void: rule_list /= Void
 	rule_macro_list_not_void: rule_macro_list /= Void
-	rule_list_not_has_empty: not rule_list.has (Void)
+--	rule_list_not_has_empty: not rule_list.has (Void)
 	default_wrapper_clause_not_void: default_wrapper_clause /= Void
 	eiffel_wrapper_set_not_void: eiffel_wrapper_set /= Void
 	directory_structure_not_void: directory_structure /= Void

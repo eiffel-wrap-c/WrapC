@@ -52,10 +52,10 @@ feature
 				check
 					todo: False
 				end
-				--parameters := a_callback_wrapper.c_pointer_type.function_type.parameter_declarations
-				if a_callback_wrapper.c_pointer_type.function_type.members.count > 0 then
-					parameters_with_comma := parameters.twin
-					parameters_with_comma.prepend (", ")
+--				parameters := a_callback_wrapper.c_pointer_type.function_type.parameter_declarations
+				if attached a_callback_wrapper.c_pointer_type.function_type.members as l_members  and then l_members.count > 0 then
+					parameters_with_comma := (", ")
+--					parameters_with_comma.prepend (", ")
 				else
 					parameters_with_comma := ""
 				end

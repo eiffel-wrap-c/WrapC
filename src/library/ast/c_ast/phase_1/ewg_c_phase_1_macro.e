@@ -53,7 +53,7 @@ feature
 			a_name_not_void: a_name /= Void
 			a_definition_not_void: a_definition /= Void
 			a_arguments_not_void: a_arguments /= Void
-			a_arguments_has_no_void_item: not a_arguments.has (Void)
+--			a_arguments_has_no_void_item: not a_arguments.has (Void)
 		do
 			name := a_name
 			arguments := a_arguments
@@ -64,7 +64,7 @@ feature
 		require
 			a_name_not_void: a_name /= Void
 			a_arguments_not_void: a_arguments /= Void
-			a_arguments_has_no_void_item: not a_arguments.has (Void)
+--			a_arguments_has_no_void_item: not a_arguments.has (Void)
 		do
 			name := a_name
 			arguments := a_arguments
@@ -117,6 +117,6 @@ invariant
 
 	arguments_not_void: arguments /= Void
 
-	arguments_has_no_void_item: not arguments.has (Void)
+--	arguments_has_no_void_item: not arguments.has (Void)
 
 end

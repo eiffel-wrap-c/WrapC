@@ -47,7 +47,9 @@ feature {NONE} -- Initialisation
 		do
 			make (a_prefix)
 			create output_string.make (20)
-			create {KL_STRING_OUTPUT_STREAM} output_stream.make (output_string)
+			if attached output_string as l_output_string then
+				create {KL_STRING_OUTPUT_STREAM} output_stream.make (l_output_string)
+			end
 		ensure
 			prefix_set: prefixx = a_prefix
 			output_string_not_void: output_string /= Void
@@ -56,10 +58,10 @@ feature {NONE} -- Initialisation
 
 feature {ANY} -- Access
 
-	output_stream: KI_CHARACTER_OUTPUT_STREAM
+	output_stream: detachable KI_CHARACTER_OUTPUT_STREAM
 			-- Output stream to append next unique name to
 
-	output_string: STRING
+	output_string: detachable STRING
 			-- Output string. Only valid when `Current' was created with
 			-- `make_with_string_stream'. Note that with multiple calls to
 			-- `generate_new_name' the generated names will be appended to
@@ -80,15 +82,17 @@ feature {ANY} -- Basic operations
 			output_stream_set: output_stream = a_output_stream
 		end
 
-	generate_new_name 
+	generate_new_name
 			-- Generate new unique name and append it to
 			-- `output_stream'.
 		require
 			output_stream_not_void: output_stream /= Void
 		do
-			index := index + 1
-			output_stream.put_string (prefixx)
-			output_stream.put_integer (index)
+			if attached output_stream as l_output_stream then
+				index := index + 1
+				l_output_stream.put_string (prefixx)
+				l_output_stream.put_integer (index)
+			end
 		end
 
 feature {NONE} -- Implementation

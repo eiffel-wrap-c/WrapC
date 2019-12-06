@@ -69,7 +69,7 @@ feature -- Status
 			valid_construct_type_code: is_valid_construct_type_code (Result)
 		end
 
-	construct_type_name_from_code (a_code: INTEGER): STRING
+	construct_type_name_from_code (a_code: INTEGER): detachable STRING
 			-- Construct type name from construct type code
 		require
 			a_code_valid_construct_type_code: is_valid_construct_type_code (a_code)
@@ -90,8 +90,8 @@ feature -- Status
 				end
 			end
 		ensure
-			construct_type_name_not_void: Result /= Void
-			construct_type_name_valid: is_valid_construct_type_name (Result)
+--			construct_type_name_not_void: Result /= Void
+			construct_type_name_valid: attached Result implies is_valid_construct_type_name (Result)
 		end
 
 feature {NONE} -- Implementation
@@ -110,7 +110,7 @@ feature {NONE} -- Implementation
 			Result.put_new (macro_code, macro_name)
 		ensure
 			construct_type_name_table_not_void: Result /= Void
-			construct_type_name_table_doesnt_have_void_name: not Result.has (Void)
+--			construct_type_name_table_doesnt_have_void_name: not Result.has (Void)
 		end
 
 

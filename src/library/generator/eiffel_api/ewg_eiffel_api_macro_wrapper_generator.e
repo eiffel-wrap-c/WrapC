@@ -44,7 +44,7 @@ feature {NONE}
 			a_class_name_not_void: a_class_name /= Void
 			a_macro_declaration_list_not_void: a_macro_declaration_list /= Void
 			a_macro_declaration_list_not_empty: a_macro_declaration_list.count > 0
-			a_macro_declaration_list_not_has_void: not a_macro_declaration_list.has (Void)
+--			a_macro_declaration_list_not_has_void: not a_macro_declaration_list.has (Void)
 		local
 			cs: DS_LINKED_LIST_CURSOR [EWG_MACRO_WRAPPER]
 			class_name: STRING

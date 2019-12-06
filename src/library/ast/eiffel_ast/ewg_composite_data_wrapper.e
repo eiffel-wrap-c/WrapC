@@ -24,6 +24,9 @@ inherit
 			make as make_abstract_wrapper
 		end
 
+create
+	make
+
 feature {NONE} -- Initialization
 
 	make (a_mapped_eiffel_name: STRING; a_header_file_name: STRING;
@@ -37,8 +40,8 @@ feature {NONE} -- Initialization
 			a_c_composite_data_type_not_void: a_c_composite_data_type /= Void
 			a_members_not_void: a_members /= Void
 		do
-			make_composite_wrapper (a_mapped_eiffel_name, a_header_file_name, a_members)
 			c_composite_data_type := a_c_composite_data_type
+			make_composite_wrapper (a_mapped_eiffel_name, a_header_file_name, a_members)
 		ensure
 			mapped_eiffel_name_set: mapped_eiffel_name = a_mapped_eiffel_name
 			header_file_name_set: header_file_name = a_header_file_name
@@ -46,12 +49,12 @@ feature {NONE} -- Initialization
 			members_set: members = a_members
 		end
 
-feature
+feature -- Access 
 
 	c_composite_data_type: EWG_C_AST_COMPOSITE_DATA_TYPE
 			-- C type to wrapp
 
-	type: EWG_C_AST_TYPE 
+	type: EWG_C_AST_TYPE
 		do
 			Result := c_composite_data_type
 		end

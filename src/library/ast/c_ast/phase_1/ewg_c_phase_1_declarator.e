@@ -24,9 +24,17 @@ inherit
 create
 
 	make,
-	make_with_pointers
+	make_with_pointers,
+	make_default
 
-feature
+feature -- Intialization
+
+	make_default
+		do
+			create direct_declarator.make ("Void")
+			create header_file_name.make_empty
+			create pointers.make
+		end
 
 	make (a_direct_declarator: EWG_C_PHASE_1_DIRECT_DECLARATOR; a_header_file_name: STRING)
 		require
@@ -95,7 +103,7 @@ feature
 
 feature
 
-	name: STRING
+	name: detachable STRING
 		require
 			not_abstract: not is_abstract
 		do

@@ -152,16 +152,19 @@ feature {NONE}
 
 	default_eiffel_identifier_for_type (a_type: EWG_C_AST_TYPE): STRING
 		do
-				check
-					dead_end: False
-				end
+
+			check
+				dead_end: False
+			end
+			create Result.make_empty
 		end
 
 	default_eiffel_identifier_for_declaration (a_declaration: EWG_C_AST_DECLARATION): STRING
 		do
-				check
-					dead_end: False
-				end
+			check
+				dead_end: False
+			end
+			create Result.make_empty
 		end
 
 	struct_wrapper_clause: EWG_CONFIG_STRUCT_WRAPPER_CLAUSE

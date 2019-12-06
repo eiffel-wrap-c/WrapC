@@ -12,7 +12,7 @@ note
 class EWG
 
 inherit
-	EWG_KERNAL
+	EWG_KERNEL
 		redefine
 			make,
 			process_arguments
@@ -62,18 +62,20 @@ feature -- Basic Operations
 
 	process_c_compiler_options
 			--<Precursor>
+		local
+			l_compiler_options: like compiler_options
 		do
 			if match_long_option ("c_compile_options") then
 				if is_next_option_long_option and then has_next_option_value then
-					compiler_options := next_option_value
+					l_compiler_options := next_option_value
 					consume_option
 					from
 
 					until
 						 match_long_option ("script_pre_process") or  match_long_option ("script_post_process") or match_long_option ("output-dir") or  match_long_option ("full-header") or not has_next_option
 					loop
-						compiler_options.append (" ")
-						compiler_options.append (next_option_value)
+						l_compiler_options.append (" ")
+						l_compiler_options.append (next_option_value)
 						consume_option
 					end
 				else
@@ -82,6 +84,7 @@ feature -- Basic Operations
 					exceptions_die
 				end
 			end
+			compiler_options := l_compiler_options
 		end
 
 	process_extension_scripts_options
@@ -151,21 +154,22 @@ feature -- Basic Operations
 			end
 
 			create l_path.make_from_string (header_file_name)
-			header_file_name := l_path.entry.out
+			if attached  l_path.entry as l_entry  then
+				header_file_name := l_entry.out
 
-
-			if match_long_option ("config") then
-				if is_next_option_long_option and then has_next_option_value then
-					config_file_name := next_option_value
-					consume_option
-				else
-					report_missing_command_line_parameter_value_error ("--config=<...>")
-					report_usage_error
-					exceptions_die
+				if match_long_option ("config") then
+					if is_next_option_long_option and then has_next_option_value then
+						config_file_name := next_option_value
+						consume_option
+					else
+						report_missing_command_line_parameter_value_error ("--config=<...>")
+						report_usage_error
+						exceptions_die
+					end
 				end
 			end
-
 			create config_system.make (header_file_name)
+
 		end
 
 	exceptions_die
