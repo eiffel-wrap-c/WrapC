@@ -419,9 +419,7 @@ feature {NONE} -- Implementation
 					-- definitly the name of the declarator.
 					-- It might still be `Void' though, then it we have an
 					-- anonymoys declarator. No problem though.
-					if attached a_declarator.direct_declarator.name as l_name  then
-						create last_declaration.make (l_name, l_last_type, a_declarator.header_file_name)
-					end
+					create last_declaration.make (a_declarator.direct_declarator.name, l_last_type, a_declarator.header_file_name)
 				end
 			end
 

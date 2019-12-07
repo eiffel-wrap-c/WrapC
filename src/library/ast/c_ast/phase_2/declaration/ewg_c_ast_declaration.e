@@ -25,7 +25,7 @@ create
 
 feature {NONE} -- Initialisation
 
-	make (a_declarator: detachable STRING; a_type: EWG_C_AST_TYPE; a_header_file_name: STRING)
+	make (a_declarator: detachable STRING; a_type: like type; a_header_file_name: STRING)
 			-- Create a new declaration with the
 			-- declarator `a_declarator' and the type resp. signature
 			-- `a_type'.
@@ -64,7 +64,7 @@ feature {ANY} -- Access
 
 feature {ANY} -- Setting
 
-	set_type (a_type: EWG_C_AST_TYPE)
+	set_type (a_type: like type)
 			-- Make `a_type' the new `type'.
 		require
 			a_type_not_void: a_type /= Void

@@ -19,7 +19,8 @@ inherit
 			make as make_declaration
 		redefine
 			is_same_declaration,
-			is_function_declaration
+			is_function_declaration,
+			type
 		end
 
 create
@@ -39,7 +40,6 @@ feature {NONE} -- Initialisation
 			a_header_file_name_not_empty: a_header_file_name.count > 0
 		do
 			make_declaration (a_declarator, a_function_type, a_header_file_name)
-			internal_type := a_function_type
 		ensure
 			a_declarator_set: declarator = a_declarator
 			a_function_type_set: function_type = a_function_type
@@ -51,17 +51,15 @@ feature {ANY} -- Basic Access
 	function_type: EWG_C_AST_FUNCTION_TYPE
 			-- function type
 		do
-			Result := internal_type
+			Result := type
 		ensure
 			function_type_not_void: Result /= Void
-			function_type_is_type: function_type = internal_type
+			function_type_is_type: function_type = type
 		end
 
 feature  {NONE}-- Access
 
-		internal_type: EWG_C_AST_FUNCTION_TYPE
-				-- Workaround
-				-- using anchoring type cause a Cat-Call.
+		type: EWG_C_AST_FUNCTION_TYPE
 feature {ANY}
 
 	is_function_declaration: BOOLEAN
