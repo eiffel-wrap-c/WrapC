@@ -63,14 +63,17 @@ feature
 			--        : `name' = "unsigned int"
 		require
 			a_type_not_void: a_type /= Void
+		local
+			l_name: like name
 		do
-			if name = Void then
-				name := a_type.name
-			elseif attached a_type.name as l_type_name and then
-					attached name as l_name then
-				name := STRING_.concat (l_name, " ")
-				name := STRING_.concat (l_name, l_type_name)
+			l_name := name
+			if l_name = Void then
+				l_name := a_type.name
+			elseif attached a_type.name as l_type_name then
+				l_name := STRING_.concat (l_name, " ")
+				l_name := STRING_.concat (l_name, l_type_name)
 			end
+			name := l_name
 		end
 
 
