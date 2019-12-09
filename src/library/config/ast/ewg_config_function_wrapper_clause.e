@@ -44,11 +44,8 @@ feature {ANY} -- Access
 		end
 
 	accepts_declaration (a_declaration: EWG_C_AST_DECLARATION): BOOLEAN
-		local
-			function_declaration: EWG_C_AST_FUNCTION_DECLARATION
 		do
-			function_declaration ?= a_declaration
-			Result := function_declaration /= Void
+			Result := attached {EWG_C_AST_FUNCTION_DECLARATION} a_declaration
 		end
 
 feature {ANY} -- Setting

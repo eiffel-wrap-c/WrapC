@@ -115,7 +115,6 @@ feature {NONE} -- Implementation
 			a_position_table_not_void: a_position_table /= Void
 		local
 			cs: DS_BILINEAR_CURSOR [XM_NODE]
-			child: XM_ELEMENT
 		do
 			if attached an_element.attribute_by_name (name_attribute_name) as l_name_attribute_name then
 				a_config_system.set_name (l_name_attribute_name.value)
@@ -126,8 +125,7 @@ feature {NONE} -- Implementation
 			until
 				cs.after
 			loop
-				child ?= cs.item
-				if child /= Void then
+				if attached {XM_ELEMENT} cs.item as child then
 					if STRING_.same_string (child.name, rule_list_element_name) then
 						fill_config_system_with_rule_list (a_config_system, child, a_position_table)
 					end
@@ -145,7 +143,6 @@ feature {NONE} -- Implementation
 			a_position_table_not_void: a_position_table /= Void
 		local
 			cs: DS_BILINEAR_CURSOR [XM_NODE]
-			child: XM_ELEMENT
 		do
 			cs := a_rule_list_element.new_cursor
 			from
@@ -153,8 +150,7 @@ feature {NONE} -- Implementation
 			until
 				cs.after
 			loop
-				child ?= cs.item
-				if child /= Void then
+				if attached {XM_ELEMENT} cs.item as child then
 					if STRING_.same_string (child.name, rule_element_name) then
 						add_rule_to_config_system (a_config_system, child, a_position_table)
 					end

@@ -162,7 +162,7 @@ feature {NONE}
 							dead_end: False
 						end
 				end
-		output_stream.put_new_line
+				output_stream.put_new_line
 			end
 		end
 

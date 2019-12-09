@@ -151,14 +151,11 @@ feature {EWG_C_AST_BASED_TYPE} -- Implementation
 			a_type_not_void: a_type /= Void
 			a_type_has_current_as_base_indirect: has_type_as_base_indirect (a_type)
 			a_indirections_greater_equal_zero: a_indirections >= 0
-		local
-			base_based_type: EWG_C_AST_BASED_TYPE
 		do
 			if base = a_type then
 				Result := a_indirections
 			else
-				base_based_type ?= base
-				if base_based_type /= Void then
+				if attached {EWG_C_AST_BASED_TYPE} base as base_based_type then
 					Result := base_based_type.number_of_pointer_or_array_types_between_current_and_type_recursive (a_type, a_indirections)
 				end
 			end

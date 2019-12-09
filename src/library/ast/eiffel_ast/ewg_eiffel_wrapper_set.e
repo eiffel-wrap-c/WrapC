@@ -62,7 +62,6 @@ feature {ANY}
 			-- should be generated using ffcall support
 		local
 			cs: DS_BILINEAR_CURSOR [EWG_CALLBACK_WRAPPER]
-			ffcall_wrapper: EWG_FFCALL_CALLBACK_WRAPPER
 		do
 			from
 				cs := callback_wrapper_table.new_cursor
@@ -70,8 +69,7 @@ feature {ANY}
 			until
 				cs.off
 			loop
-				ffcall_wrapper ?= cs.item
-				if ffcall_wrapper /= Void then
+				if attached {EWG_FFCALL_CALLBACK_WRAPPER} cs.item as ffcall_wrapper then
 					Result := True
 					cs.go_after
 				end

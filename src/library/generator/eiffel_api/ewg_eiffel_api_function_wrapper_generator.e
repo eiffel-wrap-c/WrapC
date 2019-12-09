@@ -243,8 +243,6 @@ feature {NONE} -- Generate Eiffel High Level Access
 			a_function_wrapper_not_void: a_function_wrapper /= Void
 		local
 			cs: DS_BILINEAR_CURSOR [EWG_MEMBER_WRAPPER]
-			native_member_wrapper: EWG_NATIVE_MEMBER_WRAPPER
-			zero_terminated_string_member_wrapper: EWG_ZERO_TERMINATED_STRING_MEMBER_WRAPPER
 		do
 			output_stream.put_string ("%T" + a_function_wrapper.mapped_eiffel_name)
 
@@ -257,12 +255,10 @@ feature {NONE} -- Generate Eiffel High Level Access
 				until
 					cs.off
 				loop
-					native_member_wrapper ?= cs.item
-					if native_member_wrapper /= Void then
+					if attached {EWG_NATIVE_MEMBER_WRAPPER} cs.item as native_member_wrapper then
 						generate_signature_parameter_for_native_member_wrapper (native_member_wrapper)
 					end
-					zero_terminated_string_member_wrapper ?= cs.item
-					if zero_terminated_string_member_wrapper /= Void then
+					if attached {EWG_ZERO_TERMINATED_STRING_MEMBER_WRAPPER} cs.item as zero_terminated_string_member_wrapper then
 						generate_signature_parameter_for_zero_terminated_string_member_wrapper (zero_terminated_string_member_wrapper)
 					end
 					if not cs.is_last then
@@ -449,8 +445,6 @@ feature {NONE} -- Generate Eiffel Routine calls
 			a_function_wrapper_not_void: a_function_wrapper /= Void
 		local
 			cs: DS_BILINEAR_CURSOR [EWG_MEMBER_WRAPPER]
-			native_member_wrapper: EWG_NATIVE_MEMBER_WRAPPER
-			zero_terminated_string_member_wrapper: EWG_ZERO_TERMINATED_STRING_MEMBER_WRAPPER
 		do
 			output_stream.put_string ("c_" +a_function_wrapper.mapped_eiffel_name )
 
@@ -463,12 +457,10 @@ feature {NONE} -- Generate Eiffel Routine calls
 				until
 					cs.off
 				loop
-					native_member_wrapper ?= cs.item
-					if native_member_wrapper /= Void then
+					if attached {EWG_NATIVE_MEMBER_WRAPPER} cs.item as  native_member_wrapper then
 						generate_routine_call_parameter_for_native_member_wrapper (native_member_wrapper)
 					end
-					zero_terminated_string_member_wrapper ?= cs.item
-					if zero_terminated_string_member_wrapper /= Void then
+					if attached {EWG_ZERO_TERMINATED_STRING_MEMBER_WRAPPER} cs.item as  zero_terminated_string_member_wrapper then
 						generate_routine_call_parameter_for_zero_terminated_string_member_wrapper (zero_terminated_string_member_wrapper)
 					end
 					if not cs.is_last then
@@ -586,8 +578,6 @@ feature {NONE} -- Eiffel to C call preparation
 			a_function_wrapper_not_void: a_function_wrapper /= Void
 		local
 			cs: DS_BILINEAR_CURSOR [EWG_MEMBER_WRAPPER]
-			native_member_wrapper: EWG_NATIVE_MEMBER_WRAPPER
-			zero_terminated_string_member_wrapper: EWG_ZERO_TERMINATED_STRING_MEMBER_WRAPPER
 		do
 			if attached a_function_wrapper.function_declaration.function_type.members as l_members and then l_members.count > 0 then
 				from
@@ -596,12 +586,10 @@ feature {NONE} -- Eiffel to C call preparation
 				until
 					cs.off
 				loop
-					native_member_wrapper ?= cs.item
-					if native_member_wrapper /= Void then
+					if attached {EWG_NATIVE_MEMBER_WRAPPER} cs.item as native_member_wrapper then
 						generate_routine_call_preparation_for_native_member_wrapper (native_member_wrapper)
 					end
-					zero_terminated_string_member_wrapper ?= cs.item
-					if zero_terminated_string_member_wrapper /= Void then
+					if attached {EWG_ZERO_TERMINATED_STRING_MEMBER_WRAPPER} cs.item as zero_terminated_string_member_wrapper then
 						generate_routine_call_preparation_for_zero_terminated_string_member_wrapper (zero_terminated_string_member_wrapper)
 					end
 					cs.forth
@@ -659,8 +647,6 @@ feature {NONE} -- Generate Eiffel locals
 			a_function_wrapper_not_void: a_function_wrapper /= Void
 		local
 			cs: DS_BILINEAR_CURSOR [EWG_MEMBER_WRAPPER]
-			native_member_wrapper: EWG_NATIVE_MEMBER_WRAPPER
-			zero_terminated_string_member_wrapper: EWG_ZERO_TERMINATED_STRING_MEMBER_WRAPPER
 		do
 --			if is_local_needed (a_function_wrapper) or has_function_out_parameter (a_function_wrapper) then
 			if is_local_needed (a_function_wrapper) then
@@ -673,15 +659,13 @@ feature {NONE} -- Generate Eiffel locals
 					until
 						cs.off
 					loop
-						native_member_wrapper ?= cs.item
-						if native_member_wrapper /= Void then
+						if attached {EWG_NATIVE_MEMBER_WRAPPER} cs.item as native_member_wrapper then
 							generate_local_for_native_member_wrapper (native_member_wrapper)
 						end
 --						if native_member_wrapper /= Void and then has_function_out_parameter (a_function_wrapper) then
 --							generate_local_for_out_parameter (a_function_wrapper, native_member_wrapper)
 --						end
-						zero_terminated_string_member_wrapper ?= cs.item
-						if zero_terminated_string_member_wrapper /= Void then
+						if attached {EWG_ZERO_TERMINATED_STRING_MEMBER_WRAPPER} cs.item as zero_terminated_string_member_wrapper then
 							generate_local_for_zero_terminated_string_member_wrapper (zero_terminated_string_member_wrapper)
 						end
 						cs.forth
@@ -739,7 +723,6 @@ feature {NONE} -- Generate Eiffel locals
 	is_local_needed (a_function_wrapper: EWG_FUNCTION_WRAPPER ): BOOLEAN
 		local
 			cs: DS_BILINEAR_CURSOR [EWG_MEMBER_WRAPPER]
-			zero_terminated_string_member_wrapper: EWG_ZERO_TERMINATED_STRING_MEMBER_WRAPPER
 		do
 			if attached a_function_wrapper.function_declaration.function_type.members as l_members and then l_members.count > 0 then
 				from
@@ -748,8 +731,7 @@ feature {NONE} -- Generate Eiffel locals
 				until
 					cs.off or else Result
 				loop
-					zero_terminated_string_member_wrapper ?= cs.item
-					if zero_terminated_string_member_wrapper /= Void then
+					if attached {EWG_ZERO_TERMINATED_STRING_MEMBER_WRAPPER} cs.item as zero_terminated_string_member_wrapper then
 						Result := True
 					end
 					cs.forth
