@@ -67,7 +67,6 @@ feature -- Basic Ops: Primary
 			file: KL_TEXT_INPUT_FILE
 			rule: EWG_CONFIG_RULE
 			matching_clause: EWG_CONFIG_MATCHING_CLAUSE
-			wrapper_clause: EWG_CONFIG_DEFAULT_WRAPPER_CLAUSE
 		do
 			if config_file_name /= Void then
 				create parser.make (error_handler)
@@ -82,8 +81,7 @@ feature -- Basic Ops: Primary
 				end
 			else
 				create matching_clause.make
-				create wrapper_clause.make
-				create rule.make (matching_clause, wrapper_clause)
+				create rule.make (matching_clause, create {EWG_CONFIG_DEFAULT_WRAPPER_CLAUSE}.make)
 				config_system.append_rule (rule)
 			end
 			if error_handler.has_error then
@@ -310,7 +308,7 @@ feature -- Basic Ops: Sub-supporting
 							error_handler.report_info_message (l_cmd)
 								-- To be updated.
 							l_index := l_result.error_output.index_of ('.', 1) - 1
-							l_name := l_result.error_output.substring (1, l_index)
+							l_name := l_result.error_output.to_string_8.substring (1, l_index)
 							l_name.append_string ("_cpp.h")
 							cpp_header_file_name := l_name.twin
 							create l_file.make_create_read_write (l_name)
@@ -376,7 +374,7 @@ feature -- Execute Plugin scripts
 						report_info_message ("[Execute pre process script]")
 					else
 						-- Error
-						report_info_message (l_result.error_output)
+						report_info_message (l_result.error_output.to_string_8)
 					end
 				else
 					report_info_message ("Script not found " + l_script )
@@ -394,7 +392,7 @@ feature -- Execute Plugin scripts
 						report_info_message ("[Execute post process script]")
 					else
 						-- Error
-						report_info_message (l_result.error_output)
+						report_info_message (l_result.error_output.to_string_8)
 					end
 				else
 					report_info_message ("Script not found " + l_script )

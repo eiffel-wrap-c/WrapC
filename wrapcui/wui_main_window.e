@@ -242,13 +242,10 @@ feature {NONE} -- GUI Actions
 			l_dir: DIRECTORY
 			l_message: STRING
 			l_msg: EV_MESSAGE_DIALOG
-			l_memory: MEMORY
 			l_file_utilities: FILE_UTILITIES
 		do
-			create l_memory
-			l_memory.collect
 			create l_message.make_empty
-			create l_config_system.make (full_header_textbox.text)
+			create l_config_system.make (full_header_textbox.text.to_string_8)
 			create l_dir_structure.make (l_config_system)
 				-- c
 			create l_dir.make_with_name (output_dir_textbox.text + {OPERATING_ENVIRONMENT}.Directory_separator.out + l_dir_structure.config_system.directory_structure.c_directory_name)
@@ -267,11 +264,11 @@ feature {NONE} -- GUI Actions
 				l_message := "There was nothing to clean."
 			end
 			create l_msg.make_with_text (l_message)
-			l_msg.set_buttons_and_actions (<<"OK">>, <<agent l_msg.destroy_and_exit_if_last>>)
+			l_msg.set_buttons_and_actions ({ARRAY [READABLE_STRING_GENERAL]} <<"OK">>, <<agent l_msg.destroy_and_exit_if_last>>)
 			l_msg.show_modal_to_window (Current)
 			rescue
 				create l_msg.make_with_text (clean_exception_msg)
-				l_msg.set_buttons_and_actions (<<"OK">>, <<agent l_msg.destroy_and_exit_if_last>>)
+				l_msg.set_buttons_and_actions ({ARRAY [READABLE_STRING_GENERAL]} <<"OK">>, <<agent l_msg.destroy_and_exit_if_last>>)
 				l_msg.show_modal_to_window (Current)
 		end
 
@@ -410,7 +407,7 @@ feature {NONE} -- GUI Actions Support
 			l_path_string: STRING
 			l_list: LIST [STRING]
 		do
-			l_path_string := full_header_textbox.text.twin
+			l_path_string := full_header_textbox.text.to_string_8.twin
 			l_list := l_path_string.split ({OPERATING_ENVIRONMENT}.Directory_separator)
 			l_path_string.remove_tail (l_list [l_list.count].count + 1)
 			create l_dir.make (l_path_string)
@@ -419,14 +416,8 @@ feature {NONE} -- GUI Actions Support
 
 	has_output_dir: BOOLEAN
 			-- Does `output_dir_textbox' have directory?
-		local
-			l_dir: DIRECTORY
-			l_path_string: STRING
-			l_list: LIST [STRING]
 		do
-			l_path_string := output_dir_textbox.text.twin
-			create l_dir.make (l_path_string)
-			Result := l_dir.exists
+			Result := (create {DIRECTORY}.make (output_dir_textbox.text.to_string_8.twin)).exists
 		end
 
 feature {WUI_EWG} -- GUI Components
@@ -528,7 +519,6 @@ feature -- Menu: GUI Actions
 		local
 			l_file: PLAIN_TEXT_FILE
 			l_open: EV_FILE_OPEN_DIALOG
-			l_factory: XML_PARSER_FACTORY
 			l_content,
 			l_local_part,
 			l_local_part_content: STRING
@@ -545,8 +535,7 @@ feature -- Menu: GUI Actions
 				l_content := l_file.last_string
 				l_file.close
 					-- parse it
-				create l_factory
-				l_parser := l_factory.new_standard_parser
+				l_parser := (create {XML_PARSER_FACTORY}).new_standard_parser
 				create l_callbacks
 				l_parser.set_callbacks (l_callbacks)
 				l_parser.parse_from_string (l_content)
@@ -554,8 +543,8 @@ feature -- Menu: GUI Actions
 				across
 					l_callbacks.contents as ic
 				loop
-					l_local_part := ic.item.local_part
-					l_local_part_content := ic.item.content
+					l_local_part := ic.item.local_part.to_string_8
+					l_local_part_content := ic.item.content.to_string_8
 					if l_local_part.same_string ("config") then
 						do_nothing
 					elseif l_local_part.same_string ("full_header") then
@@ -652,7 +641,7 @@ feature -- Menu: GUI Actions
 			l_msg: EV_MESSAGE_DIALOG
 		do
 			create l_msg.make_with_text ("Eiffel Sotware WrapC-UI%NCopyright 2019 (c)")
-			l_msg.set_buttons_and_actions (<<"OK">>, <<agent l_msg.destroy_and_exit_if_last>>)
+			l_msg.set_buttons_and_actions ({ARRAY [READABLE_STRING_GENERAL]} <<"OK">>, <<agent l_msg.destroy_and_exit_if_last>>)
 			l_msg.show_modal_to_window (Current)
 		end
 

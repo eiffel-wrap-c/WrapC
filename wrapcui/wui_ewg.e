@@ -33,7 +33,7 @@ feature -- Basic Ops: Sub-supporting
 			-- `process_c_compiler_options'.
 		do
 			if not main_window.c_compile_textbox.text.is_empty then
-				compiler_options := main_window.c_compile_textbox.text
+				compiler_options := main_window.c_compile_textbox.text.to_string_8
 				report_info_message ("Set compiler options.")
 			else
 				report_info_message ("No compiler options.")
@@ -44,13 +44,13 @@ feature -- Basic Ops: Sub-supporting
 			-- `process_extension_scripts_options'.
 		do
 			if not main_window.script_pre_textbox.text.is_empty then
-				script_pre_process := main_window.script_pre_textbox.text
+				script_pre_process := main_window.script_pre_textbox.text.to_string_8
 				report_info_message ("Set pre-process script options.")
 			else
 				report_info_message ("No pre-process script options.")
 			end
 			if not main_window.script_post_textbox.text.is_empty then
-				script_post_process := main_window.script_post_textbox.text
+				script_post_process := main_window.script_post_textbox.text.to_string_8
 				report_info_message ("Set post-process script options.")
 			else
 				report_info_message ("No pre-process script options.")
@@ -64,13 +64,13 @@ feature -- Basic Ops: Sub-supporting
 			l_path: PATH
 		do
 			if not main_window.output_dir_textbox.text.is_empty then
-				output_directory_name := main_window.output_dir_textbox.text
+				output_directory_name := main_window.output_dir_textbox.text.to_string_8
 				report_info_message ("Set output directory option.")
 			else
 				report_info_message ("No output directory option.")
 			end
 			if not main_window.full_header_textbox.text.is_empty then
-				full_header_file_name := main_window.full_header_textbox.text
+				full_header_file_name := main_window.full_header_textbox.text.to_string_8
 				l_header_file_name := full_header_file_name.twin
 
 				create l_path.make_from_string (l_header_file_name)
@@ -82,7 +82,7 @@ feature -- Basic Ops: Sub-supporting
 				report_info_message ("No full-header option.")
 			end
 			if not main_window.config_file_textbox.text.is_empty then
-				config_file_name := main_window.config_file_textbox.text
+				config_file_name := main_window.config_file_textbox.text.to_string_8
 				report_info_message ("Set config file option.")
 			else
 				report_info_message ("No config file option.")
