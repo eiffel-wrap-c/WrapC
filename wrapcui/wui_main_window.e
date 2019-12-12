@@ -36,7 +36,7 @@ feature {NONE} -- Initialization
 
 			create full_header_box
 			create full_header_textbox
-			create full_header_label.make_with_text ("--full_header=<...>")
+			create full_header_label.make_with_text ("Full_header=<...>")
 			full_header_label.select_actions.force (agent on_full_header_label_link_click)
 			full_header_label.set_tooltip ("Command Line Options Help - see full-header option")
 			create full_header_button.make_with_text_and_action ("...", agent on_full_header_click)
@@ -44,7 +44,7 @@ feature {NONE} -- Initialization
 
 			create output_dir_box
 			create output_dir_textbox
-			create output_dir_label.make_with_text ("--output-dir=<...>")
+			create output_dir_label.make_with_text ("Output-dir=<...>")
 			output_dir_label.select_actions.force (agent on_output_dir_label_link_click)
 			output_dir_label.set_tooltip ("Command Line Options Help - see output-dir option")
 			create output_dir_button.make_with_text_and_action ("...", agent on_output_dir_click)
@@ -52,7 +52,7 @@ feature {NONE} -- Initialization
 
 			create cmd_box
 			create run_wrapc_cmd_button.make_with_text_and_action ("Run", agent on_run_wrapc_cmd_button_click)
-			create clean_generated_files_button.make_with_text_and_action ("Clean", agent on_clean_generated_files_button_click)
+			create clean_generated_files_checkbox.make_with_text ("Clean")
 
 			create c_compile_box
 			create c_compile_textbox
@@ -107,8 +107,12 @@ feature {NONE} -- Initialization
 			output_dir_box.extend (output_dir_label)
 			output_dir_box.extend (output_dir_textbox)
 			output_dir_box.extend (output_dir_button)
+			output_dir_box.extend (clean_generated_files_checkbox)
+			clean_generated_files_checkbox.disable_sensitive
+			clean_generated_files_checkbox.set_tooltip ("Clean generated files before Run.")
 			output_dir_box.disable_item_expand (output_dir_label)
 			output_dir_box.disable_item_expand (output_dir_button)
+			output_dir_box.disable_item_expand (clean_generated_files_checkbox)
 			output_dir_box.set_border_width (3)
 			output_dir_box.set_padding_width (3)
 			output_dir_textbox.set_tooltip ("Directory where generated files will be placed.%NLocation of the target Eiffel application folder.")
@@ -160,18 +164,13 @@ feature {NONE} -- Initialization
 			main_box.extend (output_box)
 			output_box.extend (output_text)
 
-				-- Clean & Run buttons
+				-- Run button
 			main_box.extend (cmd_box)
 			cmd_box.extend (create {EV_CELL})
-				-- Clean
-			cmd_box.extend (clean_generated_files_button)
-			clean_generated_files_button.disable_sensitive
-				-- Run
 			cmd_box.extend (run_wrapc_cmd_button)
 			run_wrapc_cmd_button.disable_sensitive
 			cmd_box.extend (create {EV_CELL})
 			cmd_box.disable_item_expand (run_wrapc_cmd_button)
-			cmd_box.disable_item_expand (clean_generated_files_button)
 			cmd_box.set_border_width (3)
 			cmd_box.set_padding_width (3)
 			main_box.disable_item_expand (cmd_box)
@@ -228,8 +227,8 @@ feature {NONE} -- GUI Actions
 			config_file_textbox.set_text (l_file_open.file_name)
 		end
 
-	on_clean_generated_files_button_click
-			-- What happens when user clicks `clean_generated_files_button'.
+	on_clean_generated_files_button_checked
+			-- What happens when user clicks `clean_generated_files_checkbox'.
 		note
 			design: "[
 				1. Delete generated files from previous WrapC `run'.
@@ -279,6 +278,9 @@ feature {NONE} -- GUI Actions
 			l_ewg: WUI_EWG
 			l_msg: EV_MESSAGE_DIALOG
 		do
+			if clean_generated_files_checkbox.is_selected then
+				on_clean_generated_files_button_checked
+			end
 			create l_ewg.make_with_window (Current)
 		end
 
@@ -288,6 +290,9 @@ feature {NONE} -- GUI Actions
 		
 		Save your current configuration (if needed) and then re-open the app and
 		then click Clean. Closing the app will release any open file-handles.
+		
+		NOTE: There will be an error message right after closing this dialog.
+				Click the "Ignore" button to continue safely.
 		]"
 
 	on_full_header_textbox_focus_out
@@ -388,9 +393,9 @@ feature {NONE} -- GUI Actions Support
 			end
 
 			if has_output_dir then
-				clean_generated_files_button.enable_sensitive
+				clean_generated_files_checkbox.enable_sensitive
 			else
-				clean_generated_files_button.disable_sensitive
+				clean_generated_files_checkbox.disable_sensitive
 			end
 		end
 
@@ -435,7 +440,7 @@ feature {WUI_EWG} -- GUI Components
 	output_dir_button: EV_BUTTON
 
 	cmd_box: EV_HORIZONTAL_BOX
-	clean_generated_files_button,
+	clean_generated_files_checkbox: EV_CHECK_BUTTON
 	run_wrapc_cmd_button: EV_BUTTON
 
 	c_compile_box: EV_HORIZONTAL_BOX
