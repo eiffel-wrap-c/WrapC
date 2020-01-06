@@ -58,6 +58,7 @@ feature {NONE} -- Initialization
 			run
 		end
 
+
 feature -- Basic Ops: Primary
 
 	parse_config_file
@@ -68,16 +69,16 @@ feature -- Basic Ops: Primary
 			rule: EWG_CONFIG_RULE
 			matching_clause: EWG_CONFIG_MATCHING_CLAUSE
 		do
-			if config_file_name /= Void then
+			if attached config_file_name as l_config_file_name then
 				create parser.make (error_handler)
-				create file.make (config_file_name)
+				create file.make (l_config_file_name)
 				file.open_read
 				if file.is_open_read then
 					parser.parse_file (file, config_system)
 					file.close
 				else
-					report_cannot_read_error (config_file_name)
-					Exceptions.die (1)
+					report_cannot_read_error (l_config_file_name)
+					exceptions_die
 				end
 			else
 				create matching_clause.make
@@ -85,8 +86,10 @@ feature -- Basic Ops: Primary
 				config_system.append_rule (rule)
 			end
 			if error_handler.has_error then
-				report_quitting_because_of_config_file_errors_error (config_file_name)
-				exceptions_die
+				if attached config_file_name as l_config_file_name then
+					report_quitting_because_of_config_file_errors_error (l_config_file_name)
+					exceptions_die
+				end
 			end
 		ensure
 			has_directory_structure: attached config_system.directory_structure as al_dir_structure
@@ -102,10 +105,13 @@ feature -- Basic Ops: Primary
 				Once we arrive here, the options have either been parsed from 
 				the CLI options or set in the GUI objects.
 				]"
+		local
+			l_c_parser: like c_parser
+			l_c_macro_parser: like c_macro_parser
 		do
-			create c_parser.make (error_handler)
+			create l_c_parser.make (error_handler)
 			if is_msc_extension_enabled then
-				c_parser.enable_msc_extensions
+				l_c_parser.enable_msc_extensions
 			end
 			create post_parser_processor.make (error_handler)
 			create eiffel_wrapper_builder.make (error_handler,
@@ -122,16 +128,16 @@ feature -- Basic Ops: Primary
 				report_info_message ("expensive phase 2 assertions enabled")
 			end
 
-			if attached cpp_header_file_name then
+			if attached cpp_header_file_name as l_cpp_header_file_name then
 				preprocess_file
 					-- parsing (creates C AST)
-				c_parser.parse_file (cpp_header_file_name)
-				c_parser.print_summary
-				c_parser := Void
+				l_c_parser.parse_file (l_cpp_header_file_name)
+				l_c_parser.print_summary
+				l_c_parser := Void
 
 					-- parsing C macro header
-				create c_macro_parser.make (create {PATH}.make_from_string (cpp_header_file_name))
-				c_macro_parser.parse_macro
+				create l_c_macro_parser.make (create {PATH}.make_from_string (l_cpp_header_file_name))
+				l_c_macro_parser.parse_macro
 
 					-- post process C AST
 				post_parser_processor.post_process
@@ -141,7 +147,7 @@ feature -- Basic Ops: Primary
 				print_eiffel_wrapper_summary
 
 
-				eiffel_wrapper_builder.build_macros (c_macro_parser.constants)
+				eiffel_wrapper_builder.build_macros (l_c_macro_parser.constants)
 
 
 					-- generating
@@ -169,8 +175,8 @@ feature -- Basic Ops: Supporting
 			regex: RX_PCRE_REGULAR_EXPRESSION
 			count: INTEGER
 		do
-			if cpp_header_file_name /= Void then
-				create file.make_open_read_write (cpp_header_file_name)
+			if attached cpp_header_file_name as l_cpp_header_file_name then
+				create file.make_open_read_write (l_cpp_header_file_name)
 				if file.exists then
 					file.read_stream (file.count)
 					l_data := file.last_string
@@ -273,9 +279,9 @@ feature -- Basic Ops: Sub-supporting
 			if attached full_header_file_name as l_full_header_file_name  then
 				-- gcc -E ${wrap_c.c_compile.options.default} ${wrap_c.c_compile.options} ${wrap_c.full_header_name} &gt; ${wrap_c.cpp_header_name}
 				-- cl /nologo /E ${wrap_c.c_compile.options.default} ${wrap_c.c_compile.options} ${wrap_c.full_header_name} &gt; ${wrap_c.cpp_header_name}
-				if output_directory_name /= Void then
-					l_directory_name := output_directory_name
-					config_system.set_output_directory_name (output_directory_name)
+				if attached output_directory_name as l_output_directory_name then
+					l_directory_name := l_output_directory_name
+					config_system.set_output_directory_name (l_output_directory_name)
 				else
 					l_directory_name := config_system.directory_structure.default_output_directory
 					config_system.set_output_directory_name (config_system.directory_structure.default_output_directory)
@@ -308,7 +314,11 @@ feature -- Basic Ops: Sub-supporting
 							error_handler.report_info_message (l_cmd)
 								-- To be updated.
 							l_index := l_result.error_output.index_of ('.', 1) - 1
-							l_name := l_result.error_output.to_string_8.substring (1, l_index)
+
+							-- TODO check if to_string_8 is the right way to replace
+							-- obsolete feature call `as_string_8`
+							l_name := l_result.error_output.substring (1, l_index).to_string_8
+
 							l_name.append_string ("_cpp.h")
 							cpp_header_file_name := l_name.twin
 							create l_file.make_create_read_write (l_name)
@@ -333,7 +343,7 @@ feature -- Basic Ops: Sub-supporting
 					l_name := config_system.header_file_name.substring (1, l_index)
 					l_name.append_string ("_cpp.h")
 					cpp_header_file_name := l_name.twin
-					l_env.system (l_cmd + " > " + cpp_header_file_name)
+					l_env.system (l_cmd + " > " + l_name.twin)
 				end
 			end
 		end
@@ -374,6 +384,8 @@ feature -- Execute Plugin scripts
 						report_info_message ("[Execute pre process script]")
 					else
 						-- Error
+						-- TODO check if to_string_8 is the right way to replace
+						-- obsolete feature call `as_string_8`
 						report_info_message (l_result.error_output.to_string_8)
 					end
 				else
@@ -392,6 +404,8 @@ feature -- Execute Plugin scripts
 						report_info_message ("[Execute post process script]")
 					else
 						-- Error
+						-- TODO check if to_string_8 is the right way to replace
+						-- obsolete feature call `as_string_8`
 						report_info_message (l_result.error_output.to_string_8)
 					end
 				else
@@ -405,8 +419,10 @@ feature -- Access
 	error_handler: EWG_ERROR_HANDLER
 			-- Error handler
 
-	c_parser: EWG_C_PARSER
+	c_parser: detachable EWG_C_PARSER
 			-- C header parser
+			--| Check if it really need as a feature of the class.
+
 
 	eiffel_wrapper_builder: EWG_EIFFEL_WRAPPER_BUILDER
 			-- Builds Eiffel wrappers from C AST
@@ -419,12 +435,12 @@ feature -- Access
 
 	config_system: EWG_CONFIG_SYSTEM
 
-	config_file_name: STRING
+	config_file_name: detachable STRING
 			-- EWG configuration file name
 
 	is_msc_extension_enabled: BOOLEAN
 
-	cpp_header_file_name: STRING
+	cpp_header_file_name: detachable STRING
 			-- Already C preprocessed header file (with full path name);
 			-- This is the file ewg will open and parse.  It is a good
 			-- idea to preprocess the header with the same (preprocessor)
@@ -438,16 +454,17 @@ feature -- Access
 			-- saved as `cpp_header_file_name`.
 
 
-	compiler_options: STRING
+	compiler_options: detachable STRING
 			-- Optional compiler options to apply during C headerp
 			-- preprocessing.
 
 
-	output_directory_name: STRING
+	output_directory_name: detachable STRING
 			-- Optional dir path for output of `run'.
 
-	c_macro_parser: WRAPC_MACRO_PARSER
+	c_macro_parser: detachable WRAPC_MACRO_PARSER
 			-- C header macro parser
+			--| Check if it really need as a feature of the class.
 
 feature {NONE} -- Implementation: Error Reporting
 
@@ -504,8 +521,8 @@ feature {NONE} -- Implementation: Error Reporting
 
 feature {NONE} -- Implementation
 
-	script_pre_process: STRING
+	script_pre_process: detachable  STRING
 
-	script_post_process: STRING
+	script_post_process: detachable STRING
 
 end

@@ -46,7 +46,7 @@ feature {NONE} -- Initialization
 			struct_wrapper_set: struct_wrapper = a_struct_wrapper
 		end
 
-feature
+feature -- Access
 
 	c_declaration: EWG_C_AST_DECLARATION
 			-- C declaration to wrap
@@ -61,7 +61,7 @@ feature
 			result_not_void: Result /= Void
 		end
 
-	proposed_feature_name_list: DS_LINEAR [STRING] 
+	proposed_feature_name_list: DS_LINEAR [STRING]
 		local
 			getter_name: STRING
 			setter_name: STRING

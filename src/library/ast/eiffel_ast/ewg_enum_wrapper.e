@@ -46,10 +46,12 @@ feature {NONE} -- Initialization
 
 feature
 
-	c_enum_type: EWG_C_AST_ENUM_TYPE 
+	c_enum_type:  EWG_C_AST_ENUM_TYPE
 			-- C enum type to wrapp
 		do
-			Result ?= c_composite_data_type
+			check attached {EWG_C_AST_ENUM_TYPE} c_composite_data_type as l_c_composite_data_type  then
+				Result := l_c_composite_data_type
+			end
 		ensure
 			c_enum_type_not_void: Result /= Void
 			c_enum_type_is_c_type: Result = c_composite_data_type

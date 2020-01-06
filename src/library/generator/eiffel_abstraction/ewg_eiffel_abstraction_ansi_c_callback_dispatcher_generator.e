@@ -81,16 +81,20 @@ feature {NONE} -- Implementation
 			ext_class_name := c_header_file_name_to_eiffel_class_name (directory_structure.relative_callback_c_glue_header_file_name)
 			ext_class_name.append_string ("_FUNCTIONS_API")
 
-			template_expander.expand_into_stream_from_array (output_stream,
-																dispatcher_class_template,
-																		<<upper_name,
-																			a_callback_wrapper.set_entry_struct.mapped_eiffel_name,
-																			a_callback_wrapper.get_stub.mapped_eiffel_name,
-																			ext_class_name,
-																			on_callback_agent (a_callback_wrapper),
-																			on_callback_signature (a_callback_wrapper, "on_callback"),
-																			routine_call (a_callback_wrapper)>>
-																				)
+			if attached a_callback_wrapper.set_entry_struct as l_set_entry_struct and then
+				attached a_callback_wrapper.get_stub as l_get_stub
+			then
+				template_expander.expand_into_stream_from_array (output_stream,
+																	dispatcher_class_template,
+																			<<upper_name,
+																				l_set_entry_struct.mapped_eiffel_name,
+																				l_get_stub.mapped_eiffel_name,
+																				ext_class_name,
+																				on_callback_agent (a_callback_wrapper),
+																				on_callback_signature (a_callback_wrapper, "on_callback"),
+																				routine_call (a_callback_wrapper)>>
+																					)
+			end
 		end
 
 
@@ -100,7 +104,6 @@ feature {NONE} -- Implementation
 			a_callback_wrapper_not_void: a_callback_wrapper /= Void
 		local
 			cs: DS_BILINEAR_CURSOR [EWG_MEMBER_WRAPPER]
-			native_member_wrapper: EWG_NATIVE_MEMBER_WRAPPER
 		do
 			create Result.make (50)
 			if a_callback_wrapper.return_type /= Void then
@@ -114,15 +117,13 @@ feature {NONE} -- Implementation
 				until
 					cs.off
 				loop
-					native_member_wrapper ?= cs.item
-					check
-						no_other_wrapper_supported_yet: native_member_wrapper /= Void
-					end
-					Result.append_string ("a_")
-					Result.append_string(native_member_wrapper.mapped_eiffel_name)
+					if attached {EWG_NATIVE_MEMBER_WRAPPER} cs.item as native_member_wrapper then
+						Result.append_string ("a_")
+						Result.append_string(native_member_wrapper.mapped_eiffel_name)
 
-					if not cs.is_last then
-						Result.append_string (", ")
+						if not cs.is_last then
+							Result.append_string (", ")
+						end
 					end
 					cs.forth
 				end

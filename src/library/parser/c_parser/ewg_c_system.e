@@ -21,7 +21,8 @@ inherit
 
 create
 
-	make
+	make,
+	make_with_processor
 
 feature {NONE} -- Initialisation
 
@@ -103,13 +104,13 @@ feature {ANY}
 			-- Declaration processor to notify about new declarations
 			-- found.
 
-	last_type: EWG_C_AST_TYPE
+	last_type: detachable EWG_C_AST_TYPE
 			-- type last added to the system
 
-	last_declaration: EWG_C_AST_DECLARATION
+	last_declaration: detachable EWG_C_AST_DECLARATION
 			-- Last declaration made available via `make_declaration_from_type_and_declarator_available'
 
-	last_declaration_list: DS_ARRAYED_LIST [EWG_C_AST_DECLARATION]
+	last_declaration_list: detachable DS_ARRAYED_LIST [EWG_C_AST_DECLARATION]
 			-- Last declaration list made available via `make_declaration_list_from_declarations_available'.
 
 
@@ -130,10 +131,16 @@ feature {EWG_C_PARSER_SKELETON}
 			outer_type: EWG_C_AST_TYPE
 			cs: DS_LINKED_LIST_CURSOR [EWG_C_PHASE_1_DECLARATOR]
 		do
-			make_type_from_declaration_specifiers_available (a_declaration.storage_class_specifiers,
-																			 a_declaration.type_qualifier,
-																			 a_declaration.type_specifier,
-																			 a_declaration.header_file_name)
+			if attached a_declaration.storage_class_specifiers as l_storage_class_specifiers and then
+				attached a_declaration.type_qualifier as l_type_qualifier and then
+				attached a_declaration.type_specifier as l_type_specifier and then
+				attached a_declaration.header_file_name as l_header_file_name
+			then
+				make_type_from_declaration_specifiers_available (l_storage_class_specifiers,
+																		 l_type_qualifier,
+																		 l_type_specifier,
+																		 l_header_file_name)
+			end
 			outer_type := last_type
 			from
 				cs := a_declaration.declarators.new_cursor
@@ -141,18 +148,27 @@ feature {EWG_C_PARSER_SKELETON}
 			until
 				cs.off
 			loop
-				make_declaration_from_type_and_declarator_available (outer_type, cs.item)
-				if a_declaration.storage_class_specifiers.is_typedef then
-					-- Add alias
-					add_alias (last_declaration.type, last_declaration.declarator, last_declaration.header_file_name)
-					declaration_processor.process_typedef_declaration (last_declaration.type, last_declaration.declarator)
-				else
-					-- Add declaration
-					add_top_level_declaration_from_type_and_name (last_declaration.type, last_declaration.declarator, last_declaration.header_file_name)
+				if attached outer_type then
+					make_declaration_from_type_and_declarator_available (outer_type, cs.item)
+					if attached a_declaration.storage_class_specifiers as l_storage_class_specifiers and then l_storage_class_specifiers.is_typedef then
+						-- Add alias
+						if attached last_declaration as l_declaration and then attached l_declaration.declarator as l_declarator then
+							add_alias (l_declaration.type, l_declarator, l_declaration.header_file_name)
+						end
+						if attached last_declaration as l_declaration and then attached l_declaration.declarator as l_declarator then
+							declaration_processor.process_typedef_declaration (l_declaration.type, l_declarator)
+						end
+					else
+						-- Add declaration
+						if attached last_declaration as l_declaration and then attached l_declaration.declarator as l_declarator then
+							add_top_level_declaration_from_type_and_name (l_declaration.type, l_declarator, l_declaration.header_file_name)
+						end
+
+					end
 				end
 				cs.forth
 			end
-			if a_declaration.declarators.count = 0 then
+			if a_declaration.declarators.count = 0 and then attached outer_type then
 				declaration_processor.process_type_declaration (outer_type)
 			end
 		end
@@ -178,7 +194,7 @@ feature {ANY} -- Add to the system
 			last_type := types.last_type
 		ensure
 			last_type_not_void: last_type /= Void
-			last_type_in_set: types.has (last_type)
+			last_type_in_set: attached last_type as l_type implies types.has (l_type)
 		end
 
 
@@ -195,25 +211,24 @@ feature {ANY} -- Add to the system
 			a_name_valid_c_identifier: True -- TODO:
 			a_header_file_name_not_void: a_header_file_name /= Void
 		local
-			a_function_type: EWG_C_AST_FUNCTION_TYPE
+			l_declaration: EWG_C_AST_DECLARATION
 		do
-			a_function_type ?= a_type
-			if a_function_type /= Void then
+			if attached {EWG_C_AST_FUNCTION_TYPE} a_type as a_function_type then
 				if
 					not should_exclude_function_declaration_with_name (a_name) and
 						not (a_function_type.is_variadic and not a_function_type.has_ellipsis_parameter)
 				then
-					create {EWG_C_AST_FUNCTION_DECLARATION} last_declaration.make (a_name,
+					create {EWG_C_AST_FUNCTION_DECLARATION} l_declaration.make (a_name,
 																										a_function_type,
 																										a_header_file_name)
-					declarations.add_declaration (last_declaration)
+					declarations.add_declaration (l_declaration)
 					last_declaration := declarations.last_declaration
 				end
 				declaration_processor.process_function_declaration (a_function_type, a_name)
 			else
 				declaration_processor.process_variable_declaration (a_type, a_name)
-				create last_declaration.make (a_name, a_type, a_header_file_name)
-				declarations.add_declaration (last_declaration)
+				create l_declaration.make (a_name, a_type, a_header_file_name)
+				declarations.add_declaration (l_declaration)
 				last_declaration := declarations.last_declaration
 			end
 		ensure
@@ -242,13 +257,14 @@ feature {NONE} -- Implementation
 			enum: EWG_C_AST_ENUM_TYPE
 			name: STRING
 			type: EWG_C_AST_TYPE
-			ctype: EWG_C_AST_COMPOSITE_TYPE
 			const: EWG_C_AST_CONST_TYPE
 		do
 			-- if we have a composite type with body
 			-- process the body first
-			if a_type_specifier.is_composite_type and a_type_specifier.has_members then
-				make_declaration_list_from_declarations_available (a_type_specifier.members)
+			if a_type_specifier.is_composite_type and a_type_specifier.has_members and then
+				attached a_type_specifier.members as l_members
+			then
+				make_declaration_list_from_declarations_available (l_members)
 			end
 
 			name := a_type_specifier.name
@@ -291,26 +307,24 @@ feature {NONE} -- Implementation
 
 			-- If we have a composite type which has members, add the body
 			if a_type_specifier.is_composite_type and a_type_specifier.has_members then
-				ctype ?= type
-					check
-						ctype_not_void: ctype /= Void
-					end
-				ctype.set_members (last_declaration_list)
-				ctype.set_header_file_name (a_header_file_name)
+				if attached {EWG_C_AST_COMPOSITE_TYPE} type as ctype then
+					ctype.set_members (last_declaration_list)
+					ctype.set_header_file_name (a_header_file_name)
+				end
 			end
 
 			types.add_type (type)
 			last_type := types.last_type
 
-			if a_type_qualifier.is_const then
+			if a_type_qualifier.is_const and then attached last_type as l_type then
 				-- type is const, add const indirection
-				create const.make (a_header_file_name, last_type)
+				create const.make (a_header_file_name, l_type)
 				types.add_type (const)
 				last_type := types.last_type
 			end
 		ensure
 			last_type_not_void: last_type /= Void
-			last_type__in_system: types.has (last_type)
+			last_type__in_system:  attached last_type as l_type implies types.has (l_type)
 		end
 
 	make_declaration_list_from_declarations_available (a_declarations: DS_LINKED_LIST [EWG_C_PHASE_1_DECLARATION])
@@ -319,7 +333,7 @@ feature {NONE} -- Implementation
 			-- Adds all types it finds on the way to the C system.
 		require
 			a_declarations_not_void: a_declarations /= Void
-			a_declarations_not_has_void: not a_declarations.has (Void)
+--			a_declarations_not_has_void: not a_declarations.has (Void)
 		local
 			outer_cs: DS_LINKED_LIST_CURSOR [EWG_C_PHASE_1_DECLARATION]
 			inner_cs: DS_LINKED_LIST_CURSOR [EWG_C_PHASE_1_DECLARATOR]
@@ -333,10 +347,15 @@ feature {NONE} -- Implementation
 			until
 				outer_cs.off
 			loop
-				make_type_from_declaration_specifiers_available (outer_cs.item.storage_class_specifiers,
-																 outer_cs.item.type_qualifier,
-																 outer_cs.item.type_specifier,
-																 outer_cs.item.header_file_name)
+				if attached outer_cs.item.storage_class_specifiers as storage_class_specifiers and then
+					attached outer_cs.item.type_qualifier as type_qualifier and then
+					attached outer_cs.item.type_specifier as type_specifier
+				then
+					make_type_from_declaration_specifiers_available (storage_class_specifiers,
+																	 type_qualifier,
+																	 type_specifier,
+																	 outer_cs.item.header_file_name)
+				end
 				outer_type := last_type
 				from
 					inner_cs := outer_cs.item.declarators.new_cursor
@@ -344,8 +363,12 @@ feature {NONE} -- Implementation
 				until
 					inner_cs.off
 				loop
-					make_declaration_from_type_and_declarator_available (outer_type, inner_cs.item)
-					declaration_list.force_last (last_declaration)
+					if attached outer_type then
+						make_declaration_from_type_and_declarator_available (outer_type, inner_cs.item)
+					end
+					if attached last_declaration as l_declaration then
+						declaration_list.force_last (l_declaration)
+					end
 					inner_cs.forth
 				end
 				outer_cs.forth
@@ -353,7 +376,7 @@ feature {NONE} -- Implementation
 			last_declaration_list := declaration_list
 		ensure
 			last_declartion_list_not_void: last_declaration_list /= Void
-			types_of_members_in_system: member_types_in_types (last_declaration_list)
+			types_of_members_in_system: attached last_declaration_list as l_declaration_list implies member_types_in_types (l_declaration_list)
 		end
 
 	make_declaration_from_type_and_declarator_available (a_type: EWG_C_AST_TYPE;
@@ -377,26 +400,34 @@ feature {NONE} -- Implementation
 		do
 			make_pointer_types_available (a_type, a_declarator)
 
-			make_function_type_available (last_type, a_declarator.direct_declarator, a_declarator.header_file_name)
-
-			make_array_types_available (last_type, a_declarator.direct_declarator, a_declarator.header_file_name)
-
-			if a_declarator.direct_declarator.declarator = Void then
-				-- We have reached the end of the rabit hole.
-				-- The name of `a_declarator.direct_declarator.name' is
-				-- definitly the name of the declarator.
-				-- It might still be `Void' though, then it we have an
-				-- anonymoys declarator. No problem though.
-				create last_declaration.make (a_declarator.direct_declarator.name, last_type, a_declarator.header_file_name)
-			else
-				-- dive in further
-				make_declaration_from_type_and_declarator_available (last_type,
-																		a_declarator.direct_declarator.declarator)
+			if attached last_type as l_last_type then
+				make_function_type_available (l_last_type, a_declarator.direct_declarator, a_declarator.header_file_name)
 			end
+
+			if attached last_type as l_last_type then
+				make_array_types_available (l_last_type, a_declarator.direct_declarator, a_declarator.header_file_name)
+			end
+
+			if attached last_type as l_last_type then
+				if attached a_declarator.direct_declarator.declarator as l_declarator then
+					-- dive in further
+					make_declaration_from_type_and_declarator_available (l_last_type,
+																			l_declarator)
+				else
+					-- We have reached the end of the rabit hole.
+					-- The name of `a_declarator.direct_declarator.name' is
+					-- definitly the name of the declarator.
+					-- It might still be `Void' though, then it we have an
+					-- anonymoys declarator. No problem though.
+					create last_declaration.make (a_declarator.direct_declarator.name, l_last_type, a_declarator.header_file_name)
+				end
+			end
+
 		ensure
 			last_declaration_not_void: last_declaration /= Void
-			type_of_last_declaration_in_system: types.has (last_declaration.type)
+			type_of_last_declaration_in_system: attached last_declaration as l_declaration implies types.has (l_declaration.type)
 		end
+
 
 	make_pointer_types_available (a_type: EWG_C_AST_TYPE; a_declarator: EWG_C_PHASE_1_DECLARATOR)
 			-- Create a chain of pointer types based on `a_type'.
@@ -422,16 +453,18 @@ feature {NONE} -- Implementation
 			until
 				cs.off
 			loop
-				create pointer_type.make (a_declarator.header_file_name, outer_type)
-				types.add_type (pointer_type)
-				last_type := types.last_type
-				outer_type := last_type
-
-				if cs.item.type_qualifier.is_const then
-					create const_type.make (a_declarator.header_file_name, outer_type)
-					types.add_type (const_type)
+				if attached outer_type then
+					create pointer_type.make (a_declarator.header_file_name, outer_type)
+					types.add_type (pointer_type)
 					last_type := types.last_type
 					outer_type := last_type
+
+					if cs.item.type_qualifier.is_const and then attached  outer_type then
+						create const_type.make (a_declarator.header_file_name, outer_type)
+						types.add_type (const_type)
+						last_type := types.last_type
+						outer_type := last_type
+					end
 				end
 
 				cs.forth
@@ -440,7 +473,7 @@ feature {NONE} -- Implementation
 		ensure
 			last_type_not_void: last_type /= Void
 			no_pointers_means_last_type_is_a_type: a_declarator.pointers.count = 0 implies last_type = a_type
-			pointers_means_last_type_is_array: a_declarator.pointers.count > 0 implies last_type.skip_consts.is_pointer_type
+			pointers_means_last_type_is_array: a_declarator.pointers.count > 0 and then attached last_type as l_type implies l_type.skip_consts.is_pointer_type
 		end
 
 	make_array_types_available (a_type: EWG_C_AST_TYPE;
@@ -460,7 +493,6 @@ feature {NONE} -- Implementation
 			a_header_file_name_not_empty: not a_header_file_name.is_empty
 		local
 			i: INTEGER
-			phase_1_array: EWG_C_PHASE_1_ARRAY
 			array_type: EWG_C_AST_ARRAY_TYPE
 			outer_type: EWG_C_AST_TYPE
 		do
@@ -470,22 +502,25 @@ feature {NONE} -- Implementation
 			until
 				i > a_direct_declarator.arrays.count
 			loop
-				phase_1_array := a_direct_declarator.arrays.item (i)
-				if phase_1_array.is_size_defined then
-					create array_type.make_with_size (a_header_file_name, outer_type, phase_1_array.size)
-				else
-					create array_type.make (a_header_file_name, outer_type)
+				if attached {EWG_C_PHASE_1_ARRAY} a_direct_declarator.arrays.item (i) as phase_1_array and then
+					attached outer_type
+				then
+					if attached phase_1_array.size as l_size then
+						create array_type.make_with_size (a_header_file_name, outer_type, l_size)
+					else
+						create array_type.make (a_header_file_name, outer_type)
+					end
+					types.add_type (array_type)
+					last_type := types.last_type
+					outer_type := last_type
 				end
-				types.add_type (array_type)
-				last_type := types.last_type
-				outer_type := last_type
 				i := i + 1
 			end
 			last_type := outer_type
 		ensure
 			last_type_not_void: last_type /= Void
 			no_array_means_last_type_is_a_type: a_direct_declarator.arrays.count = 0 implies last_type = a_type
-			arrays_means_last_type_is_array: a_direct_declarator.arrays.count > 0 implies last_type.is_array_type
+			arrays_means_last_type_is_array: a_direct_declarator.arrays.count > 0 and then attached last_type as l_type implies l_type.is_array_type
 		end
 
 
@@ -506,30 +541,35 @@ feature {NONE} -- Implementation
 			a_function: EWG_C_AST_FUNCTION_TYPE
 		do
 			if a_direct_declarator.is_function_direct_declarator then
-				make_declaration_list_from_declarations_available (a_direct_declarator.parameters.parameter_list)
-				-- Check for single anonymous void typed parameter.
-				-- It means the function has no parameter
-				if
-					last_declaration_list.count = 1 and then
-					last_declaration_list.first.declarator = Void and then
-					types.void_type = last_declaration_list.first.type.skip_consts_and_aliases
-				then
-					create last_declaration_list.make_default
+				if attached a_direct_declarator.parameters as l_parameters then
+					make_declaration_list_from_declarations_available (l_parameters.parameter_list)
+					-- Check for single anonymous void typed parameter.
+					-- It means the function has no parameter
+					if  attached last_declaration_list as l_last_declaration_list and then
+						l_last_declaration_list.count = 1 and then
+						l_last_declaration_list.first.declarator = Void and then
+						types.void_type = l_last_declaration_list.first.type.skip_consts_and_aliases
+					then
+						create last_declaration_list.make_default
+					end
+					if attached last_declaration_list as l_last_declaration_list then
+						create a_function.make (a_header_file_name,
+														a_type,
+														l_last_declaration_list)
+
+						a_function.set_calling_convention (a_direct_declarator.calling_convention)
+						a_function.set_ellipsis_parameter (l_parameters.has_ellipsis_parameter)
+						types.add_type (a_function)
+					end
+					last_type := types.last_type
 				end
-				create a_function.make (a_header_file_name,
-												a_type,
-												last_declaration_list)
-				a_function.set_calling_convention (a_direct_declarator.calling_convention)
-				a_function.set_ellipsis_parameter (a_direct_declarator.parameters.has_ellipsis_parameter)
-				types.add_type (a_function)
-				last_type := types.last_type
 			else
 				last_type := a_type
 			end
 		ensure
 			last_type_not_void: last_type /= Void
 			no_function_means_last_type_is_a_type: not a_direct_declarator.is_function_direct_declarator implies last_type = a_type
-			arrays_means_last_type_is_array: a_direct_declarator.is_function_direct_declarator implies last_type.is_function_type
+			arrays_means_last_type_is_array: a_direct_declarator.is_function_direct_declarator implies attached last_type as l_last_type and then l_last_type.is_function_type
 		end
 
 feature {NONE} -- Status checks
@@ -589,7 +629,7 @@ feature {NONE} -- Implementation
 			Result.force ("VarI4FromInt")
 		ensure
 			excluded_function_names_not_void: Result /= Void
-			excluded_function_names_not_has_void: not Result.has (Void)
+--			excluded_function_names_not_has_void: not Result.has (Void)
 		end
 
 

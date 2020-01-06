@@ -138,7 +138,6 @@ feature {NONE} -- Validation
 			cs: DS_BILINEAR_CURSOR [XM_NODE]
 			child: XM_ELEMENT
 			match_clause_parsed: BOOLEAN
-			type: XM_ELEMENT
 			construct_type_name: STRING
 			construct_type_code: INTEGER
 		do
@@ -152,9 +151,10 @@ feature {NONE} -- Validation
 					-- OK.
 					validate_match (child, a_position_table)
 					match_clause_parsed := True
-					if child.has_element_by_name (type_element_name) then
-						type := child.element_by_name (type_element_name)
-						construct_type_name := type.attribute_by_name (name_attribute_name).value
+					if attached child.element_by_name (type_element_name) as type and then
+						attached type.attribute_by_name (name_attribute_name) as l_construct_type_name
+					then
+						construct_type_name := l_construct_type_name.value
 						construct_type_code := construct_type_names.construct_type_code_from_name (construct_type_name)
 					else
 						construct_type_code := construct_type_names.any_code
@@ -305,17 +305,27 @@ feature {NONE} -- Validation
 			cs: DS_BILINEAR_CURSOR [XM_NODE]
 			child: XM_ELEMENT
 		do
-			if not a_wrapper.has_attribute_by_name (type_attribute_name) then
-				has_error := True
-				error_handler.report_missing_config_attribute_error (a_wrapper, type_attribute_name, a_position_table.item (a_wrapper))
-			else
+			if attached a_wrapper.attribute_by_name (type_attribute_name) as l_type_attribute_name then
 				if
-					not wrapper_type_names.is_valid_wrapper_type_name (a_wrapper.attribute_by_name (type_attribute_name).value)
+					not wrapper_type_names.is_valid_wrapper_type_name (l_type_attribute_name.value)
 				then
 					has_error := True
 					error_handler.report_unknown_config_wrapper_type_error (a_wrapper, a_position_table.item (a_wrapper))
 				end
 			end
+
+			if attached a_wrapper.attribute_by_name (type_attribute_name) as  l_type_attribute_name then
+				if
+					not wrapper_type_names.is_valid_wrapper_type_name (l_type_attribute_name.value)
+				then
+					has_error := True
+					error_handler.report_unknown_config_wrapper_type_error (a_wrapper, a_position_table.item (a_wrapper))
+				end
+			else
+				has_error := True
+				error_handler.report_missing_config_attribute_error (a_wrapper, type_attribute_name, a_position_table.item (a_wrapper))
+			end
+
 			cs := a_wrapper.new_cursor
 			from cs.start until cs.after loop
 				child ?= cs.item
@@ -348,12 +358,9 @@ feature {NONE} -- Validation
 			child: XM_ELEMENT
 			regexp: RX_PCRE_REGULAR_EXPRESSION
 		do
-			if not a_header.has_attribute_by_name (name_attribute_name) then
-				has_error := True
-				error_handler.report_missing_config_attribute_error (a_header, name_attribute_name, a_position_table.item (a_header))
-			else
+			if attached a_header.attribute_by_name (name_attribute_name) as l_name_attribute_name then
 				create regexp.make
-				regexp.compile (a_header.attribute_by_name (name_attribute_name).value)
+				regexp.compile (l_name_attribute_name.value)
 				if not regexp.is_compiled then
 					error_handler.report_illegal_regular_expression_in_attribute (a_header,
 																									  name_attribute_name,
@@ -361,6 +368,9 @@ feature {NONE} -- Validation
 																									  regexp.error_message,
 																									  regexp.error_position)
 				end
+			else
+				has_error := True
+				error_handler.report_missing_config_attribute_error (a_header, name_attribute_name, a_position_table.item (a_header))
 			end
 
 			cs := a_header.new_cursor
@@ -388,12 +398,9 @@ feature {NONE} -- Validation
 			child: XM_ELEMENT
 			regexp: RX_PCRE_REGULAR_EXPRESSION
 		do
-			if not a_identifier.has_attribute_by_name (name_attribute_name) then
-				has_error := True
-				error_handler.report_missing_config_attribute_error (a_identifier, name_attribute_name, a_position_table.item (a_identifier))
-			else
+			if attached a_identifier.attribute_by_name (name_attribute_name) as l_name_attribute_name then
 				create regexp.make
-				regexp.compile (a_identifier.attribute_by_name (name_attribute_name).value)
+				regexp.compile (l_name_attribute_name.value)
 				if not regexp.is_compiled then
 					error_handler.report_illegal_regular_expression_in_attribute (a_identifier,
 																									  name_attribute_name,
@@ -401,6 +408,9 @@ feature {NONE} -- Validation
 																									  regexp.error_message,
 																									  regexp.error_position)
 				end
+			else
+				has_error := True
+				error_handler.report_missing_config_attribute_error (a_identifier, name_attribute_name, a_position_table.item (a_identifier))
 			end
 
 			cs := a_identifier.new_cursor
@@ -428,17 +438,18 @@ feature {NONE} -- Validation
 			child: XM_ELEMENT
 			name: STRING
 		do
-			if not a_type.has_attribute_by_name (name_attribute_name) then
-				has_error := True
-				error_handler.report_missing_config_attribute_error (a_type, name_attribute_name, a_position_table.item (a_type))
-			else
-				name := a_type.attribute_by_name (name_attribute_name).value
+
+			if attached a_type.attribute_by_name (name_attribute_name) as l_name_attribute_name  then
+				name := l_name_attribute_name.value
 				if
 					not construct_type_names.is_valid_construct_type_name (name)
 				then
 					has_error := True
 					error_handler.report_unknown_config_construct_type_error (a_type, a_position_table.item (a_type))
 				end
+			else
+				has_error := True
+				error_handler.report_missing_config_attribute_error (a_type, name_attribute_name, a_position_table.item (a_type))
 			end
 
 			cs := a_type.new_cursor
@@ -466,17 +477,17 @@ feature {NONE} -- Validation
 			child: XM_ELEMENT
 			name: STRING
 		do
-			if not a_class_name.has_attribute_by_name (name_attribute_name) then
-				has_error := True
-				error_handler.report_missing_config_attribute_error (a_class_name, name_attribute_name, a_position_table.item (a_class_name))
-			else
-				name := a_class_name.attribute_by_name (name_attribute_name).value
+			if attached a_class_name.attribute_by_name (name_attribute_name) as l_name_attribute_name then
+				name := l_name_attribute_name.value
 				if
 					name.count = 0
 				then
 					has_error := True
 					error_handler.report_invalid_class_name_error (a_class_name, a_position_table.item (a_class_name))
 				end
+			else
+				has_error := True
+				error_handler.report_missing_config_attribute_error (a_class_name, name_attribute_name, a_position_table.item (a_class_name))
 			end
 
 			cs := a_class_name.new_cursor

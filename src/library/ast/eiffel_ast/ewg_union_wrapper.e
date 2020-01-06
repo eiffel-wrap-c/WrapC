@@ -44,12 +44,14 @@ feature {NONE} -- Initialization
 			members_set: members = a_members
 		end
 
-feature
+feature -- Access
 
-	c_union_type: EWG_C_AST_UNION_TYPE 
+	c_union_type: EWG_C_AST_UNION_TYPE
 			-- C union type to wrapp
 		do
-			Result ?= c_composite_data_type
+			check attached {EWG_C_AST_UNION_TYPE} c_composite_data_type as l_c_composite_data_type then
+				Result := l_c_composite_data_type
+			end
 		ensure
 			c_union_type_not_void: Result /= Void
 			c_union_type_is_c_type: Result = c_composite_data_type

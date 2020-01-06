@@ -174,135 +174,136 @@ feature -- Generate Eiffel API
 			eiffel_member_name: STRING
 			l_struct_name: STRING
 		do
-			eiffel_member_name := eiffel_parameter_name_from_c_parameter_name (a_struct_wrapper.c_declaration.declarator)
-			l_struct_name := eiffel_class_name_from_c_type_name (a_struct_wrapper.struct_wrapper.mapped_eiffel_name)
+			if attached a_struct_wrapper.c_declaration.declarator as l_declarator then
+				eiffel_member_name := eiffel_parameter_name_from_c_parameter_name (l_declarator)
+				l_struct_name := eiffel_class_name_from_c_type_name (a_struct_wrapper.struct_wrapper.mapped_eiffel_name)
 
-			if has_struct_wrapper_by_name (l_struct_name) then
-				output_stream.put_string ("%T")
-				output_stream.put_string (escaped_struct_feature_name (a_struct_wrapper.mapped_eiffel_name))
-				output_stream.put_string (": detachable ")
-				output_stream.put_string (l_struct_name)
-				output_stream.put_string ("_STRUCT_API ")
-				output_stream.put_new_line
-
-				output_stream.put_string ("%T%T%T-- Access member `")
-				output_stream.put_string (a_struct_wrapper.c_declaration.declarator)
-				output_stream.put_string ("`")
-				output_stream.put_new_line
-
-				output_stream.put_line ("%T%Trequire")
-				output_stream.put_line ("%T%T%Texists: exists")
-
-				output_stream.put_line ("%T%Tdo")
-				output_stream.put_string ("%T%T%Tif attached c_")
-				output_stream.put_string (eiffel_member_name)
-				output_stream.put_line (" (item) as l_ptr and then not l_ptr.is_default_pointer then")
-				output_stream.put_line ("%T%T%T%Tcreate Result.make_by_pointer (l_ptr)")
-				output_stream.put_line ("%T%T%Tend")
-
-				output_stream.put_line ("%T%Tensure")
-				output_stream.put_string ("%T%T%Tresult_void: Result = Void implies c_")
-				output_stream.put_string (eiffel_member_name)
-				output_stream.put_line (" (item) = default_pointer ")
-
-				output_stream.put_string ("%T%T%Tresult_not_void: attached Result as l_result implies l_result.item = c_")
-				output_stream.put_string (eiffel_member_name)
-				output_stream.put_line (" (item) ")
-				output_stream.put_line ("%T%Tend")
-				output_stream.put_new_line
-
-
-				if not a_struct_wrapper.c_declaration.type.skip_consts_and_aliases.is_array_type then
-					-- the setter
-					output_stream.put_string ("%Tset_")
-					output_stream.put_string (a_struct_wrapper.mapped_eiffel_name)
-					output_stream.put_string (" (a_value: ")
-					output_stream.put_string (eiffel_class_name_from_c_type_name (a_struct_wrapper.struct_wrapper.mapped_eiffel_name))
-					output_stream.put_string ("_STRUCT_API) ")
-					output_stream.put_new_line
-
-					output_stream.put_string ("%T%T%T-- Set member `")
-					output_stream.put_string (a_struct_wrapper.c_declaration.declarator)
-					output_stream.put_string ("`")
-					output_stream.put_new_line
-
-					output_stream.put_line ("%T%Trequire")
-					output_stream.put_line ("%T%T%Ta_value_not_void: a_value /= Void")
-					output_stream.put_line ("%T%T%Texists: exists")
-
-					output_stream.put_line ("%T%Tdo")
-					output_stream.put_string ("%T%T%Tset_c_")
-					output_stream.put_string (eiffel_member_name)
-					output_stream.put_line (" (item, a_value.item)")
-
-					output_stream.put_line ("%T%Tensure")
-					output_stream.put_string ("%T%T%T" + eiffel_member_name + "_set: attached ")
-					output_stream.put_string (eiffel_member_name)
-					output_stream.put_string (" as l_value implies l_value = a_value.item")
-					output_stream.put_new_line
-					output_stream.put_line ("%T%Tend")
-					output_stream.put_new_line
-				end
-			else
-				output_stream.put_string ("%T")
-				output_stream.put_string (escaped_struct_feature_name (a_struct_wrapper.mapped_eiffel_name))
-				output_stream.put_string (": POINTER")
-				output_stream.put_new_line
-
-				output_stream.put_string ("%T%T%T-- Access member `")
-				output_stream.put_string (a_struct_wrapper.c_declaration.declarator)
-				output_stream.put_string ("`")
-				output_stream.put_new_line
-
-				output_stream.put_line ("%T%Trequire")
-				output_stream.put_line ("%T%T%Texists: exists")
-
-				output_stream.put_line ("%T%Tdo")
-				output_stream.put_string ("%T%T%TResult := c_")
-				output_stream.put_string (eiffel_member_name)
-				output_stream.put_line (" (item) ")
-
-				output_stream.put_line ("%T%Tensure")
-				output_stream.put_line ("%T%Tend")
-				output_stream.put_new_line
-
-				if not a_struct_wrapper.c_declaration.type.skip_consts_and_aliases.is_array_type then
-								-- the setter
-					output_stream.put_string ("%Tset_")
+				if has_struct_wrapper_by_name (l_struct_name) then
+					output_stream.put_string ("%T")
 					output_stream.put_string (escaped_struct_feature_name (a_struct_wrapper.mapped_eiffel_name))
-					output_stream.put_string (" (a_value: ")
-					output_stream.put_string ("POINTER )")
+					output_stream.put_string (": detachable ")
+					output_stream.put_string (l_struct_name)
+					output_stream.put_string ("_STRUCT_API ")
 					output_stream.put_new_line
 
-					output_stream.put_string ("%T%T%T-- Set member `")
-					output_stream.put_string (a_struct_wrapper.c_declaration.declarator)
+					output_stream.put_string ("%T%T%T-- Access member `")
+					output_stream.put_string (l_declarator)
 					output_stream.put_string ("`")
 					output_stream.put_new_line
 
 					output_stream.put_line ("%T%Trequire")
-					output_stream.put_line ("%T%T%Ta_value_not_void: a_value /= default_pointer")
 					output_stream.put_line ("%T%T%Texists: exists")
 
 					output_stream.put_line ("%T%Tdo")
-					output_stream.put_string ("%T%T%Tset_c_")
+					output_stream.put_string ("%T%T%Tif attached c_")
 					output_stream.put_string (eiffel_member_name)
-					output_stream.put_line (" (item, a_value)")
+					output_stream.put_line (" (item) as l_ptr and then not l_ptr.is_default_pointer then")
+					output_stream.put_line ("%T%T%T%Tcreate Result.make_by_pointer (l_ptr)")
+					output_stream.put_line ("%T%T%Tend")
+
 					output_stream.put_line ("%T%Tensure")
-					output_stream.put_string ("%T%T%T")
+					output_stream.put_string ("%T%T%Tresult_void: Result = Void implies c_")
 					output_stream.put_string (eiffel_member_name)
-					output_stream.put_string ("_set: ")
+					output_stream.put_line (" (item) = default_pointer ")
+
+					output_stream.put_string ("%T%T%Tresult_not_void: attached Result as l_result implies l_result.item = c_")
 					output_stream.put_string (eiffel_member_name)
-					output_stream.put_string (" = a_value ")
+					output_stream.put_line (" (item) ")
 					output_stream.put_line ("%T%Tend")
 					output_stream.put_new_line
+
+
+					if not a_struct_wrapper.c_declaration.type.skip_consts_and_aliases.is_array_type then
+						-- the setter
+						output_stream.put_string ("%Tset_")
+						output_stream.put_string (a_struct_wrapper.mapped_eiffel_name)
+						output_stream.put_string (" (a_value: ")
+						output_stream.put_string (eiffel_class_name_from_c_type_name (a_struct_wrapper.struct_wrapper.mapped_eiffel_name))
+						output_stream.put_string ("_STRUCT_API) ")
+						output_stream.put_new_line
+
+						output_stream.put_string ("%T%T%T-- Set member `")
+						output_stream.put_string (l_declarator)
+						output_stream.put_string ("`")
+						output_stream.put_new_line
+
+						output_stream.put_line ("%T%Trequire")
+						output_stream.put_line ("%T%T%Ta_value_not_void: a_value /= Void")
+						output_stream.put_line ("%T%T%Texists: exists")
+
+						output_stream.put_line ("%T%Tdo")
+						output_stream.put_string ("%T%T%Tset_c_")
+						output_stream.put_string (eiffel_member_name)
+						output_stream.put_line (" (item, a_value.item)")
+
+						output_stream.put_line ("%T%Tensure")
+						output_stream.put_string ("%T%T%T" + eiffel_member_name + "_set: attached ")
+						output_stream.put_string (eiffel_member_name)
+						output_stream.put_string (" as l_value implies l_value = a_value.item")
+						output_stream.put_new_line
+						output_stream.put_line ("%T%Tend")
+						output_stream.put_new_line
+					end
+				else
+					output_stream.put_string ("%T")
+					output_stream.put_string (escaped_struct_feature_name (a_struct_wrapper.mapped_eiffel_name))
+					output_stream.put_string (": POINTER")
+					output_stream.put_new_line
+
+					output_stream.put_string ("%T%T%T-- Access member `")
+					output_stream.put_string (l_declarator)
+					output_stream.put_string ("`")
+					output_stream.put_new_line
+
+					output_stream.put_line ("%T%Trequire")
+					output_stream.put_line ("%T%T%Texists: exists")
+
+					output_stream.put_line ("%T%Tdo")
+					output_stream.put_string ("%T%T%TResult := c_")
+					output_stream.put_string (eiffel_member_name)
+					output_stream.put_line (" (item) ")
+
+					output_stream.put_line ("%T%Tensure")
+					output_stream.put_line ("%T%Tend")
+					output_stream.put_new_line
+
+					if not a_struct_wrapper.c_declaration.type.skip_consts_and_aliases.is_array_type then
+									-- the setter
+						output_stream.put_string ("%Tset_")
+						output_stream.put_string (escaped_struct_feature_name (a_struct_wrapper.mapped_eiffel_name))
+						output_stream.put_string (" (a_value: ")
+						output_stream.put_string ("POINTER )")
+						output_stream.put_new_line
+
+						output_stream.put_string ("%T%T%T-- Set member `")
+						output_stream.put_string (l_declarator)
+						output_stream.put_string ("`")
+						output_stream.put_new_line
+
+						output_stream.put_line ("%T%Trequire")
+						output_stream.put_line ("%T%T%Ta_value_not_void: a_value /= default_pointer")
+						output_stream.put_line ("%T%T%Texists: exists")
+
+						output_stream.put_line ("%T%Tdo")
+						output_stream.put_string ("%T%T%Tset_c_")
+						output_stream.put_string (eiffel_member_name)
+						output_stream.put_line (" (item, a_value)")
+						output_stream.put_line ("%T%Tensure")
+						output_stream.put_string ("%T%T%T")
+						output_stream.put_string (eiffel_member_name)
+						output_stream.put_string ("_set: ")
+						output_stream.put_string (eiffel_member_name)
+						output_stream.put_string (" = a_value ")
+						output_stream.put_line ("%T%Tend")
+						output_stream.put_new_line
+					end
 				end
 			end
-
 		end
 
 
 	generate_native_struct_wrapper_member (a_mapped_eiffel_name: STRING;
-											  a_composite_wrapper: EWG_COMPOSITE_WRAPPER;
+											  a_composite_wrapper: detachable EWG_COMPOSITE_WRAPPER;
 											  a_c_declaration: EWG_C_AST_DECLARATION;
 											  a_header_file_name: STRING)
 		local
@@ -310,135 +311,141 @@ feature -- Generate Eiffel API
 			escaped_mapped_eiffel_name: STRING
 			l_struct_name: STRING
 		do
-			escaped_mapped_eiffel_name := escaped_struct_feature_name (a_mapped_eiffel_name)
-			eiffel_member_name := eiffel_parameter_name_from_c_parameter_name (a_c_declaration.declarator)
+			if attached a_c_declaration.declarator as l_declarator  then
+				escaped_mapped_eiffel_name := escaped_struct_feature_name (a_mapped_eiffel_name)
+				eiffel_member_name := eiffel_parameter_name_from_c_parameter_name (l_declarator)
 
-			if attached a_c_declaration.type.name as l_name  then
-				l_struct_name := l_name.twin
-			else
-				l_struct_name := a_c_declaration.type.skip_wrapper_irrelevant_types.name.twin
-			end
-			l_struct_name := escaped_struct_feature_name (l_struct_name)
-
-			l_struct_name.to_upper
-			if has_struct_wrapper_by_name (l_struct_name) then
-				output_stream.put_string ("%T")
-				output_stream.put_string (escaped_mapped_eiffel_name)
-				output_stream.put_string (": ")
-				output_stream.put_string (eiffel_class_name_from_c_type_name (l_struct_name))
-				output_stream.put_string ("_STRUCT_API")
-				output_stream.put_new_line
-
-				output_stream.put_string ("%T%T%T-- Access member `")
-				output_stream.put_string (a_c_declaration.declarator)
-				output_stream.put_string ("`")
-				output_stream.put_new_line
-
-				output_stream.put_line ("%T%Trequire")
-				output_stream.put_line ("%T%T%Texists: exists")
-
-				output_stream.put_line ("%T%Tdo")
-				output_stream.put_string ("%T%T%Tcreate Result.make_by_pointer ( c_")
-				output_stream.put_string (eiffel_member_name)
-				output_stream.put_line ("(item) )")
-				output_stream.put_line ("%T%Tensure")
-				output_stream.put_string ("%T%T%Tresult_not_void: Result.item = c_")
-				output_stream.put_string (eiffel_member_name)
-				output_stream.put_line (" (item) ")
-
-
-				output_stream.put_line ("%T%Tend")
-				output_stream.put_new_line
-
-				if not a_c_declaration.type.skip_consts_and_aliases.is_array_type then
-					-- the setter
-					output_stream.put_string ("%Tset_")
-					output_stream.put_string (escaped_mapped_eiffel_name)
-					output_stream.put_string (" (a_value: ")
-					output_stream.put_string (eiffel_class_name_from_c_type_name (l_struct_name))
-					output_stream.put_string ("_STRUCT_API) ")
-					output_stream.put_new_line
-
-					output_stream.put_string ("%T%T%T-- Set member `")
-					output_stream.put_string (a_c_declaration.declarator)
-					output_stream.put_string ("`")
-					output_stream.put_new_line
-
-					output_stream.put_line ("%T%Trequire")
-					output_stream.put_line ("%T%T%Ta_value_not_void: a_value /= Void")
-					output_stream.put_line ("%T%T%Texists: exists")
-
-					output_stream.put_line ("%T%Tdo")
-					output_stream.put_string ("%T%T%Tset_c_")
-					output_stream.put_string (eiffel_member_name)
-					output_stream.put_line (" (item, a_value.item)")
-
-					output_stream.put_line ("%T%Tensure")
-					output_stream.put_string ("%T%T%T" + eiffel_member_name + "_set: ")
-					output_stream.put_string (eiffel_member_name)
-					output_stream.put_string (".item = a_value.item")
-					output_stream.put_new_line
-					output_stream.put_line ("%T%Tend")
-					output_stream.put_new_line
+				if attached a_c_declaration.type.name as l_name  then
+					l_struct_name := l_name.twin
+				else
+					if attached a_c_declaration.type.skip_wrapper_irrelevant_types.name as l_name then
+						l_struct_name := l_name.twin
+					else
+						l_struct_name := ""
+					end
 				end
-			else
-				output_stream.put_string ("%T")
-				output_stream.put_string (escaped_mapped_eiffel_name)
-				output_stream.put_string (": POINTER")
-				output_stream.put_new_line
+				l_struct_name := escaped_struct_feature_name (l_struct_name)
 
-				output_stream.put_string ("%T%T%T-- Access member `")
-				output_stream.put_string (a_c_declaration.declarator)
-				output_stream.put_string ("`")
-				output_stream.put_new_line
-
-				output_stream.put_line ("%T%Trequire")
-				output_stream.put_line ("%T%T%Texists: exists")
-
-				output_stream.put_line ("%T%Tdo")
-				output_stream.put_string ("%T%T%TResult := c_")
-				output_stream.put_string (eiffel_member_name)
-				output_stream.put_line (" (item) ")
-
-				output_stream.put_line ("%T%Tensure")
-				output_stream.put_line ("%T%Tend")
-				output_stream.put_new_line
-
-				if not a_c_declaration.type.skip_consts_and_aliases.is_array_type then
-								-- the setter
-					output_stream.put_string ("%Tset_")
+				l_struct_name.to_upper
+				if has_struct_wrapper_by_name (l_struct_name) then
+					output_stream.put_string ("%T")
 					output_stream.put_string (escaped_mapped_eiffel_name)
-					output_stream.put_string (" (a_value: ")
-					output_stream.put_string ("POINTER )")
+					output_stream.put_string (": ")
+					output_stream.put_string (eiffel_class_name_from_c_type_name (l_struct_name))
+					output_stream.put_string ("_STRUCT_API")
 					output_stream.put_new_line
 
-					output_stream.put_string ("%T%T%T-- Set member `")
-					output_stream.put_string (a_c_declaration.declarator)
+					output_stream.put_string ("%T%T%T-- Access member `")
+					output_stream.put_string (l_declarator)
 					output_stream.put_string ("`")
 					output_stream.put_new_line
 
 					output_stream.put_line ("%T%Trequire")
-					output_stream.put_line ("%T%T%Ta_value_not_void: a_value /= default_pointer")
 					output_stream.put_line ("%T%T%Texists: exists")
 
 					output_stream.put_line ("%T%Tdo")
-					output_stream.put_string ("%T%T%Tset_c_")
+					output_stream.put_string ("%T%T%Tcreate Result.make_by_pointer ( c_")
 					output_stream.put_string (eiffel_member_name)
-					output_stream.put_line (" (item, a_value)")
+					output_stream.put_line ("(item) )")
 					output_stream.put_line ("%T%Tensure")
-					output_stream.put_string ("%T%T%T")
+					output_stream.put_string ("%T%T%Tresult_not_void: Result.item = c_")
 					output_stream.put_string (eiffel_member_name)
-					output_stream.put_string ("_set: ")
-					output_stream.put_string (eiffel_member_name)
-					output_stream.put_string (" = a_value ")
+					output_stream.put_line (" (item) ")
+
+
 					output_stream.put_line ("%T%Tend")
 					output_stream.put_new_line
+
+					if not a_c_declaration.type.skip_consts_and_aliases.is_array_type then
+						-- the setter
+						output_stream.put_string ("%Tset_")
+						output_stream.put_string (escaped_mapped_eiffel_name)
+						output_stream.put_string (" (a_value: ")
+						output_stream.put_string (eiffel_class_name_from_c_type_name (l_struct_name))
+						output_stream.put_string ("_STRUCT_API) ")
+						output_stream.put_new_line
+
+						output_stream.put_string ("%T%T%T-- Set member `")
+						output_stream.put_string (l_declarator)
+						output_stream.put_string ("`")
+						output_stream.put_new_line
+
+						output_stream.put_line ("%T%Trequire")
+						output_stream.put_line ("%T%T%Ta_value_not_void: a_value /= Void")
+						output_stream.put_line ("%T%T%Texists: exists")
+
+						output_stream.put_line ("%T%Tdo")
+						output_stream.put_string ("%T%T%Tset_c_")
+						output_stream.put_string (eiffel_member_name)
+						output_stream.put_line (" (item, a_value.item)")
+
+						output_stream.put_line ("%T%Tensure")
+						output_stream.put_string ("%T%T%T" + eiffel_member_name + "_set: ")
+						output_stream.put_string (eiffel_member_name)
+						output_stream.put_string (".item = a_value.item")
+						output_stream.put_new_line
+						output_stream.put_line ("%T%Tend")
+						output_stream.put_new_line
+					end
+				else
+					output_stream.put_string ("%T")
+					output_stream.put_string (escaped_mapped_eiffel_name)
+					output_stream.put_string (": POINTER")
+					output_stream.put_new_line
+
+					output_stream.put_string ("%T%T%T-- Access member `")
+					output_stream.put_string (l_declarator)
+					output_stream.put_string ("`")
+					output_stream.put_new_line
+
+					output_stream.put_line ("%T%Trequire")
+					output_stream.put_line ("%T%T%Texists: exists")
+
+					output_stream.put_line ("%T%Tdo")
+					output_stream.put_string ("%T%T%TResult := c_")
+					output_stream.put_string (eiffel_member_name)
+					output_stream.put_line (" (item) ")
+
+					output_stream.put_line ("%T%Tensure")
+					output_stream.put_line ("%T%Tend")
+					output_stream.put_new_line
+
+					if not a_c_declaration.type.skip_consts_and_aliases.is_array_type then
+									-- the setter
+						output_stream.put_string ("%Tset_")
+						output_stream.put_string (escaped_mapped_eiffel_name)
+						output_stream.put_string (" (a_value: ")
+						output_stream.put_string ("POINTER )")
+						output_stream.put_new_line
+
+						output_stream.put_string ("%T%T%T-- Set member `")
+						output_stream.put_string (l_declarator)
+						output_stream.put_string ("`")
+						output_stream.put_new_line
+
+						output_stream.put_line ("%T%Trequire")
+						output_stream.put_line ("%T%T%Ta_value_not_void: a_value /= default_pointer")
+						output_stream.put_line ("%T%T%Texists: exists")
+
+						output_stream.put_line ("%T%Tdo")
+						output_stream.put_string ("%T%T%Tset_c_")
+						output_stream.put_string (eiffel_member_name)
+						output_stream.put_line (" (item, a_value)")
+						output_stream.put_line ("%T%Tensure")
+						output_stream.put_string ("%T%T%T")
+						output_stream.put_string (eiffel_member_name)
+						output_stream.put_string ("_set: ")
+						output_stream.put_string (eiffel_member_name)
+						output_stream.put_string (" = a_value ")
+						output_stream.put_line ("%T%Tend")
+						output_stream.put_new_line
+					end
 				end
 			end
 		end
 
 	generate_native_union_wrapper_member (a_mapped_eiffel_name: STRING;
-											  a_composite_wrapper: EWG_COMPOSITE_WRAPPER;
+											  a_composite_wrapper: detachable EWG_COMPOSITE_WRAPPER;
 											  a_c_declaration: EWG_C_AST_DECLARATION;
 											  a_header_file_name: STRING)
 		local
@@ -446,133 +453,137 @@ feature -- Generate Eiffel API
 			escaped_mapped_eiffel_name: STRING
 			l_union_name: STRING
 		do
-			escaped_mapped_eiffel_name := escaped_struct_feature_name (a_mapped_eiffel_name)
-			eiffel_member_name := eiffel_parameter_name_from_c_parameter_name (a_c_declaration.declarator)
+			if attached a_c_declaration.declarator as l_declarator then
+				escaped_mapped_eiffel_name := escaped_struct_feature_name (a_mapped_eiffel_name)
+				eiffel_member_name := eiffel_parameter_name_from_c_parameter_name (l_declarator)
 
-			if attached a_c_declaration.type.name as l_name  then
-				l_union_name := l_name.twin
-			else
-				l_union_name := a_c_declaration.type.skip_wrapper_irrelevant_types.name.twin
-			end
-			l_union_name := escaped_struct_feature_name (l_union_name)
+				if attached a_c_declaration.type.name as l_name  then
+					l_union_name := l_name.twin
+				elseif attached a_c_declaration.type.skip_wrapper_irrelevant_types.name as l_name then
+
+					l_union_name := l_name.twin
+				else
+					l_union_name := ""
+				end
+				l_union_name := escaped_struct_feature_name (l_union_name)
 
 
-			l_union_name.to_upper
+				l_union_name.to_upper
 
-			if has_union_wrapper_by_name (l_union_name) then
-				output_stream.put_string ("%T")
-				output_stream.put_string (escaped_mapped_eiffel_name)
-				output_stream.put_string (": ")
-				output_stream.put_string (eiffel_class_name_from_c_type_name (l_union_name))
-				output_stream.put_string ("_UNION_API")
-				output_stream.put_new_line
-
-				output_stream.put_string ("%T%T%T-- Access member `")
-				output_stream.put_string (a_c_declaration.declarator)
-				output_stream.put_string ("`")
-				output_stream.put_new_line
-
-				output_stream.put_line ("%T%Trequire")
-				output_stream.put_line ("%T%T%Texists: exists")
-
-				output_stream.put_line ("%T%Tdo")
-
-				output_stream.put_string ("%T%T%Tcreate Result.make_by_pointer ( c_")
-				output_stream.put_string (eiffel_member_name)
-				output_stream.put_line ("(item) )")
-				output_stream.put_line ("%T%Tensure")
-				output_stream.put_string ("%T%T%Tresult_not_void: Result.item = c_")
-				output_stream.put_string (eiffel_member_name)
-				output_stream.put_line (" (item) ")
-
-				output_stream.put_line ("%T%Tend")
-				output_stream.put_new_line
-
-				if not a_c_declaration.type.skip_consts_and_aliases.is_array_type then
-					-- the setter
-					output_stream.put_string ("%Tset_")
+				if has_union_wrapper_by_name (l_union_name) then
+					output_stream.put_string ("%T")
 					output_stream.put_string (escaped_mapped_eiffel_name)
-					output_stream.put_string (" (a_value: ")
+					output_stream.put_string (": ")
 					output_stream.put_string (eiffel_class_name_from_c_type_name (l_union_name))
-					output_stream.put_string ("_UNION_API) ")
+					output_stream.put_string ("_UNION_API")
 					output_stream.put_new_line
 
-					output_stream.put_string ("%T%T%T-- Set member `")
-					output_stream.put_string (a_c_declaration.declarator)
+					output_stream.put_string ("%T%T%T-- Access member `")
+					output_stream.put_string (l_declarator)
 					output_stream.put_string ("`")
 					output_stream.put_new_line
 
 					output_stream.put_line ("%T%Trequire")
-					output_stream.put_line ("%T%T%Ta_value_not_void: a_value /= Void")
 					output_stream.put_line ("%T%T%Texists: exists")
 
 					output_stream.put_line ("%T%Tdo")
-					output_stream.put_string ("%T%T%Tset_c_")
-					output_stream.put_string (eiffel_member_name)
-					output_stream.put_line (" (item, a_value.item)")
 
-					output_stream.put_line ("%T%Tensure")
-					output_stream.put_string ("%T%T%T" + eiffel_member_name + "_set: ")
+					output_stream.put_string ("%T%T%Tcreate Result.make_by_pointer ( c_")
 					output_stream.put_string (eiffel_member_name)
-					output_stream.put_string (".item = a_value.item")
-					output_stream.put_new_line
+					output_stream.put_line ("(item) )")
+					output_stream.put_line ("%T%Tensure")
+					output_stream.put_string ("%T%T%Tresult_not_void: Result.item = c_")
+					output_stream.put_string (eiffel_member_name)
+					output_stream.put_line (" (item) ")
+
 					output_stream.put_line ("%T%Tend")
 					output_stream.put_new_line
-				end
-			else
-				output_stream.put_string ("%T")
-				output_stream.put_string (escaped_mapped_eiffel_name)
-				output_stream.put_string (": POINTER")
-				output_stream.put_new_line
 
-				output_stream.put_string ("%T%T%T-- Access member `")
-				output_stream.put_string (a_c_declaration.declarator)
-				output_stream.put_string ("`")
-				output_stream.put_new_line
-
-				output_stream.put_line ("%T%Trequire")
-				output_stream.put_line ("%T%T%Texists: exists")
-
-				output_stream.put_line ("%T%Tdo")
-				output_stream.put_string ("%T%T%TResult := c_")
-				output_stream.put_string (eiffel_member_name)
-				output_stream.put_line (" (item) ")
-
-				output_stream.put_line ("%T%Tensure")
-				output_stream.put_line ("%T%Tend")
-				output_stream.put_new_line
-
-				if not a_c_declaration.type.skip_consts_and_aliases.is_array_type then
+					if not a_c_declaration.type.skip_consts_and_aliases.is_array_type then
 						-- the setter
-					output_stream.put_string ("%Tset_")
+						output_stream.put_string ("%Tset_")
+						output_stream.put_string (escaped_mapped_eiffel_name)
+						output_stream.put_string (" (a_value: ")
+						output_stream.put_string (eiffel_class_name_from_c_type_name (l_union_name))
+						output_stream.put_string ("_UNION_API) ")
+						output_stream.put_new_line
+
+						output_stream.put_string ("%T%T%T-- Set member `")
+						output_stream.put_string (l_declarator)
+						output_stream.put_string ("`")
+						output_stream.put_new_line
+
+						output_stream.put_line ("%T%Trequire")
+						output_stream.put_line ("%T%T%Ta_value_not_void: a_value /= Void")
+						output_stream.put_line ("%T%T%Texists: exists")
+
+						output_stream.put_line ("%T%Tdo")
+						output_stream.put_string ("%T%T%Tset_c_")
+						output_stream.put_string (eiffel_member_name)
+						output_stream.put_line (" (item, a_value.item)")
+
+						output_stream.put_line ("%T%Tensure")
+						output_stream.put_string ("%T%T%T" + eiffel_member_name + "_set: ")
+						output_stream.put_string (eiffel_member_name)
+						output_stream.put_string (".item = a_value.item")
+						output_stream.put_new_line
+						output_stream.put_line ("%T%Tend")
+						output_stream.put_new_line
+					end
+				else
+					output_stream.put_string ("%T")
 					output_stream.put_string (escaped_mapped_eiffel_name)
-					output_stream.put_string (" (a_value: ")
-					output_stream.put_string ("POINTER )")
+					output_stream.put_string (": POINTER")
 					output_stream.put_new_line
 
-					output_stream.put_string ("%T%T%T-- Set member `")
-					output_stream.put_string (a_c_declaration.declarator)
+					output_stream.put_string ("%T%T%T-- Access member `")
+					output_stream.put_string (l_declarator)
 					output_stream.put_string ("`")
 					output_stream.put_new_line
 
 					output_stream.put_line ("%T%Trequire")
-					output_stream.put_line ("%T%T%Ta_value_not_void: a_value /= default_pointer")
 					output_stream.put_line ("%T%T%Texists: exists")
 
 					output_stream.put_line ("%T%Tdo")
-					output_stream.put_string ("%T%T%Tset_c_")
+					output_stream.put_string ("%T%T%TResult := c_")
 					output_stream.put_string (eiffel_member_name)
-					output_stream.put_line (" (item, a_value)")
+					output_stream.put_line (" (item) ")
+
 					output_stream.put_line ("%T%Tensure")
-					output_stream.put_string ("%T%T%T")
-					output_stream.put_string (eiffel_member_name)
-					output_stream.put_string ("_set: ")
-					output_stream.put_string (eiffel_member_name)
-					output_stream.put_string (" = a_value ")
 					output_stream.put_line ("%T%Tend")
 					output_stream.put_new_line
-				end
 
+					if not a_c_declaration.type.skip_consts_and_aliases.is_array_type then
+							-- the setter
+						output_stream.put_string ("%Tset_")
+						output_stream.put_string (escaped_mapped_eiffel_name)
+						output_stream.put_string (" (a_value: ")
+						output_stream.put_string ("POINTER )")
+						output_stream.put_new_line
+
+						output_stream.put_string ("%T%T%T-- Set member `")
+						output_stream.put_string (l_declarator)
+						output_stream.put_string ("`")
+						output_stream.put_new_line
+
+						output_stream.put_line ("%T%Trequire")
+						output_stream.put_line ("%T%T%Ta_value_not_void: a_value /= default_pointer")
+						output_stream.put_line ("%T%T%Texists: exists")
+
+						output_stream.put_line ("%T%Tdo")
+						output_stream.put_string ("%T%T%Tset_c_")
+						output_stream.put_string (eiffel_member_name)
+						output_stream.put_line (" (item, a_value)")
+						output_stream.put_line ("%T%Tensure")
+						output_stream.put_string ("%T%T%T")
+						output_stream.put_string (eiffel_member_name)
+						output_stream.put_string ("_set: ")
+						output_stream.put_string (eiffel_member_name)
+						output_stream.put_string (" = a_value ")
+						output_stream.put_line ("%T%Tend")
+						output_stream.put_new_line
+					end
+				end
 			end
 		end
 
@@ -581,128 +592,129 @@ feature -- Generate Eiffel API
 			eiffel_member_name: STRING
 			l_union_name: STRING
 		do
-			eiffel_member_name := eiffel_parameter_name_from_c_parameter_name (a_union_wrapper.c_declaration.declarator)
-			l_union_name := a_union_wrapper.union_wrapper.mapped_eiffel_name
+			if attached a_union_wrapper.c_declaration.declarator as l_declarator then
+				eiffel_member_name := eiffel_parameter_name_from_c_parameter_name (l_declarator)
+				l_union_name := a_union_wrapper.union_wrapper.mapped_eiffel_name
 
-			if has_union_wrapper_by_name (l_union_name) then
-				output_stream.put_string ("%T")
-				output_stream.put_string (escaped_struct_feature_name (a_union_wrapper.mapped_eiffel_name))
-				output_stream.put_string (": detachable ")
-				output_stream.put_string (l_union_name)
-				output_stream.put_string ("_UNION_API ")
-				output_stream.put_new_line
-
-				output_stream.put_string ("%T%T%T-- Access member `")
-				output_stream.put_string (a_union_wrapper.c_declaration.declarator)
-				output_stream.put_string ("`")
-				output_stream.put_new_line
-
-				output_stream.put_line ("%T%Trequire")
-				output_stream.put_line ("%T%T%Texists: exists")
-
-				output_stream.put_line ("%T%Tdo")
-				output_stream.put_string ("%T%T%Tif attached c_")
-				output_stream.put_string (eiffel_member_name)
-				output_stream.put_line (" (item) as l_ptr and then not l_ptr.is_default_pointer then")
-				output_stream.put_line ("%T%T%T%Tcreate Result.make_by_pointer (l_ptr)")
-				output_stream.put_line ("%T%T%Tend")
-
-				output_stream.put_line ("%T%Tensure")
-				output_stream.put_string ("%T%T%Tresult_void: Result = Void implies c_")
-				output_stream.put_string (eiffel_member_name)
-				output_stream.put_line (" (item) = default_pointer ")
-
-				output_stream.put_string ("%T%T%Tresult_not_void: attached Result as l_result implies l_result.item = c_")
-				output_stream.put_string (eiffel_member_name)
-				output_stream.put_line (" (item) ")
-				output_stream.put_line ("%T%Tend")
-				output_stream.put_new_line
-
-				if not a_union_wrapper.c_declaration.type.skip_consts_and_aliases.is_array_type then
-					-- the setter
-					output_stream.put_string ("%Tset_")
-					output_stream.put_string (a_union_wrapper.mapped_eiffel_name)
-					output_stream.put_string (" (a_value: ")
-					output_stream.put_string (a_union_wrapper.union_wrapper.mapped_eiffel_name)
-					output_stream.put_string ("_UNION_API) ")
-					output_stream.put_new_line
-
-					output_stream.put_string ("%T%T%T-- Set member `")
-					output_stream.put_string (a_union_wrapper.c_declaration.declarator)
-					output_stream.put_string ("`")
-					output_stream.put_new_line
-
-					output_stream.put_line ("%T%Trequire")
-					output_stream.put_line ("%T%T%Ta_value_not_void: a_value /= Void")
-					output_stream.put_line ("%T%T%Texists: exists")
-
-					output_stream.put_line ("%T%Tdo")
-					output_stream.put_string ("%T%T%Tset_c_")
-					output_stream.put_string (eiffel_member_name)
-					output_stream.put_line (" (item, a_value.item)")
-
-					output_stream.put_line ("%T%Tensure")
-					output_stream.put_string ("%T%T%T" + eiffel_member_name + "_set: attached ")
-					output_stream.put_string (eiffel_member_name)
-					output_stream.put_string (" as l_value implies l_value = a_value.item")
-					output_stream.put_new_line
-					output_stream.put_line ("%T%Tend")
-					output_stream.put_new_line
-				end
-			else
-				output_stream.put_string ("%T")
-				output_stream.put_string (escaped_struct_feature_name (a_union_wrapper.mapped_eiffel_name))
-				output_stream.put_string (": POINTER")
-				output_stream.put_new_line
-
-				output_stream.put_string ("%T%T%T-- Access member `")
-				output_stream.put_string (a_union_wrapper.c_declaration.declarator)
-				output_stream.put_string ("`")
-				output_stream.put_new_line
-
-				output_stream.put_line ("%T%Trequire")
-				output_stream.put_line ("%T%T%Texists: exists")
-
-				output_stream.put_line ("%T%Tdo")
-				output_stream.put_string ("%T%T%TResult := c_")
-				output_stream.put_string (eiffel_member_name)
-				output_stream.put_line (" (item) ")
-
-				output_stream.put_line ("%T%Tensure")
-				output_stream.put_line ("%T%Tend")
-				output_stream.put_new_line
-
-				if not a_union_wrapper.c_declaration.type.skip_consts_and_aliases.is_array_type then
-								-- the setter
-					output_stream.put_string ("%Tset_")
+				if has_union_wrapper_by_name (l_union_name) then
+					output_stream.put_string ("%T")
 					output_stream.put_string (escaped_struct_feature_name (a_union_wrapper.mapped_eiffel_name))
-					output_stream.put_string (" (a_value: ")
-					output_stream.put_string ("POINTER )")
+					output_stream.put_string (": detachable ")
+					output_stream.put_string (l_union_name)
+					output_stream.put_string ("_UNION_API ")
 					output_stream.put_new_line
 
-					output_stream.put_string ("%T%T%T-- Set member `")
-					output_stream.put_string (a_union_wrapper.c_declaration.declarator)
+					output_stream.put_string ("%T%T%T-- Access member `")
+					output_stream.put_string (l_declarator)
 					output_stream.put_string ("`")
 					output_stream.put_new_line
 
 					output_stream.put_line ("%T%Trequire")
-					output_stream.put_line ("%T%T%Ta_value_not_void: a_value /= default_pointer")
 					output_stream.put_line ("%T%T%Texists: exists")
 
 					output_stream.put_line ("%T%Tdo")
-					output_stream.put_string ("%T%T%Tset_c_")
+					output_stream.put_string ("%T%T%Tif attached c_")
 					output_stream.put_string (eiffel_member_name)
-					output_stream.put_line (" (item, a_value)")
+					output_stream.put_line (" (item) as l_ptr and then not l_ptr.is_default_pointer then")
+					output_stream.put_line ("%T%T%T%Tcreate Result.make_by_pointer (l_ptr)")
+					output_stream.put_line ("%T%T%Tend")
+
 					output_stream.put_line ("%T%Tensure")
-					output_stream.put_string ("%T%T%T")
+					output_stream.put_string ("%T%T%Tresult_void: Result = Void implies c_")
 					output_stream.put_string (eiffel_member_name)
-					output_stream.put_string ("_set: ")
+					output_stream.put_line (" (item) = default_pointer ")
+
+					output_stream.put_string ("%T%T%Tresult_not_void: attached Result as l_result implies l_result.item = c_")
 					output_stream.put_string (eiffel_member_name)
-					output_stream.put_string (" = a_value ")
+					output_stream.put_line (" (item) ")
 					output_stream.put_line ("%T%Tend")
 					output_stream.put_new_line
-				end
 
+					if not a_union_wrapper.c_declaration.type.skip_consts_and_aliases.is_array_type then
+						-- the setter
+						output_stream.put_string ("%Tset_")
+						output_stream.put_string (a_union_wrapper.mapped_eiffel_name)
+						output_stream.put_string (" (a_value: ")
+						output_stream.put_string (a_union_wrapper.union_wrapper.mapped_eiffel_name)
+						output_stream.put_string ("_UNION_API) ")
+						output_stream.put_new_line
+
+						output_stream.put_string ("%T%T%T-- Set member `")
+						output_stream.put_string (l_declarator)
+						output_stream.put_string ("`")
+						output_stream.put_new_line
+
+						output_stream.put_line ("%T%Trequire")
+						output_stream.put_line ("%T%T%Ta_value_not_void: a_value /= Void")
+						output_stream.put_line ("%T%T%Texists: exists")
+
+						output_stream.put_line ("%T%Tdo")
+						output_stream.put_string ("%T%T%Tset_c_")
+						output_stream.put_string (eiffel_member_name)
+						output_stream.put_line (" (item, a_value.item)")
+
+						output_stream.put_line ("%T%Tensure")
+						output_stream.put_string ("%T%T%T" + eiffel_member_name + "_set: attached ")
+						output_stream.put_string (eiffel_member_name)
+						output_stream.put_string (" as l_value implies l_value = a_value.item")
+						output_stream.put_new_line
+						output_stream.put_line ("%T%Tend")
+						output_stream.put_new_line
+					end
+				else
+					output_stream.put_string ("%T")
+					output_stream.put_string (escaped_struct_feature_name (a_union_wrapper.mapped_eiffel_name))
+					output_stream.put_string (": POINTER")
+					output_stream.put_new_line
+
+					output_stream.put_string ("%T%T%T-- Access member `")
+					output_stream.put_string (l_declarator)
+					output_stream.put_string ("`")
+					output_stream.put_new_line
+
+					output_stream.put_line ("%T%Trequire")
+					output_stream.put_line ("%T%T%Texists: exists")
+
+					output_stream.put_line ("%T%Tdo")
+					output_stream.put_string ("%T%T%TResult := c_")
+					output_stream.put_string (eiffel_member_name)
+					output_stream.put_line (" (item) ")
+
+					output_stream.put_line ("%T%Tensure")
+					output_stream.put_line ("%T%Tend")
+					output_stream.put_new_line
+
+					if not a_union_wrapper.c_declaration.type.skip_consts_and_aliases.is_array_type then
+									-- the setter
+						output_stream.put_string ("%Tset_")
+						output_stream.put_string (escaped_struct_feature_name (a_union_wrapper.mapped_eiffel_name))
+						output_stream.put_string (" (a_value: ")
+						output_stream.put_string ("POINTER )")
+						output_stream.put_new_line
+
+						output_stream.put_string ("%T%T%T-- Set member `")
+						output_stream.put_string (l_declarator)
+						output_stream.put_string ("`")
+						output_stream.put_new_line
+
+						output_stream.put_line ("%T%Trequire")
+						output_stream.put_line ("%T%T%Ta_value_not_void: a_value /= default_pointer")
+						output_stream.put_line ("%T%T%Texists: exists")
+
+						output_stream.put_line ("%T%Tdo")
+						output_stream.put_string ("%T%T%Tset_c_")
+						output_stream.put_string (eiffel_member_name)
+						output_stream.put_line (" (item, a_value)")
+						output_stream.put_line ("%T%Tensure")
+						output_stream.put_string ("%T%T%T")
+						output_stream.put_string (eiffel_member_name)
+						output_stream.put_string ("_set: ")
+						output_stream.put_string (eiffel_member_name)
+						output_stream.put_string (" = a_value ")
+						output_stream.put_line ("%T%Tend")
+						output_stream.put_new_line
+					end
+				end
 			end
 		end
 
@@ -711,138 +723,140 @@ feature -- Generate Eiffel API
 
 
 	generate_native_wrapped_member (a_mapped_eiffel_name: STRING;
-											  a_composite_wrapper: EWG_COMPOSITE_WRAPPER;
+											  a_composite_wrapper: detachable EWG_COMPOSITE_WRAPPER;
 											  a_c_declaration: EWG_C_AST_DECLARATION;
 											  a_header_file_name: STRING)
 		require
 			a_mapped_eiffel_name_not_void: a_mapped_eiffel_name /= Void
 			a_mapped_eiffel_name_not_empty: not a_mapped_eiffel_name.is_empty
-			a_composite_wrapper_not_void: a_composite_wrapper /= Void
+--			a_composite_wrapper_not_void: a_composite_wrapper /= Void
 			a_c_declaration_not_void: a_c_declaration /= Void
 			a_header_file_name_not_void: a_header_file_name /= Void
 			a_header_file_name_not_empty: not a_header_file_name.is_empty
 		local
 			eiffel_member_name: STRING
 		do
-			eiffel_member_name := eiffel_parameter_name_from_c_parameter_name (a_c_declaration.declarator)
+			if attached a_c_declaration.declarator as l_declarator then
+				eiffel_member_name := eiffel_parameter_name_from_c_parameter_name (l_declarator)
 
-			-- the getter
-			output_stream.put_string ("%T")
-			output_stream.put_string (a_mapped_eiffel_name)
-			output_stream.put_string (": ")
-
-			-- Add detachable iff the type is STRING OR UNICODE STRING
-			if is_char_pointer_type (a_c_declaration) or is_unicode_char_pointer_type (a_c_declaration) then
-				output_stream.put_string (" detachable ")
-			end
-
-
-			output_stream.put_string (a_c_declaration.type.corresponding_eiffel_type_api )
-			output_stream.put_string (" ")
-			output_stream.put_new_line
-
-			output_stream.put_string ("%T%T%T-- Access member `")
-			output_stream.put_string (a_c_declaration.declarator)
-			output_stream.put_string ("`")
-			output_stream.put_new_line
-
-			output_stream.put_line ("%T%Trequire")
-			output_stream.put_line ("%T%T%Texists: exists")
-
-			output_stream.put_line ("%T%Tdo")
-
-			if is_char_pointer_type (a_c_declaration) then
-				output_stream.put_string ("%T%T%Tif attached c_")
-				output_stream.put_string (eiffel_member_name)
-				output_stream.put_line (" (item) as l_ptr then")
-				output_stream.put_line ("%T%T%T%TResult := (create {C_STRING}.make_by_pointer (l_ptr)).string")
-				output_stream.put_line ("%T%T%Tend")
-
-				output_stream.put_line ("%T%Tensure")
-				output_stream.put_string ("%T%T%Tresult_void: Result = Void implies c_")
-				output_stream.put_string (eiffel_member_name)
-				output_stream.put_line (" (item) = default_pointer")
-				output_stream.put_line ("%T%T%Tresult_not_void: attached Result as l_result implies l_result.same_string ((create {C_STRING}.make_by_pointer (item)).string)")
-				output_stream.put_line ("%T%Tend")
-				output_stream.put_new_line
-			elseif is_unicode_char_pointer_type (a_c_declaration) then
-				output_stream.put_string ("%T%T%Tif attached c_")
-				output_stream.put_string (eiffel_member_name)
-				output_stream.put_line (" (item) as l_ptr then")
-				output_stream.put_line ("%T%T%T%TResult := (create {NATIVE_STRING}.make_from_pointer (l_ptr)).string")
-				output_stream.put_line ("%T%T%Tend")
-
-				output_stream.put_line ("%T%Tensure")
-				output_stream.put_string ("%T%T%Tresult_void: Result = Void implies c_")
-				output_stream.put_string (eiffel_member_name)
-				output_stream.put_line (" (item) = default_pointer")
-				output_stream.put_line ("%T%T%Tresult_not_void: attached Result as l_result implies l_result.same_string ((create {NATIVE_STRING}.make_from_pointer (item)).string)")
-				output_stream.put_line ("%T%Tend")
-				output_stream.put_new_line
-			else
-				output_stream.put_string ("%T%T%TResult := c_")
-				output_stream.put_string (eiffel_member_name)
-				output_stream.put_line (" (item)")
-				output_stream.put_line ("%T%Tensure")
-				output_stream.put_string ("%T%T%Tresult_correct: Result = c_")
-				output_stream.put_string (eiffel_member_name)
-				output_stream.put_string (" (item)")
-				output_stream.put_line ("%T%Tend")
-				output_stream.put_new_line
-			end
-			if
-				not a_c_declaration.type.skip_consts_and_aliases.is_array_type
-			then
-					-- the setter
-				output_stream.put_string ("%Tset_")
+				-- the getter
+				output_stream.put_string ("%T")
 				output_stream.put_string (a_mapped_eiffel_name)
-				output_stream.put_string (" (a_value: ")
-				output_stream.put_string (a_c_declaration.type.corresponding_eiffel_type_api)
-				output_stream.put_string (") ")
+				output_stream.put_string (": ")
+
+				-- Add detachable iff the type is STRING OR UNICODE STRING
+				if is_char_pointer_type (a_c_declaration) or is_unicode_char_pointer_type (a_c_declaration) then
+					output_stream.put_string (" detachable ")
+				end
+
+
+				output_stream.put_string (a_c_declaration.type.corresponding_eiffel_type_api )
+				output_stream.put_string (" ")
 				output_stream.put_new_line
 
-				output_stream.put_string ("%T%T%T-- Change the value of member `")
-				output_stream.put_string (a_c_declaration.declarator)
-				output_stream.put_string ("` to `a_value`.")
+				output_stream.put_string ("%T%T%T-- Access member `")
+				output_stream.put_string (l_declarator)
+				output_stream.put_string ("`")
 				output_stream.put_new_line
 
 				output_stream.put_line ("%T%Trequire")
 				output_stream.put_line ("%T%T%Texists: exists")
 
 				output_stream.put_line ("%T%Tdo")
-				if a_c_declaration.type.is_char_pointer_type   then
-					output_stream.put_string ("%T%T%Tset_c_")
+
+				if is_char_pointer_type (a_c_declaration) then
+					output_stream.put_string ("%T%T%Tif attached c_")
 					output_stream.put_string (eiffel_member_name)
-					output_stream.put_line (" (item, (create {C_STRING}.make (a_value)).item )")
-				elseif a_c_declaration.type.is_unicode_char_pointer_type then
-					output_stream.put_string ("%T%T%Tset_c_")
+					output_stream.put_line (" (item) as l_ptr then")
+					output_stream.put_line ("%T%T%T%TResult := (create {C_STRING}.make_by_pointer (l_ptr)).string")
+					output_stream.put_line ("%T%T%Tend")
+
+					output_stream.put_line ("%T%Tensure")
+					output_stream.put_string ("%T%T%Tresult_void: Result = Void implies c_")
 					output_stream.put_string (eiffel_member_name)
-					output_stream.put_line (" (item, (create {NATIVE_STRING}.make (a_value)).item )")
+					output_stream.put_line (" (item) = default_pointer")
+					output_stream.put_line ("%T%T%Tresult_not_void: attached Result as l_result implies l_result.same_string ((create {C_STRING}.make_by_pointer (item)).string)")
+					output_stream.put_line ("%T%Tend")
+					output_stream.put_new_line
+				elseif is_unicode_char_pointer_type (a_c_declaration) then
+					output_stream.put_string ("%T%T%Tif attached c_")
+					output_stream.put_string (eiffel_member_name)
+					output_stream.put_line (" (item) as l_ptr then")
+					output_stream.put_line ("%T%T%T%TResult := (create {NATIVE_STRING}.make_from_pointer (l_ptr)).string")
+					output_stream.put_line ("%T%T%Tend")
+
+					output_stream.put_line ("%T%Tensure")
+					output_stream.put_string ("%T%T%Tresult_void: Result = Void implies c_")
+					output_stream.put_string (eiffel_member_name)
+					output_stream.put_line (" (item) = default_pointer")
+					output_stream.put_line ("%T%T%Tresult_not_void: attached Result as l_result implies l_result.same_string ((create {NATIVE_STRING}.make_from_pointer (item)).string)")
+					output_stream.put_line ("%T%Tend")
+					output_stream.put_new_line
 				else
-					output_stream.put_string ("%T%T%Tset_c_")
+					output_stream.put_string ("%T%T%TResult := c_")
 					output_stream.put_string (eiffel_member_name)
-					output_stream.put_line (" (item, a_value)")
+					output_stream.put_line (" (item)")
+					output_stream.put_line ("%T%Tensure")
+					output_stream.put_string ("%T%T%Tresult_correct: Result = c_")
+					output_stream.put_string (eiffel_member_name)
+					output_stream.put_string (" (item)")
+					output_stream.put_line ("%T%Tend")
+					output_stream.put_new_line
 				end
 				if
-					not (a_c_declaration.type.skip_consts_and_aliases.is_struct_type or
-						  a_c_declaration.type.skip_consts_and_aliases.is_union_type)
+					not a_c_declaration.type.skip_consts_and_aliases.is_array_type
 				then
-					output_stream.put_line ("%T%Tensure")
-					output_stream.put_string ("%T%T%T")
-					output_stream.put_string (eiffel_member_name)
-					output_stream.put_string ("_set: a_value = c_")
-					output_stream.put_string (eiffel_member_name)
-					output_stream.put_line ("(item)")
+						-- the setter
+					output_stream.put_string ("%Tset_")
+					output_stream.put_string (a_mapped_eiffel_name)
+					output_stream.put_string (" (a_value: ")
+					output_stream.put_string (a_c_declaration.type.corresponding_eiffel_type_api)
+					output_stream.put_string (") ")
+					output_stream.put_new_line
+
+					output_stream.put_string ("%T%T%T-- Change the value of member `")
+					output_stream.put_string (l_declarator)
+					output_stream.put_string ("` to `a_value`.")
+					output_stream.put_new_line
+
+					output_stream.put_line ("%T%Trequire")
+					output_stream.put_line ("%T%T%Texists: exists")
+
+					output_stream.put_line ("%T%Tdo")
+					if a_c_declaration.type.is_char_pointer_type   then
+						output_stream.put_string ("%T%T%Tset_c_")
+						output_stream.put_string (eiffel_member_name)
+						output_stream.put_line (" (item, (create {C_STRING}.make (a_value)).item )")
+					elseif a_c_declaration.type.is_unicode_char_pointer_type then
+						output_stream.put_string ("%T%T%Tset_c_")
+						output_stream.put_string (eiffel_member_name)
+						output_stream.put_line (" (item, (create {NATIVE_STRING}.make (a_value)).item )")
+					else
+						output_stream.put_string ("%T%T%Tset_c_")
+						output_stream.put_string (eiffel_member_name)
+						output_stream.put_line (" (item, a_value)")
+					end
+					if
+						not (a_c_declaration.type.skip_consts_and_aliases.is_struct_type or
+							  a_c_declaration.type.skip_consts_and_aliases.is_union_type)
+					then
+						output_stream.put_line ("%T%Tensure")
+						output_stream.put_string ("%T%T%T")
+						output_stream.put_string (eiffel_member_name)
+						output_stream.put_string ("_set: a_value = c_")
+						output_stream.put_string (eiffel_member_name)
+						output_stream.put_line ("(item)")
+					end
+
+					output_stream.put_line ("%T%Tend")
+					output_stream.put_new_line
 				end
 
-				output_stream.put_line ("%T%Tend")
-				output_stream.put_new_line
-			end
-
-			if a_c_declaration.type.skip_consts_and_aliases.is_callback then
-				-- the function caller
-				output_stream.put_line ("-- TODO: function pointers not yet callable from")
-				output_stream.put_line ("--%T%Tunion, use corresponding callback class instead")
+				if a_c_declaration.type.skip_consts_and_aliases.is_callback then
+					-- the function caller
+					output_stream.put_line ("-- TODO: function pointers not yet callable from")
+					output_stream.put_line ("--%T%Tunion, use corresponding callback class instead")
+				end
 			end
 		end
 
@@ -894,9 +908,9 @@ feature -- Generate Eiffel Low level C API.
 			eiffel_to_c_cast_printer.print_declaration_from_type (a_union_wrapper.c_union_type, "")
 
 			-- member access
-			if a_union_wrapper.c_union_type.is_complete then
+			if attached a_union_wrapper.c_union_type.members as l_members then -- a_union_wrapper.c_union_type.is_complete
 				from
-					cs := a_union_wrapper.c_union_type.members.new_cursor
+					cs := l_members.new_cursor
 					cs.start
 				until
 					cs.off
@@ -939,36 +953,37 @@ feature -- Generate Eiffel Low level C API.
 		local
 			eiffel_member_name: STRING
 		do
-			eiffel_member_name := eiffel_parameter_name_from_c_parameter_name (a_union_member.declarator)
-			output_stream.put_string ("%Tc_")
-			output_stream.put_string (eiffel_member_name)
-			output_stream.put_string (" (an_item: POINTER): ")
-			output_stream.put_string (a_union_member.type.corresponding_eiffel_type)
-			output_stream.put_line (" ")
-			output_stream.put_line ("%T%Trequire")
-			output_stream.put_line ("%T%T%Tan_item_not_null: an_item /= default_pointer")
-			output_stream.put_line ("%T%Texternal")
+			if attached a_union_member.declarator as l_declarator then
+				eiffel_member_name := eiffel_parameter_name_from_c_parameter_name (l_declarator)
+				output_stream.put_string ("%Tc_")
+				output_stream.put_string (eiffel_member_name)
+				output_stream.put_string (" (an_item: POINTER): ")
+				output_stream.put_string (a_union_member.type.corresponding_eiffel_type)
+				output_stream.put_line (" ")
+				output_stream.put_line ("%T%Trequire")
+				output_stream.put_line ("%T%T%Tan_item_not_null: an_item /= default_pointer")
+				output_stream.put_line ("%T%Texternal")
 
-			generate_inline_union_wrapper (a_header_file_name)
+				generate_inline_union_wrapper (a_header_file_name)
 
-			output_stream.put_line ("%T%Talias")
-			output_stream.put_line ("%T%T%T%"[")
-			output_stream.put_string ("%T%T%T%T")
-			if
-				a_union_member.type.skip_consts_and_aliases.is_struct_type or
-					a_union_member.type.skip_consts_and_aliases.is_union_type
-			then
-				output_stream.put_character ('&')
+				output_stream.put_line ("%T%Talias")
+				output_stream.put_line ("%T%T%T%"[")
+				output_stream.put_string ("%T%T%T%T")
+				if
+					a_union_member.type.skip_consts_and_aliases.is_struct_type or
+						a_union_member.type.skip_consts_and_aliases.is_union_type
+				then
+					output_stream.put_character ('&')
+				end
+				output_stream.put_string ("(")
+				output_stream.put_string (a_cast_with_one_pointer_indirection)
+				output_stream.put_string ("$an_item)->")
+				output_stream.put_line (l_declarator)
+				output_stream.put_line ("%T%T%T]%"")
+
+				output_stream.put_line ("%T%Tend")
+				output_stream.put_new_line
 			end
-			output_stream.put_string ("(")
-			output_stream.put_string (a_cast_with_one_pointer_indirection)
-			output_stream.put_string ("$an_item)->")
-			output_stream.put_line (a_union_member.declarator)
-			output_stream.put_line ("%T%T%T]%"")
-
-			output_stream.put_line ("%T%Tend")
-			output_stream.put_new_line
-
 		end
 
 	generate_member_setter (a_union_member: EWG_C_AST_DECLARATION;
@@ -986,40 +1001,42 @@ feature -- Generate Eiffel Low level C API.
 			eiffel_member_name: STRING
 			eiffel_to_c_cast_printer: EWG_EIFFEL_TO_C_TYPE_CAST_PRINTER
 		do
-			eiffel_member_name := eiffel_parameter_name_from_c_parameter_name (a_union_member.declarator)
-			output_stream.put_string ("%Tset_c_")
-			output_stream.put_string (eiffel_member_name)
-			output_stream.put_string (" (an_item: POINTER; a_value: ")
-			output_stream.put_string (a_union_member.type.corresponding_eiffel_type)
-			output_stream.put_line (") ")
-			output_stream.put_line ("%T%Trequire")
-			output_stream.put_line ("%T%T%Tan_item_not_null: an_item /= default_pointer")
-			output_stream.put_line ("%T%Texternal")
+			if attached a_union_member.declarator as l_declarator then
+				eiffel_member_name := eiffel_parameter_name_from_c_parameter_name (l_declarator)
+				output_stream.put_string ("%Tset_c_")
+				output_stream.put_string (eiffel_member_name)
+				output_stream.put_string (" (an_item: POINTER; a_value: ")
+				output_stream.put_string (a_union_member.type.corresponding_eiffel_type)
+				output_stream.put_line (") ")
+				output_stream.put_line ("%T%Trequire")
+				output_stream.put_line ("%T%T%Tan_item_not_null: an_item /= default_pointer")
+				output_stream.put_line ("%T%Texternal")
 
-			generate_inline_union_wrapper (a_header_file_name)
+				generate_inline_union_wrapper (a_header_file_name)
 
-				-- To be updated
-			output_stream.put_line ("%T%Talias")
-			output_stream.put_string ("%T%T%T%"[")
-			output_stream.put_string ("%N%T%T%T%T(")
-			output_stream.put_string (a_cast_with_one_pointer_indirection)
-			output_stream.put_string ("$an_item)->")
-			output_stream.put_string (a_union_member.declarator)
-			output_stream.put_string (" = ")
-			output_stream.put_character (' ')
-			if
-				a_union_member.type.skip_consts_and_aliases.is_struct_type or
-					a_union_member.type.skip_consts_and_aliases.is_union_type
-			then
-				output_stream.put_character ('*')
+					-- To be updated
+				output_stream.put_line ("%T%Talias")
+				output_stream.put_string ("%T%T%T%"[")
+				output_stream.put_string ("%N%T%T%T%T(")
+				output_stream.put_string (a_cast_with_one_pointer_indirection)
+				output_stream.put_string ("$an_item)->")
+				output_stream.put_string (l_declarator)
+				output_stream.put_string (" = ")
+				output_stream.put_character (' ')
+				if
+					a_union_member.type.skip_consts_and_aliases.is_struct_type or
+						a_union_member.type.skip_consts_and_aliases.is_union_type
+				then
+					output_stream.put_character ('*')
+				end
+				create eiffel_to_c_cast_printer.make (output_stream, eiffel_compiler_mode)
+				eiffel_to_c_cast_printer.print_declaration_from_type (a_union_member.type, "")
+				output_stream.put_line ("$a_value;")
+				output_stream.put_line ("%T%T%T]%"")
+
+				output_stream.put_line ("%T%Tend")
+				output_stream.put_new_line
 			end
-			create eiffel_to_c_cast_printer.make (output_stream, eiffel_compiler_mode)
-			eiffel_to_c_cast_printer.print_declaration_from_type (a_union_member.type, "")
-			output_stream.put_line ("$a_value;")
-			output_stream.put_line ("%T%T%T]%"")
-
-			output_stream.put_line ("%T%Tend")
-			output_stream.put_new_line
 		end
 
 	generate_sizeof_feature (a_header_file_name: STRING;

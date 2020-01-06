@@ -69,11 +69,13 @@ feature -- Generation
 	generate_callback_wrapper (a_callback_wrapper: EWG_CALLBACK_WRAPPER)
 		require
 			a_callback_wrapper_not_void: a_callback_wrapper /= Void
-			calling_conventions_must_be_cdecl: a_callback_wrapper.c_pointer_type.function_type.calling_convention = cdecl
+			calling_conventions_must_be_cdecl: attached a_callback_wrapper.c_pointer_type.function_type as l_function_type and then l_function_type.calling_convention = cdecl
 		do
 
 			if
-				a_callback_wrapper.c_pointer_type.function_type.return_type.skip_consts_and_aliases =
+				attached a_callback_wrapper.c_pointer_type.function_type as l_function_type and then
+				attached l_function_type.return_type as l_return_type and then
+				l_return_type.skip_consts_and_aliases =
 				c_system.types.void_type
 			then
 				output_stream.put_string ("void ")
@@ -111,21 +113,26 @@ feature -- Generation
 			-- TODO: return type
 
 			create name_generator.make_with_string_stream ("ewg_arg_")
-			from
-				cs := a_callback_wrapper.c_pointer_type.function_type.members.new_cursor
-				cs.start
-			until
-				cs.off
-			loop
-				output_stream.put_character ('%T')
-				name_generator.generate_new_name
-					check
-						todo: False
+			if attached a_callback_wrapper.c_pointer_type.function_type as l_function_type and then attached l_function_type.members as l_members then
+				from
+					cs := l_members.new_cursor
+					cs.start
+				until
+					cs.off
+				loop
+					output_stream.put_character ('%T')
+					name_generator.generate_new_name
+						check
+							todo: False
+						end
+					-- cs.item.type.append_declaration_to_stream (output_stream, name_generator.output_string)
+					if attached name_generator.output_string as l_output_string then
+						l_output_string.wipe_out
 					end
-				-- cs.item.type.append_declaration_to_stream (output_stream, name_generator.output_string)
-				name_generator.output_string.wipe_out
-				output_stream.put_line (";")
-				cs.forth
+
+					output_stream.put_line (";")
+					cs.forth
+				end
 			end
 
 			output_stream.put_new_line
@@ -139,21 +146,29 @@ feature -- Generation
 			output_stream.put_new_line
 
 			output_stream.put_string ("%Tva_start_")
-			generate_ffcall_type (a_callback_wrapper.c_pointer_type.function_type.return_type)
-			create name_generator.make_with_string_stream ("ewg_arg_")
-			from
-				cs := a_callback_wrapper.c_pointer_type.function_type.members.new_cursor
-				cs.start
-			until
-				cs.off
-			loop
-				output_stream.put_character ('%T')
-				name_generator.generate_new_name
-				output_stream.put_string (name_generator.output_string)
-				name_generator.output_string.wipe_out
-				output_stream.put_string (" = va_arg_")
-				generate_ffcall_type (cs.item.type)
-				cs.forth
+
+			if attached a_callback_wrapper.c_pointer_type.function_type as l_function_type and then
+				attached l_function_type.members as l_members and then
+				attached l_function_type.return_type as l_return_type then
+
+				generate_ffcall_type (l_return_type)
+				create name_generator.make_with_string_stream ("ewg_arg_")
+				from
+					cs := l_members.new_cursor
+					cs.start
+				until
+					cs.off
+				loop
+					output_stream.put_character ('%T')
+					name_generator.generate_new_name
+					if attached name_generator.output_string as l_output_string then
+						output_stream.put_string (l_output_string)
+						l_output_string.wipe_out
+					end
+					output_stream.put_string (" = va_arg_")
+					generate_ffcall_type (cs.item.type)
+					cs.forth
+				end
 			end
 
 		end
@@ -170,19 +185,24 @@ feature -- Generation
 			output_stream.put_string ("%T(*feature) (eif_access (entry_struct->class), ")
 
 			create name_generator.make_with_string_stream ("ewg_arg_")
-			from
-				cs := a_callback_wrapper.c_pointer_type.function_type.members.new_cursor
-				cs.start
-			until
-				cs.off
-			loop
-				name_generator.generate_new_name
-				output_stream.put_string (name_generator.output_string)
-				name_generator.output_string.wipe_out
-				if not cs.is_last then
-					output_stream.put_string (", ")
+			if attached a_callback_wrapper.c_pointer_type.function_type as l_function_type and then attached l_function_type.members as l_members
+			then
+				from
+					cs := l_members.new_cursor
+					cs.start
+				until
+					cs.off
+				loop
+					name_generator.generate_new_name
+					if attached name_generator.output_string as l_output_string then
+						output_stream.put_string (l_output_string)
+						l_output_string.wipe_out
+					end
+					if not cs.is_last then
+						output_stream.put_string (", ")
+					end
+					cs.forth
 				end
-				cs.forth
 			end
 			output_stream.put_line (");")
 		end
@@ -192,7 +212,6 @@ feature -- Generation
 			a_type_not_void: a_type /= Void
 		local
 			type: EWG_C_AST_TYPE
-			primitive_type: EWG_C_AST_PRIMITIVE_TYPE
 		do
 			type := a_type.skip_consts_and_aliases
 			if type.is_pointer_type then
@@ -204,8 +223,7 @@ feature -- Generation
 				output_stream.put_line (");")
 			elseif type = c_system.types.void_type then
 				output_stream.put_line ("void (alist);")
-			elseif type.is_primitive_type then
-				primitive_type ?= type
+			elseif type.is_primitive_type and then attached {EWG_C_AST_PRIMITIVE_TYPE} type as primitive_type then
 				if primitive_type.is_int_type then
 					output_stream.put_line ("int (alist);")
 				elseif primitive_type.is_long_type then

@@ -23,7 +23,7 @@ feature {NONE} -- Initialization
 			a_class_name: STRING;
 			a_constant_name: STRING;
 			a_type: STRING;
-			a_value: detachable STRING
+			a_value: STRING
 			)
 		require
 			a_mapped_eiffel_name_not_void: a_mapped_eiffel_name /= Void
@@ -58,7 +58,7 @@ feature -- Access
 	eiffel_type: STRING
 			-- Name of the proposed Eiffel type.
 
-	eiffel_value: detachable STRING
+	eiffel_value: STRING
 			-- String representation of value.
 
 

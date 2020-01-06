@@ -86,7 +86,7 @@ feature -- Formatting
 	print_declaration_list (a_list: DS_LINEAR [EWG_C_AST_DECLARATION])
 		require
 			a_list_not_void: a_list /= Void
-			a_list_doesnt_have_void: not a_list.has (Void)
+--			a_list_doesnt_have_void: not a_list.has (Void)
 		local
 			parameter_name_generator: EWG_UNIQUE_NAME_GENERATOR
 			cs: DS_LINEAR_CURSOR [EWG_C_AST_DECLARATION]
@@ -99,7 +99,12 @@ feature -- Formatting
 			until
 				cs.off
 			loop
-				if cs.item.is_anonymous then
+				if attached cs.item.declarator as l_declarator then
+					declarator := eiffel_parameter_name_from_c_parameter_name (l_declarator)
+				else
+					check
+						is_anonymous: cs.item.is_anonymous
+					end
 					if parameter_name_generator = Void then
 						create parameter_name_generator.make ("anonymous_")
 					end
@@ -107,9 +112,8 @@ feature -- Formatting
 					create string_stream.make (declarator)
 					parameter_name_generator.set_output_stream (string_stream)
 					parameter_name_generator.generate_new_name
-				else
-					declarator := eiffel_parameter_name_from_c_parameter_name (cs.item.declarator)
 				end
+
 				declaration_printer.print_declaration_from_type (cs.item.type, declarator_prefix + declarator)
 				cs.forth
 				if not cs.after then

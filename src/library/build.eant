@@ -25,7 +25,7 @@
 		</description>
 
 		<geant target="ewg_c_parser"/>
-		<geant target="ewg_c_macro_parser"/>
+		<!--geant target="ewg_c_macro_parser"/> -->
 	</target>
 
 	<target name="clean">

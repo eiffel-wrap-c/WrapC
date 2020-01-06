@@ -17,6 +17,9 @@ inherit
 	EWG_C_AST_TYPE_PROCESSOR
 
 	EWG_PRINTER
+		redefine
+			make_internal
+		end
 
 	KL_IMPORTED_STRING_ROUTINES
 		export {NONE} all end
@@ -27,6 +30,18 @@ inherit
 	EWG_C_CALLING_CONVENTION_CONSTANTS
 		export {NONE} all end
 
+
+
+create
+	make,
+	make_string
+	
+feature
+	make_internal
+		do
+			reset
+		end
+
 feature -- Acccess
 
 	declarator: STRING
@@ -36,7 +51,9 @@ feature {EWG_C_AST_TYPE_PROCESSOR} -- Processing
 
 	process_primitive_type (a_type: EWG_C_AST_PRIMITIVE_TYPE)
 		do
-			output_stream.put_string (a_type.name)
+			if attached a_type.name as l_name then
+				output_stream.put_string (l_name)
+			end
 			if should_print_const then
 				output_stream.put_character (' ')
 				print_const
@@ -54,7 +71,10 @@ feature {EWG_C_AST_TYPE_PROCESSOR} -- Processing
 
 	process_alias_type (a_type: EWG_C_AST_ALIAS_TYPE)
 		do
-			output_stream.put_string (a_type.name)
+			if attached a_type.name as l_name then
+				output_stream.put_string (l_name)
+			end
+
 			if should_print_const then
 				output_stream.put_character (' ')
 				print_const
@@ -67,7 +87,7 @@ feature {EWG_C_AST_TYPE_PROCESSOR} -- Processing
 
 	process_pointer_type (a_type: EWG_C_AST_POINTER_TYPE)
 		do
-			if last_type /= Void and then last_type.is_const_type then
+			if attached last_type as l_last_type and then l_last_type.is_const_type then
 				prepend_to_declarator ("*const ")
 			else
 				prepend_to_declarator ("*")
@@ -80,8 +100,8 @@ feature {EWG_C_AST_TYPE_PROCESSOR} -- Processing
 	process_array_type (a_type: EWG_C_AST_ARRAY_TYPE)
 		do
 			append_to_declarator ("[")
-			if a_type.is_size_defined then
-				append_to_declarator (a_type.size)
+			if attached a_type.size as l_size then
+				append_to_declarator (l_size)
 			end
 			append_to_declarator ("]")
 			if should_print_const then
@@ -112,17 +132,17 @@ feature {EWG_C_AST_TYPE_PROCESSOR} -- Processing
 			if should_print_const then
 				prepend_to_declarator ("const ")
 			end
-			if last_type /= Void and then last_type.is_pointer_type then
+			if attached last_type as l_last_type and then l_last_type.is_pointer_type then
 				prepend_to_declarator ("(")
 			end
-			if last_type /= Void and then last_type.is_pointer_type then
+			if attached last_type as l_last_type and then l_last_type.is_pointer_type then
 				append_to_declarator (")")
 			end
 			create declaration_printer.make_string (text_after_declarator)
 			create declaration_list_printer.make_string (text_after_declarator, declaration_printer)
 			append_to_declarator (" (")
-			if a_type.members.count > 0 then
-				declaration_list_printer.print_declaration_list (a_type.members)
+			if	attached a_type.members as l_members then
+				declaration_list_printer.print_declaration_list (l_members)
 				if a_type.has_ellipsis_parameter then
 					append_to_declarator (", ...")
 				end
@@ -146,11 +166,16 @@ feature {EWG_C_AST_TYPE_PROCESSOR} -- Processing
 					check
 						has_perfect_alias: a_type.has_perfect_alias_type
 					end
-				process (a_type.closest_alias_type)
+				if attached a_type.closest_alias_type as l_closest_alias_type then
+					process (l_closest_alias_type)
+				end
 			else
 				output_stream.put_string ("struct ")
+				if attached a_type.name as l_name then
+					output_stream.put_string (l_name)
+				end
 --				output_stream.put_string (a_type.name.as_lower)
-				output_stream.put_string (a_type.name)
+
 				if should_print_const then
 					output_stream.put_character (' ')
 					print_const
@@ -168,10 +193,16 @@ feature {EWG_C_AST_TYPE_PROCESSOR} -- Processing
 					check
 						has_perfect_alias: a_type.has_perfect_alias_type
 					end
-				process (a_type.closest_alias_type)
+				if attached a_type.closest_alias_type as l_closest_alias_type then
+					process (l_closest_alias_type)
+				end
+
 			else
 				output_stream.put_string ("union ")
-				output_stream.put_string (a_type.name)
+				if attached a_type.name as l_name then
+					output_stream.put_string (l_name)
+				end
+
 --				output_stream.put_string (a_type.name.as_lower)
 				if should_print_const then
 					output_stream.put_character (' ')
@@ -190,10 +221,14 @@ feature {EWG_C_AST_TYPE_PROCESSOR} -- Processing
 					check
 						has_perfect_alias: a_type.has_perfect_alias_type
 					end
-				process (a_type.closest_alias_type)
+				if attached a_type.closest_alias_type as l_closest_alias_type then
+					process (l_closest_alias_type)
+				end
 			else
 				output_stream.put_string ("enum ")
-				output_stream.put_string (a_type.name)
+				if attached a_type.name as l_name  then
+					output_stream.put_string (l_name)
+				end
 				if should_print_const then
 					output_stream.put_character (' ')
 					print_const
@@ -228,7 +263,7 @@ feature {NONE}
 			text_after_declarator_is_empty: text_after_declarator.count = 0
 		end
 
-	last_type: EWG_C_AST_TYPE
+	last_type: detachable EWG_C_AST_TYPE
 			-- Last type that was processed
 
 	process (a_type: EWG_C_AST_TYPE)
@@ -293,7 +328,7 @@ feature {NONE}
 
 	should_print_const: BOOLEAN
 		do
-			Result := last_type /= Void and then last_type.is_const_type
+			Result := attached last_type as l_last_type and then l_last_type.is_const_type
 		end
 
 	has_declarator: BOOLEAN

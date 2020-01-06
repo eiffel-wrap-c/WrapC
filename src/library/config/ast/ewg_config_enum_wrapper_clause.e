@@ -33,22 +33,19 @@ feature {ANY} -- Basic Routines
 
 	shallow_wrap_type (a_type: EWG_C_AST_TYPE;
 							 a_include_header_file_name: STRING;
-							 a_eiffel_wrapper_set: EWG_EIFFEL_WRAPPER_SET) 
+							 a_eiffel_wrapper_set: EWG_EIFFEL_WRAPPER_SET)
 		local
-			enum_type: EWG_C_AST_ENUM_TYPE
 			enum_wrapper: EWG_ENUM_WRAPPER
 			member_list: DS_ARRAYED_LIST [EWG_MEMBER_WRAPPER]
 		do
-			enum_type ?= a_type.skip_wrapper_irrelevant_types
-				check
-					enum_type_not_void: enum_type /= Void
-				end
-			create member_list.make_default
-			create enum_wrapper.make (eiffel_identifier_for_type (enum_type),
-											  a_include_header_file_name,
-											  enum_type,
-											  member_list)
-			a_eiffel_wrapper_set.add_wrapper (enum_wrapper)
+			if attached {EWG_C_AST_ENUM_TYPE} a_type.skip_wrapper_irrelevant_types as enum_type then
+				create member_list.make_default
+				create enum_wrapper.make (eiffel_identifier_for_type (enum_type),
+												  a_include_header_file_name,
+												  enum_type,
+												  member_list)
+				a_eiffel_wrapper_set.add_wrapper (enum_wrapper)
+			end
 		end
 
 end

@@ -24,6 +24,9 @@ inherit
 			make as make_abstract_wrapper
 		end
 
+create
+	make
+
 feature {NONE} -- Initialization
 
 	make (a_mapped_eiffel_name: STRING; a_header_file_name: STRING; a_c_pointer_type: EWG_C_AST_POINTER_TYPE;
@@ -37,8 +40,8 @@ feature {NONE} -- Initialization
 			a_c_pointer_type_is_callback: a_c_pointer_type.is_callback
 			a_members_not_void: a_members /= Void
 		do
-			make_callable_wrapper (a_mapped_eiffel_name, a_header_file_name, a_members)
 			c_pointer_type := a_c_pointer_type
+			make_callable_wrapper (a_mapped_eiffel_name, a_header_file_name, a_members)
 		ensure
 			mapped_eiffel_name_set: mapped_eiffel_name = a_mapped_eiffel_name
 			header_file_name_set: header_file_name = a_header_file_name
@@ -56,9 +59,9 @@ feature
 			Result := c_pointer_type
 		end
 
-	get_stub: EWG_FUNCTION_WRAPPER
+	get_stub: detachable EWG_FUNCTION_WRAPPER
 
-	set_entry_struct: EWG_FUNCTION_WRAPPER
+	set_entry_struct: detachable EWG_FUNCTION_WRAPPER
 
 	set_get_stub (a_function_wrapper: EWG_FUNCTION_WRAPPER)
 		require
@@ -69,7 +72,7 @@ feature
 			get_stub_set: get_stub = a_function_wrapper
 		end
 
-	set_set_entry_struct (a_function_wrapper: EWG_FUNCTION_WRAPPER) 
+	set_set_entry_struct (a_function_wrapper: EWG_FUNCTION_WRAPPER)
 		require
 			a_function_wrapper_not_void: a_function_wrapper /= Void
 		do

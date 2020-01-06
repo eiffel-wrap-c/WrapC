@@ -31,7 +31,7 @@ feature {NONE} -- Initialisation
 
 feature {ANY} -- Access
 
-	last_declaration: EWG_C_AST_DECLARATION
+	last_declaration: detachable EWG_C_AST_DECLARATION
 			-- Last declaration added
 
 feature {ANY} -- Status checkers
@@ -96,7 +96,7 @@ feature {EWG_C_SYSTEM} -- Add function declarations
 		ensure
 			a_declaration_added: has (a_declaration)
 			last_declaration_not_void: last_declaration /= Void
-			last_declaration_equal_to_a_function_declaration: declaration_equality_tester.test (last_declaration, a_declaration)
+			last_declaration_equal_to_a_function_declaration: attached last_declaration as l_declaration and then declaration_equality_tester.test (l_declaration, a_declaration)
 		end
 
 	function_declarations: DS_LINEAR [EWG_C_AST_FUNCTION_DECLARATION]
@@ -105,7 +105,6 @@ feature {EWG_C_SYSTEM} -- Add function declarations
 		local
 			set: DS_HASH_SET [EWG_C_AST_FUNCTION_DECLARATION]
 			cs: DS_LINEAR_CURSOR [EWG_C_AST_DECLARATION]
-			function_declaration: EWG_C_AST_FUNCTION_DECLARATION
 		do
 			create set.make (Default_declaration_storage_capacity)
 			set.set_equality_tester (function_declaration_equality_tester)
@@ -115,8 +114,7 @@ feature {EWG_C_SYSTEM} -- Add function declarations
 			until
 				cs.off
 			loop
-				function_declaration ?= cs.item
-				if function_declaration /= Void then
+				if attached {EWG_C_AST_FUNCTION_DECLARATION} cs.item as function_declaration then
 					set.force_new (function_declaration)
 				end
 				cs.forth
@@ -138,8 +136,8 @@ feature {NONE} -- Constants
 
 invariant
 
-	last_declaration_void_or_in_system: last_declaration /= Void implies has (last_declaration)
+	last_declaration_void_or_in_system: attached last_declaration as l_declaration implies has (l_declaration)
 	declaration_storage_not_void: declaration_storage /= Void
-	declaration_storage_doesnt_have_void: not declaration_storage.has (Void)
+--	declaration_storage_doesnt_have_void: not declaration_storage.has (Void)
 
 end

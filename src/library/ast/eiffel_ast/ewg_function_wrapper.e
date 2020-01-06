@@ -45,9 +45,9 @@ feature {NONE} -- Initialization
 			a_class_name_not_void: a_class_name /= Void
 			a_class_name_not_empty: a_class_name.count > 0
 		do
-			make_callable_wrapper (a_mapped_eiffel_name, a_header_file_name, a_members)
 			function_declaration := a_function_declaration
 			class_name := a_class_name
+			make_callable_wrapper (a_mapped_eiffel_name, a_header_file_name, a_members)
 		ensure
 			mapped_eiffel_name_set: mapped_eiffel_name = a_mapped_eiffel_name
 			header_file_name_set: header_file_name = a_header_file_name
@@ -61,7 +61,7 @@ feature
 	function_declaration: EWG_C_AST_FUNCTION_DECLARATION
 			-- Function declaration to wrap
 
-	declaration: EWG_C_AST_DECLARATION 
+	declaration: EWG_C_AST_DECLARATION
 		do
 			Result := function_declaration
 		end

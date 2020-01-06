@@ -19,9 +19,14 @@ inherit
 			make_internal
 		end
 
+create
+	make,
+	make_string
+
+
 feature {NONE} -- Initialization
 
-	make_internal 
+	make_internal
 		do
 			create eiffel_compiler_mode.make
 		end

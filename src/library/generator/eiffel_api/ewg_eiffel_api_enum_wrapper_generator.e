@@ -73,10 +73,10 @@ feature {NONE}
 			output_stream.put_line ("feature {ANY}")
 			output_stream.put_new_line
 
-			if an_enum_wrapper.c_enum_type.members /= Void then
+			if attached an_enum_wrapper.c_enum_type.members as l_members then
 				generate_is_valid_feature (an_enum_wrapper)
 				from
-					cs := an_enum_wrapper.c_enum_type.members.new_cursor
+					cs := l_members.new_cursor
 					cs.start
 				until
 					cs.off
@@ -98,26 +98,30 @@ feature {NONE}
 		local
 			cs: DS_BILINEAR_CURSOR [EWG_C_AST_DECLARATION]
 		do
-			output_stream.put_line ("%Tis_valid_enum (a_value: INTEGER): BOOLEAN ")
-			output_stream.put_line ("%T%T%T-- Is `a_value' a valid integer code for this enum ?")
-			output_stream.put_line ("%T%Tdo")
-			output_stream.put_string("%T%T%TResult := ")
-			from
-				cs := an_enum_wrapper.c_enum_type.members.new_cursor
-				cs.start
-			until
-				cs.off
-			loop
-				output_stream.put_string ("a_value = ")
-				output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (cs.item.declarator))
-				cs.forth
-				if not cs.after then
-					output_stream.put_string (" or ")
+			if attached an_enum_wrapper.c_enum_type.members as l_members then
+				output_stream.put_line ("%Tis_valid_enum (a_value: INTEGER): BOOLEAN ")
+				output_stream.put_line ("%T%T%T-- Is `a_value' a valid integer code for this enum ?")
+				output_stream.put_line ("%T%Tdo")
+				output_stream.put_string("%T%T%TResult := ")
+				from
+					cs := l_members.new_cursor
+					cs.start
+				until
+					cs.off
+				loop
+					if attached cs.item.declarator as l_declarator then
+						output_stream.put_string ("a_value = ")
+						output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (l_declarator))
+						cs.forth
+						if not cs.after then
+							output_stream.put_string (" or ")
+						end
+					end
 				end
+				output_stream.put_new_line
+				output_stream.put_line ("%T%Tend")
+				output_stream.put_new_line
 			end
-			output_stream.put_new_line
-			output_stream.put_line ("%T%Tend")
-			output_stream.put_new_line
 		end
 
 	generate_member (a_member: EWG_C_AST_DECLARATION;
@@ -130,35 +134,36 @@ feature {NONE}
 		local
 			eiffel_member_name: STRING
 		do
-			eiffel_member_name := eiffel_parameter_name_from_c_parameter_name (a_member.declarator)
+			if attached a_member.declarator as l_declarator then
+				eiffel_member_name := eiffel_parameter_name_from_c_parameter_name (l_declarator)
 
-			output_stream.put_string ("%T")
-			output_stream.put_string (eiffel_member_name)
-			output_stream.put_line (": INTEGER ")
-			output_stream.put_line ("%T%Texternal")
+				output_stream.put_string ("%T")
+				output_stream.put_string (eiffel_member_name)
+				output_stream.put_line (": INTEGER ")
+				output_stream.put_line ("%T%Texternal")
 
-			if
-				eiffel_compiler_mode.is_ise_mode
-			then
-				output_stream.put_string ("%T%T%T%"C inline use <")
-				output_stream.put_string (a_header_file_name)
-				output_stream.put_string (">%"")
+				if
+					eiffel_compiler_mode.is_ise_mode
+				then
+					output_stream.put_string ("%T%T%T%"C inline use <")
+					output_stream.put_string (a_header_file_name)
+					output_stream.put_string (">%"")
+					output_stream.put_new_line
+					output_stream.put_string ("%T%Talias")
+					output_stream.put_new_line
+					output_stream.put_string ("%T%T%T%"")
+					output_stream.put_string (l_declarator)
+					output_stream.put_string ("%"")
+					output_stream.put_new_line
+					output_stream.put_string ("%T%Tend")
+					output_stream.put_new_line
+				else
+						check
+							dead_end: False
+						end
+				end
 				output_stream.put_new_line
-				output_stream.put_string ("%T%Talias")
-				output_stream.put_new_line
-				output_stream.put_string ("%T%T%T%"")
-				output_stream.put_string (a_member.declarator)
-				output_stream.put_string ("%"")
-				output_stream.put_new_line
-				output_stream.put_string ("%T%Tend")
-				output_stream.put_new_line
-			else
-					check
-						dead_end: False
-					end
 			end
-
-			output_stream.put_new_line
 		end
 
 end

@@ -32,28 +32,33 @@ feature
 		do
 			-- TODO: handle __int8, __int16, __int32 and __int64
 			-- TODO: Take care of how different platforms handle C types.
-			if name.has_substring ("int") or
-				name.has_substring ("long") or
-				name.has_substring ("signed") or -- includes 'unsigned'
-				name.has_substring ("short") or
-				name.has_substring ("_Bool") then -- TODO: this should really be mapped to BOOLEAN. Needs changes all over the place probably.
-				Result := "INTEGER"
-			elseif name.has_substring ("char") then
-				Result := "CHARACTER"
-			elseif name.has_substring ("double") then
-				Result := "REAL_64"
-			elseif name.has_substring ("float") then
-				Result := "REAL"
-			elseif name.has_substring ("void") then
-				Result := "WHAT_SHOULD_I_DO_WITH_VOID"
-			else
+			if attached name as l_name then
+				if l_name.has_substring ("int") or
+					l_name.has_substring ("long") or
+					l_name.has_substring ("signed") or -- includes 'unsigned'
+					l_name.has_substring ("short") or
+					l_name.has_substring ("_Bool") then -- TODO: this should really be mapped to BOOLEAN. Needs changes all over the place probably.
+					Result := "INTEGER"
+				elseif l_name.has_substring ("char") then
+					Result := "CHARACTER"
+				elseif l_name.has_substring ("double") then
+					Result := "REAL_64"
+				elseif l_name.has_substring ("float") then
+					Result := "REAL"
+				elseif l_name.has_substring ("void") then
+					Result := "WHAT_SHOULD_I_DO_WITH_VOID"
+				else
 					check
 						dead_end: False
 					end
-			end
-
-			if {PLATFORM}.is_windows then
-
+					Result := "UNKNOWN"
+					-- TODO: double check what to do with this
+					-- or just return detachable STRING
+				end
+			else
+				Result := "UNKNOWN"
+					-- TODO: double check what to do with this
+					-- or just return detachable STRING
 			end
 		end
 
@@ -77,32 +82,44 @@ feature
 	is_char_type: BOOLEAN
 			-- Is this type 'char'?
 		do
-			Result := name.has_substring ("char")
+			if attached name as l_name then
+				Result := l_name.has_substring ("char")
+			end
 		end
 
 	is_int_type: BOOLEAN
 		do
-			Result := name.has_substring ("int")
+			if attached name as l_name then
+				Result := l_name.has_substring ("int")
+			end
 		end
 
 	is_long_type: BOOLEAN
 		do
-			Result := name.has_substring ("long")
+			if attached name as l_name then
+				Result := l_name.has_substring ("long")
+			end
 		end
 
 	is_double_type: BOOLEAN
 		do
-			Result := name.has_substring ("double")
+			if attached name as l_name then
+				Result := l_name.has_substring ("double")
+			end
 		end
 
 	is_float_type: BOOLEAN
 		do
-			Result := name.has_substring ("float")
+			if attached name as l_name then
+				Result := l_name.has_substring ("float")
+			end
 		end
 
 	is_short_type: BOOLEAN
 		do
-			Result := name.has_substring ("short")
+			if attached name as l_name then
+				Result := l_name.has_substring ("short")
+			end
 		end
 
 feature -- Visitor Pattern

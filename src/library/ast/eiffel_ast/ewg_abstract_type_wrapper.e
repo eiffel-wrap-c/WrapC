@@ -16,9 +16,9 @@ inherit
 
 	EWG_ABSTRACT_WRAPPER
 
-feature
+feature -- Access
 
-	type: EWG_C_AST_TYPE 
+	type: EWG_C_AST_TYPE
 		deferred
 		end
 

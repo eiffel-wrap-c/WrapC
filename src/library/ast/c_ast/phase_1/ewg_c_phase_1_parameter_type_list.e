@@ -66,7 +66,7 @@ feature -- Access
 
 feature -- Element change
 
-	set_ellipsis_parameter (a_value: BOOLEAN) 
+	set_ellipsis_parameter (a_value: BOOLEAN)
 			-- Set `has_ellipsis_parameter' to `a_value'.
 		do
 			has_ellipsis_parameter := a_value
@@ -77,6 +77,6 @@ feature -- Element change
 invariant
 
 	parameter_list_not_void: parameter_list /= Void
-	parameter_list_doesnt_have_void: not parameter_list.has (Void)
+--	parameter_list_doesnt_have_void: not parameter_list.has (Void)
 
 end

@@ -56,14 +56,11 @@ feature {NONE} -- Creation
 			header_file_name_set: header_file_name = a_header_file_name
 		end
 
-feature
+feature -- Access
 
 	is_same_type (other: EWG_C_AST_TYPE): BOOLEAN
-		local
-			other_pointer: EWG_C_AST_POINTER_TYPE
 		do
-			other_pointer ?= other
-			if other_pointer /= Void then
+			if attached {EWG_C_AST_POINTER_TYPE} other as other_pointer then
 				Result := Current = other_pointer or else is_same_based_type (other_pointer)
 			end
 		end
@@ -130,17 +127,13 @@ feature
 	is_char_pointer_type: BOOLEAN
 			-- Is the current type a pointer to char ?
 			-- (Note aliases and consts are ignored)
-		local
-			primitive_type: EWG_C_AST_PRIMITIVE_TYPE
 		do
 			if
 				base.skip_consts_and_aliases.is_primitive_type
-				then
-					primitive_type ?= base.skip_consts_and_aliases
-					check
-						primitive_type_not_void: primitive_type /= Void
-					end
-				Result := primitive_type.is_char_type
+			then
+				if attached {EWG_C_AST_PRIMITIVE_TYPE} base.skip_consts_and_aliases as  primitive_type then
+					Result := primitive_type.is_char_type
+				end
 			end
 		end
 
@@ -164,15 +157,17 @@ feature
 		require
 			is_callback: is_callback
 		do
-			Result ?= based_type_recursive
+			check attached {EWG_C_AST_FUNCTION_TYPE} based_type_recursive as l_based_type_recursive  then
+				Result := l_based_type_recursive
+			end
 		ensure
 			function_type_not_void: Result /= Void
 		end
 
-
-	get_eiffel_type (a_header_file_name: STRING_8; ): STRING
+	get_eiffel_type (a_header_file_name: STRING_8 ): STRING
 		do
-
+			Result := "Not Implemented"
+			-- TODO double check
 		end
 
 feature -- Visitor Pattern
@@ -186,14 +181,11 @@ feature -- Visitor Pattern
 feature {EWG_C_AST_BASED_TYPE}
 
 	number_of_pointer_or_array_types_between_current_and_type_recursive (a_type: EWG_C_AST_TYPE; a_indirections: INTEGER): INTEGER
-		local
-			base_based_type: EWG_C_AST_BASED_TYPE
 		do
 			if base = a_type then
 				Result := a_indirections + 1
 			else
-				base_based_type ?= base
-				if base_based_type /= Void then
+				if attached {EWG_C_AST_BASED_TYPE} base as base_based_type then
 					Result := base_based_type.number_of_pointer_or_array_types_between_current_and_type_recursive (a_type, a_indirections + 1)
 				end
 			end

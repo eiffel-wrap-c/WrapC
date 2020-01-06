@@ -28,26 +28,26 @@ create
 
 feature
 
-	make (a_name: STRING)
+	make (a_name: detachable STRING)
 		do
 			name := a_name
 		end
 
-	make_enum (a_name: STRING; a_members: DS_LINKED_LIST [EWG_C_PHASE_1_DECLARATION])
+	make_enum (a_name: detachable STRING; a_members: detachable DS_LINKED_LIST [EWG_C_PHASE_1_DECLARATION])
 		do
 			is_enum := True
 			make (a_name)
 			members := a_members
 		end
 
-	make_struct (a_name: STRING; a_members: DS_LINKED_LIST [EWG_C_PHASE_1_DECLARATION])
+	make_struct (a_name: detachable STRING; a_members: detachable DS_LINKED_LIST [EWG_C_PHASE_1_DECLARATION])
 		do
 			is_struct := True
 			make (a_name)
 			members := a_members
 		end
 
-	make_union (a_name: STRING; a_members: DS_LINKED_LIST [EWG_C_PHASE_1_DECLARATION])
+	make_union (a_name: detachable STRING; a_members: detachable DS_LINKED_LIST [EWG_C_PHASE_1_DECLARATION])
 		do
 			is_union := True
 			make (a_name)
@@ -63,13 +63,17 @@ feature
 			--        : `name' = "unsigned int"
 		require
 			a_type_not_void: a_type /= Void
+		local
+			l_name: like name
 		do
-			if name = Void then
-				name := a_type.name
-			elseif a_type.name /= Void then
-				name := STRING_.concat (name, " ")
-				name := STRING_.concat (name, a_type.name)
+			l_name := name
+			if l_name = Void then
+				l_name := a_type.name
+			elseif attached a_type.name as l_type_name then
+				l_name := STRING_.concat (l_name, " ")
+				l_name := STRING_.concat (l_name, l_type_name)
 			end
+			name := l_name
 		end
 
 
@@ -89,14 +93,16 @@ feature
 			-- Is this the simple 'void' specifier?
 		do
 				-- TODO: put manifiest string in a constants class
-			Result := STRING_.same_string (name, "void")
+			if attached name as l_name then
+				Result := STRING_.same_string (l_name, "void")
+			end
 		ensure
 			true_implies_simple_type: Result implies not is_composite_type
 		end
 
 feature
 
-	name: STRING
+	name: detachable STRING
 			-- type may be anonymous (name = Void in this case)
 			-- Note: Is this a good idea?
 
@@ -106,12 +112,12 @@ feature
 
 	is_enum: BOOLEAN
 
-	members: DS_LINKED_LIST [EWG_C_PHASE_1_DECLARATION]
+	members: detachable DS_LINKED_LIST [EWG_C_PHASE_1_DECLARATION]
 
 
 feature
 
-	c_code: STRING 
+	c_code: STRING
 		do
 			create Result.make (10)
 			if is_enum then

@@ -33,7 +33,7 @@ inherit
 
 feature {NONE}
 
-	make (a_name: STRING; a_header_file_name: STRING)
+	make (a_name: detachable STRING; a_header_file_name: STRING)
 			-- Make a new c type with the name `a_name',
 			-- that was found in header `a_header_file_name'.
 			-- Name may be `Void' in which case the type is
@@ -51,14 +51,14 @@ feature {NONE}
 
 feature {ANY} -- Basic Queries
 
-	name: STRING
+	name: detachable STRING
 			-- Name of this type;
 			-- may be Void, in case type is anonymous
 
 	header_file_name: STRING
 			-- Name of header file this type has been found
 
-	closest_alias_type: EWG_C_AST_ALIAS_TYPE
+	closest_alias_type: detachable EWG_C_AST_ALIAS_TYPE
 			-- After a certain stage, this attribute contains a
 			-- reference to the closest alias for `Current'.
 			-- Close means low ammount of indirections.
@@ -112,12 +112,12 @@ feature {ANY} -- Basic Commands
 	set_closest_alias_type (a_closest_alias_type: EWG_C_AST_ALIAS_TYPE)
 		require
 			a_closest_alias_type_better: closest_alias_type = Void or else
-				closest_alias_type_quality > a_closest_alias_type.number_of_pointer_or_arrays_between_current_and_type (Current)
+				 closest_alias_type_quality > a_closest_alias_type.number_of_pointer_or_arrays_between_current_and_type (Current)
 			a_closest_alias_has_current_as_base: closest_alias_type /= Void
 																implies a_closest_alias_type.has_type_as_base_indirect (Current)
 		do
 			closest_alias_type := a_closest_alias_type
-			closest_alias_type_quality := closest_alias_type.number_of_pointer_or_arrays_between_current_and_type (Current)
+			closest_alias_type_quality := a_closest_alias_type.number_of_pointer_or_arrays_between_current_and_type (Current)
 		ensure
 			closest_alias_type_set: closest_alias_type = a_closest_alias_type
 		end
@@ -172,8 +172,8 @@ feature {ANY} -- Declaration Queries
 			Result := closest_alias_type /= Void and then
 								closest_alias_type_quality = 0
 		ensure
-			valid: Result implies (closest_alias_type /= Void and then
-								  closest_alias_type.has_type_as_base_with_no_pointer_or_array_types_inbetween_indirect (Current))
+			valid: Result implies ( attached closest_alias_type as l_closest_alias_type and then
+								  l_closest_alias_type.has_type_as_base_with_no_pointer_or_array_types_inbetween_indirect (Current))
 		end
 
 	is_anonymous: BOOLEAN
@@ -308,7 +308,7 @@ feature
 		deferred
 		ensure
 			result_not_void: Result /= Void
-			result_has_no_void: not Result.has (Void)
+			--result_has_no_void: not Result.has (Void)
 		end
 
 	total_pointer_and_array_indirections: INTEGER
@@ -502,14 +502,14 @@ feature {ANY} -- Assertion helpers
 			-- due to a SE (v1.1) bug, it's not ):
 		local
 			b: BOOLEAN
-			pointer_type: EWG_C_AST_POINTER_TYPE
 		do
 			-- This assigment seems to prevent
 			-- the triggering of a bug in SE (v1.1)
 			b := is_pointer_type
 			if b then
-				pointer_type ?= Current
-				Result := pointer_type.base.skip_consts_and_aliases.is_function_type
+				if attached {EWG_C_AST_POINTER_TYPE} Current as pointer_type then
+					Result := pointer_type.base.skip_consts_and_aliases.is_function_type
+				end
 			end
 		end
 
@@ -632,8 +632,8 @@ feature {NONE} -- Implementation Constants
 invariant
 
 	header_file_name_not_void: header_file_name /= Void
-	name_not_void_implies_name_not_empty: name /= Void implies name.count > 0
-	closest_alias_type_not_void_implies: closest_alias_type /= Void
-													 implies closest_alias_type.has_type_as_base_indirect (Current)
+	name_not_void_implies_name_not_empty: attached name as l_name implies l_name.count > 0
+	closest_alias_type_not_void_implies: attached closest_alias_type as l_closest_alias_type
+													 implies l_closest_alias_type.has_type_as_base_indirect (Current)
 
 end

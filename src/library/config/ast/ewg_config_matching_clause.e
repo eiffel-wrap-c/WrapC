@@ -40,13 +40,16 @@ feature {ANY} -- Setting
 	set_header_file_name_regexp (a_header_file_name_regexp: STRING)
 		require
 			a_header_file_name_regexp_not_void: a_header_file_name_regexp /= Void
+		local
+			l_header_file_name_regexp: like header_file_name_regexp
 		do
-			create header_file_name_regexp.make
-			header_file_name_regexp.compile (a_header_file_name_regexp)
+			create l_header_file_name_regexp.make
+			l_header_file_name_regexp.compile (a_header_file_name_regexp)
 			-- TODO: this should be a precondition
 				check
-					compiled: header_file_name_regexp.is_compiled
+					compiled: l_header_file_name_regexp.is_compiled
 				end
+			header_file_name_regexp := l_header_file_name_regexp
 		ensure
 			-- TODO: doesnt work anymore this way (since regexp support)
 --			header_file_name_regexp_set: header_file_name_regexp = a_header_file_name_regexp
@@ -55,13 +58,16 @@ feature {ANY} -- Setting
 	set_c_identifier_regexp (a_c_identifier_regexp: STRING)
 		require
 			a_c_identifier_regexp_not_void: a_c_identifier_regexp /= Void
+		local
+			l_c_identifier_regexp: like c_identifier_regexp
 		do
-			create c_identifier_regexp.make
-			c_identifier_regexp.compile (a_c_identifier_regexp)
+			create l_c_identifier_regexp.make
+			l_c_identifier_regexp.compile (a_c_identifier_regexp)
 			-- TODO: this should be a precondition
 				check
-					compiled: c_identifier_regexp.is_compiled
+					compiled: l_c_identifier_regexp.is_compiled
 				end
+			c_identifier_regexp := l_c_identifier_regexp
 		ensure
 			-- TODO: doesnt work anymore this way (since regexp support)
 --			c_identifier_regexp_set: c_identifier_regexp = a_c_identifier_regexp
@@ -192,7 +198,7 @@ feature {ANY} -- Operations
 
 feature {NONE}
 
-	match_text (a_text: STRING; a_regexp: RX_PCRE_REGULAR_EXPRESSION): BOOLEAN
+	match_text (a_text: detachable STRING; a_regexp: detachable RX_PCRE_REGULAR_EXPRESSION): BOOLEAN
 		do
 			if a_regexp /= Void then
 				if a_text /= Void then
@@ -207,21 +213,21 @@ feature {NONE}
 
 feature {NONE}
 
-	header_file_name_regexp: RX_PCRE_REGULAR_EXPRESSION
+	header_file_name_regexp: detachable RX_PCRE_REGULAR_EXPRESSION
 			-- Header file name the construct has to be in; Note that
 			-- construct has to be declared directly in that header, not
 			-- pulled in via an "#include" statement.  If `Void', any
 			-- header file matches.  Will be interpreted as a regular
 			-- expression.
 
-	c_identifier_regexp: RX_PCRE_REGULAR_EXPRESSION
+	c_identifier_regexp: detachable RX_PCRE_REGULAR_EXPRESSION
 			-- Identifier of the construct to match; If `Void' any name
 			-- matches.  Will be interpreted as a regular expression.
 
 invariant
 
-	header_file_name_regexp_not_void_implies_compiled: header_file_name_regexp /= Void implies header_file_name_regexp.is_compiled
-	c_identifier_regexp_not_void_implies_compiled: c_identifier_regexp /= Void implies c_identifier_regexp.is_compiled
+	header_file_name_regexp_not_void_implies_compiled: attached header_file_name_regexp as l_header_file_name_regexp implies l_header_file_name_regexp.is_compiled
+	c_identifier_regexp_not_void_implies_compiled: attached c_identifier_regexp as l_c_identifier_regexp implies l_c_identifier_regexp.is_compiled
 	valid_construct_type_code: construct_type_names.is_valid_construct_type_code (construct_type_code)
 
 end

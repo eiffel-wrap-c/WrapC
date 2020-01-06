@@ -51,11 +51,8 @@ feature {NONE} -- Creation
 feature
 
 	is_same_type (other: EWG_C_AST_TYPE): BOOLEAN
-		local
-			other_const: EWG_C_AST_CONST_TYPE
 		do
-			other_const ?= other
-			if other_const /= Void then
+			if attached {EWG_C_AST_CONST_TYPE} other as  other_const then
 				Result := is_same_based_type (other_const)
 			end
 		end

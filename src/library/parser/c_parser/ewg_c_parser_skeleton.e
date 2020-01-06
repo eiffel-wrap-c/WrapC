@@ -46,6 +46,7 @@ feature {NONE} -- Initialization
 			make_ewg_parser (a_error_handler)
 			make_c_scanner ("unknown")
 			init_type_names
+			last_string_value := ""
 		ensure
 			error_header_set: error_handler = a_error_handler
 		end
@@ -70,7 +71,7 @@ feature {ANY}
 			end
 		end
 
-	parse_file (a_file_name: STRING) 
+	parse_file (a_file_name: STRING)
 			-- Parse the already preprocessed C header file `a_file_name'.
 		require
 			a_file_name_not_void: a_file_name /= Void
@@ -151,7 +152,10 @@ feature {NONE}
 --						check
 --							item_not_yet_in_table: not type_names.has (cs_dc.item.name)
 --						end
-					type_names.force (cs_dc.item.name)
+					if attached cs_dc.item.name as l_name then
+						type_names.force (l_name)
+					end
+
 					cs_dc.forth
 				end
 			end

@@ -31,11 +31,15 @@ feature -- Status
 
 	can_be_printed_from_type (a_type: EWG_C_AST_TYPE; a_declarator: STRING): BOOLEAN
 		do
-			Result := Precursor (a_type, a_declarator) and not a_type.skip_consts_and_pointers.is_array_type
-				or (is_additional_pointer_indirection_enabeled and a_type.has_closest_alias_type and then
-					 (a_type.closest_alias_type_quality = 1 and
-					  not a_type.closest_alias_type.skip_consts_and_aliases.is_array_type and
-					  can_be_printed_from_type (a_type.closest_alias_type, a_declarator)))
+			if attached a_type.closest_alias_type as l_closest_alias_type  then
+				Result := Precursor (a_type, a_declarator) and not a_type.skip_consts_and_pointers.is_array_type
+					or (is_additional_pointer_indirection_enabeled and then
+						 (a_type.closest_alias_type_quality = 1 and
+						  not l_closest_alias_type.skip_consts_and_aliases.is_array_type and
+						  can_be_printed_from_type (l_closest_alias_type, a_declarator)))
+			else
+				Result := Precursor (a_type, a_declarator) and not a_type.skip_consts_and_pointers.is_array_type
+			end
 		end
 
 feature -- Status Setting
@@ -58,7 +62,8 @@ feature -- Printing
 				if
 					a_type.has_closest_alias_type and then
 					a_type.closest_alias_type_quality = 1 and then
-					not a_type.closest_alias_type.skip_consts_and_aliases.is_array_type
+					attached a_type.closest_alias_type as l_closest_alias_type and then
+					not l_closest_alias_type.skip_consts_and_aliases.is_array_type
 				then
 					type := a_type.closest_alias_type
 				else
@@ -68,7 +73,11 @@ feature -- Printing
 			else
 				type := a_type
 			end
-			do_format (type)
+			if attached type then
+				do_format (type)
+			else
+				{EXCEPTIONS}.raise (generator + ".print_declaration_from_type")
+			end
 		end
 
  feature {NONE} -- Implentation

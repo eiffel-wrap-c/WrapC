@@ -67,7 +67,6 @@ feature
 			a_feature_name_not_void: a_feature_name /= Void
 		local
 			cs: DS_BILINEAR_CURSOR [EWG_MEMBER_WRAPPER]
-			native_member_wrapper: EWG_NATIVE_MEMBER_WRAPPER
 		do
 			create Result.make (100)
 			Result.append_string (a_feature_name)
@@ -80,29 +79,25 @@ feature
 				until
 					cs.off
 				loop
-					native_member_wrapper ?= cs.item
-						check
-							no_other_wrapper_supported_yet: native_member_wrapper /= Void
-						end
-					Result.append_string ("a_")
-					Result.append_string(native_member_wrapper.mapped_eiffel_name)
-					Result.append_string (": ")
-					Result.append_string (native_member_wrapper.c_declaration.type.corresponding_eiffel_type)
+					if attached {EWG_NATIVE_MEMBER_WRAPPER} cs.item as native_member_wrapper then
+						Result.append_string ("a_")
+						Result.append_string(native_member_wrapper.mapped_eiffel_name)
+						Result.append_string (": ")
+						Result.append_string (native_member_wrapper.c_declaration.type.corresponding_eiffel_type)
 
-					if not cs.is_last then
-						Result.append_string ("; ")
+						if not cs.is_last then
+							Result.append_string ("; ")
+						end
 					end
 					cs.forth
 				end
 				Result.append_string (")")
 			end
 			if a_callback_wrapper.return_type /= Void then
-				native_member_wrapper ?= a_callback_wrapper.return_type
-					check
-						no_other_wrapper_supported_yet: native_member_wrapper /= Void
-					end
-				Result.append_string (": ")
-				Result.append_string (native_member_wrapper.c_declaration.type.corresponding_eiffel_type)
+				if attached {EWG_NATIVE_MEMBER_WRAPPER} a_callback_wrapper.return_type as native_member_wrapper then
+					Result.append_string (": ")
+					Result.append_string (native_member_wrapper.c_declaration.type.corresponding_eiffel_type)
+				end
 			end
 			Result.append_string ("  ")
 		end
@@ -112,7 +107,6 @@ feature
 			a_callback_wrapper_not_void: a_callback_wrapper /= Void
 		local
 			cs: DS_BILINEAR_CURSOR [EWG_MEMBER_WRAPPER]
-			native_member_wrapper: EWG_NATIVE_MEMBER_WRAPPER
 			l_routine: STRING
 		do
 			create Result.make (100)
@@ -127,17 +121,14 @@ feature
 				until
 					cs.off
 				loop
-					native_member_wrapper ?= cs.item
-						check
-							no_other_wrapper_supported_yet: native_member_wrapper /= Void
+					if attached {EWG_NATIVE_MEMBER_WRAPPER} cs.item as native_member_wrapper then
+						Result.append_string ("a_")
+						Result.append_string(native_member_wrapper.mapped_eiffel_name)
+						Result.append_string (": ")
+						Result.append_string (native_member_wrapper.c_declaration.type.corresponding_eiffel_type)
+						if not cs.is_last then
+							Result.append_string ("; ")
 						end
-					Result.append_string ("a_")
-					Result.append_string(native_member_wrapper.mapped_eiffel_name)
-					Result.append_string (": ")
-					Result.append_string (native_member_wrapper.c_declaration.type.corresponding_eiffel_type)
-
-					if not cs.is_last then
-						Result.append_string ("; ")
 					end
 					cs.forth
 				end
@@ -145,18 +136,16 @@ feature
 			end
 			if a_callback_wrapper.return_type /= Void then
 				l_routine.append ("FUNCTION ")
-				native_member_wrapper ?= a_callback_wrapper.return_type
-					check
-						no_other_wrapper_supported_yet: native_member_wrapper /= Void
+				if attached {EWG_NATIVE_MEMBER_WRAPPER} a_callback_wrapper.return_type as native_member_wrapper then
+					if a_callback_wrapper.members.count > 0	then
+						Result.append_string (", ")
+						Result.append_string (native_member_wrapper.c_declaration.type.corresponding_eiffel_type)
+						Result.append_string ("] ")
+					else
+						Result.append_string ("[ ")
+						Result.append_string (native_member_wrapper.c_declaration.type.corresponding_eiffel_type)
+						Result.append_string ("] ")
 					end
-				if a_callback_wrapper.members.count > 0	then
-					Result.append_string (", ")
-					Result.append_string (native_member_wrapper.c_declaration.type.corresponding_eiffel_type)
-					Result.append_string ("] ")
-				else
-					Result.append_string ("[ ")
-					Result.append_string (native_member_wrapper.c_declaration.type.corresponding_eiffel_type)
-					Result.append_string ("] ")
 				end
 			else
 				if a_callback_wrapper.members.count > 0 then

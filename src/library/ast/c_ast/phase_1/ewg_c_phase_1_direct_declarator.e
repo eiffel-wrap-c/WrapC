@@ -100,8 +100,8 @@ feature
 			-- direct declarators
 		do
 			Result := arrays.twin
-			if declarator /= Void then
-				Result.extend_last (declarator.arrays_indirect)
+			if attached declarator as l_declarator then
+				Result.extend_last (l_declarator.arrays_indirect)
 			end
 		ensure
 			result_not_void: Result /= Void
@@ -111,8 +111,8 @@ feature
 			-- pointers from this direct declarator and (possibly recursivly nested)
 			-- direct declarators
 		do
-			if declarator /= Void then
-				Result := declarator.pointers_indirect
+			if attached declarator as l_declarator then
+				Result := l_declarator.pointers_indirect
 			else
 				create Result.make
 			end
@@ -121,15 +121,15 @@ feature
 		end
 
 
-	parameters: EWG_C_PHASE_1_PARAMETER_TYPE_LIST
+	parameters: detachable EWG_C_PHASE_1_PARAMETER_TYPE_LIST
 			-- zero or more
 			-- TODO: invariant: every parameter declaration must only contain
 			-- one declarator
 
-	name: STRING
+	name: detachable STRING
 			-- can be Void
 
-	declarator: EWG_C_PHASE_1_DECLARATOR
+	declarator: detachable EWG_C_PHASE_1_DECLARATOR
 			-- can be Void
 
 	is_abstract: BOOLEAN
@@ -138,7 +138,7 @@ feature
 			-- parameter which has an abstract declarator
 		do
 			Result := name = Void and
-							(declarator = Void or else declarator.is_abstract)
+							(declarator = Void or else attached declarator as l_declarator and then l_declarator.is_abstract)
 		end
 
 	has_abstract_parameter_declaration: BOOLEAN
@@ -147,17 +147,19 @@ feature
 		local
 			cs: DS_LINKED_LIST_CURSOR [EWG_C_PHASE_1_DECLARATION]
 		do
-			from
-				cs := parameters.parameter_list.new_cursor
-				cs.start
-			until
-				cs.off
-			loop
-				if cs.item.has_abstract_declarator then
-					Result := True
-					cs.go_after
-				else
-					cs.forth
+			if attached parameters as l_parameters then
+				from
+					cs := l_parameters.parameter_list.new_cursor
+					cs.start
+				until
+					cs.off
+				loop
+					if cs.item.has_abstract_declarator then
+						Result := True
+						cs.go_after
+					else
+						cs.forth
+					end
 				end
 			end
 		end
@@ -172,8 +174,8 @@ feature
 		do
 			if has_calling_convention_set then
 				Result := calling_convention_internal
-			elseif declarator /= Void then
-				Result := declarator.direct_declarator.calling_convention
+			elseif attached declarator as l_declarator then
+				Result := l_declarator.direct_declarator.calling_convention
 			else
 				Result := calling_convention_internal
 			end
@@ -221,16 +223,16 @@ feature
 
 feature
 
-	nested_name: STRING
+	nested_name: detachable STRING
 			-- Name of `Current' or (if `name = Void')
 			-- name of nested declarator
 		require
 			not_abstract: not is_abstract
 		do
-			if name /= Void then
-				Result := name
-			else
-				Result := declarator.name
+			if attached name as l_name then
+				Result := l_name
+			elseif attached declarator as l_declarator then
+				Result := l_declarator.name
 			end
 		end
 
@@ -243,10 +245,10 @@ feature
 			a_name_not_void: a_name /= Void
 			a_name_not_empty: a_name.count > 0
 		do
-			if declarator = Void then
-				name := a_name
+			if attached declarator as l_declarator then
+				l_declarator.make_concrete (a_name)
 			else
-				declarator.make_concrete (a_name)
+				name := a_name
 			end
 		ensure
 			not_abstract: not is_abstract
@@ -270,11 +272,11 @@ feature
 			param_cs: DS_LINEAR_CURSOR [EWG_C_PHASE_1_DECLARATION]
 		do
 			create Result.make (10)
-			if name /= Void then
-				Result.append_string (name)
+			if attached name as l_name then
+				Result.append_string (l_name)
 			end
-			if declarator /= Void then
-				Result.append_string (declarator.c_code)
+			if attached declarator as l_declarator then
+				Result.append_string (l_declarator.c_code)
 			end
 
 			from
@@ -291,9 +293,9 @@ feature
 				array_cs.forth
 			end
 
-			if parameters /= Void then
+			if attached parameters as l_parameters then
 				from
-					param_cs := parameters.parameter_list.new_cursor
+					param_cs := l_parameters.parameter_list.new_cursor
 					param_cs.start
 				until
 					param_cs.off

@@ -28,16 +28,14 @@
 
   <target name="init_wrap_c">
     <set name="system_dir" value="${cwd}"/>
-    <set name="wrap_c.library_name" value="callback"/>
+    <set name="wrap_c.library_name" value="simple"/>
     <set name="wrap_c.full_header_name" value="${cwd}${path_separator}manual_wrapper${path_separator}c${path_separator}include${path_separator}simple_header.h"/>
     <set name="wrap_c.use_config_file" value="True"/>
     <set name="wrap_c.verbose" value="--verbose"/>
     <set name="wrap_c.wrapper_dir" value="${system_dir}${path_separator}generated_wrapper"/>
   </target>
 
-
-
-<target name="wrap_c" depend="init_wrap_c">
+  <target name="wrap_c" depend="init_wrap_c">
        <description>
          Generate wrapper files
         </description>
@@ -67,7 +65,7 @@
 
 
   <target name="clean">
-    <echo message="- Clean [EiffelCallback]" />
+    <echo message="- Clean [EiffelSimple]" />
     <delete directory="C/spec/${ISE_PLATFORM}" unless="${is_windows}"/>
     <delete directory="C\spec\${ISE_C_COMPILER}\${ISE_PLATFORM}" if="${is_windows}" />
     <delete directory="generated_wrapper"/>

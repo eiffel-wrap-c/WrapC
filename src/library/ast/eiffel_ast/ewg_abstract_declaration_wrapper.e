@@ -16,9 +16,9 @@ inherit
 
 	EWG_ABSTRACT_WRAPPER
 
-feature
+feature -- Access
 
-	declaration: EWG_C_AST_DECLARATION 
+	declaration: EWG_C_AST_DECLARATION
 		deferred
 		end
 

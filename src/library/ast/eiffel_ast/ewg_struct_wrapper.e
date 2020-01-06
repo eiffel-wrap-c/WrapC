@@ -44,12 +44,14 @@ feature {NONE} -- Initialization
 			members_set: members = a_members
 		end
 
-feature
+feature -- Access
 
 	c_struct_type: EWG_C_AST_STRUCT_TYPE
 			-- C struct type to wrapp
 		do
-			Result := if attached {EWG_C_AST_STRUCT_TYPE} c_composite_data_type as l_struct_type then l_struct_type else Void end
+			check attached {EWG_C_AST_STRUCT_TYPE} c_composite_data_type as l_struct_type then
+				Result := l_struct_type
+			end
 		ensure
 			c_struct_type_not_void: Result /= Void
 			c_struct_type_is_c_type: Result = c_composite_data_type

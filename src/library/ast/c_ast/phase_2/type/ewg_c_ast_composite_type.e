@@ -26,7 +26,7 @@ inherit
 
 feature
 
-	make (a_name: STRING; a_header_file_name: STRING; a_members: like members)
+	make (a_name: detachable STRING; a_header_file_name: STRING; a_members: like members)
 		do
 			make_type (a_name, a_header_file_name)
 			members := a_members
@@ -47,7 +47,7 @@ feature
 
 feature
 
-	members: DS_ARRAYED_LIST [EWG_C_AST_DECLARATION]
+	members: detachable DS_ARRAYED_LIST [EWG_C_AST_DECLARATION]
 
 	append_members_hash_code_to_string (a_string: STRING)
 		require
@@ -56,19 +56,21 @@ feature
 		local
 			cs: DS_BILINEAR_CURSOR [EWG_C_AST_DECLARATION]
 		do
-			a_string.append_string ("?members?")
-			from
-				cs := members.new_cursor
-			until
-				cs.off
-			loop
-				cs.item.type.append_hash_string_to_string (a_string)
-				if not cs.item.is_anonymous then
+			if attached members as l_members then
+				a_string.append_string ("?members?")
+				from
+					cs := l_members.new_cursor
+				until
+					cs.off
+				loop
+					cs.item.type.append_hash_string_to_string (a_string)
+					if not cs.item.is_anonymous then
+						a_string.append_character ('?')
+						a_string.append_string (cs.item.declarator)
+					end
 					a_string.append_character ('?')
-					a_string.append_string (cs.item.declarator)
+					cs.forth
 				end
-				a_string.append_character ('?')
-				cs.forth
 			end
 		end
 
@@ -85,7 +87,7 @@ feature
 			-- An incomplete type looks like this:
 			-- struct foo;
 		do
-			Result := members /= Void and then members.count > 0
+			Result := attached members as l_members and then l_members.count > 0
 		end
 
 	is_same_composite_type (other: EWG_C_AST_COMPOSITE_TYPE): BOOLEAN
@@ -111,14 +113,14 @@ feature
 				Result := other.members = Void
 			elseif other.members = Void then
 				Result := False
-			elseif members.count = other.members.count then
+			elseif attached members as l_members and then attached other.members as other_members and then l_members.count = other_members.count then
 				Result := True
 				from
 					i := 1
 				until
-					i > members.count or Result = False
+					i > l_members.count or Result = False
 				loop
-					if not members.item (i).is_same_declaration (other.members.item (i)) then
+					if not l_members.item (i).is_same_declaration (other_members.item (i)) then
 						Result := False
 					else
 						i := i + 1
@@ -132,9 +134,9 @@ feature
 			a_cs: DS_BILINEAR_CURSOR [EWG_C_AST_DECLARATION]
 		do
 			create Result.make
-			if members /= Void then
+			if attached members as l_members then
 				from
-					a_cs := members.new_cursor
+					a_cs := l_members.new_cursor
 					a_cs.start
 				until
 					a_cs.off
@@ -145,13 +147,13 @@ feature
 			end
 		end
 
-	is_composite_type: BOOLEAN 
+	is_composite_type: BOOLEAN
 		do
 			Result := True
 		end
 
 invariant
 
-	members_has_no_void: members /= Void implies not members.has (Void)
+--	members_has_no_void: members /= Void implies not members.has (Void)
 
 end

@@ -62,12 +62,12 @@ feature -- Basic Access
 			Result := has_ellipsis_parameter
 			if
 				not Result and
-					members /= Void and then
-					not members.is_empty and then
-					members.last.type.name /= Void
+					attached members as l_members and then
+					not l_members.is_empty and then
+					attached l_members.last.type.name as l_name
 			then
-				Result := STRING_.has_substring (members.last.type.header_file_name, "stdarg.h") and
-					STRING_.same_string (members.last.type.name, "va_list")
+				Result := STRING_.has_substring (l_members.last.type.header_file_name, "stdarg.h") and
+					STRING_.same_string (l_name, "va_list")
 			end
 		end
 
@@ -94,7 +94,7 @@ feature
 			has_ellipsis_parameter_set: has_ellipsis_parameter = a_value
 		end
 
-feature 
+feature
 
 	is_same_type (other: EWG_C_AST_TYPE): BOOLEAN
 		do
@@ -125,18 +125,19 @@ feature
 		local
 			cs: DS_BILINEAR_CURSOR [EWG_C_AST_DECLARATION]
 		do
-			Result := False
-			from
-				cs := members.new_cursor
-				cs.start
-			until
-				cs.off
-			loop
-				if cs.item.type.is_callback then
-					Result := True
-					cs.go_after
+			if attached members as l_members then
+				from
+					cs := l_members.new_cursor
+					cs.start
+				until
+					cs.off
+				loop
+					if cs.item.type.is_callback then
+						Result := True
+						cs.go_after
+					end
+					cs.forth
 				end
-				cs.forth
 			end
 		end
 
@@ -185,9 +186,9 @@ feature {NONE}
 			cs: DS_LINEAR_CURSOR [EWG_C_AST_DECLARATION]
 			pointer: EWG_C_AST_POINTER_TYPE
 		do
-			if members /= Void then
+			if attached members as l_members then
 				from
-					cs := members.new_cursor
+					cs := l_members.new_cursor
 					cs.start
 				until
 					cs.off
@@ -195,7 +196,9 @@ feature {NONE}
 					if cs.item.type.skip_consts_and_aliases.is_function_type then
 						create pointer.make (cs.item.type.header_file_name, cs.item.type)
 						c_system.types.add_type (pointer)
-						cs.item.set_type (c_system.types.last_type)
+						if attached c_system.types.last_type as last_type then
+							cs.item.set_type (last_type)
+						end
 					end
 					cs.forth
 				end

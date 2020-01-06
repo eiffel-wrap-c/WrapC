@@ -29,7 +29,6 @@ inherit
 		end
 
 create
-
 	make,
 	make_with_size
 
@@ -65,21 +64,18 @@ feature {NONE} -- Creation
 
 feature
 
-	size: STRING
+	size: detachable STRING
 			-- Size of current array as unparsed string
 
 	is_size_defined: BOOLEAN
 			-- Does current array have a defined size ?
 		do
-			Result := size /= Void
+			Result := attached size
 		end
 
 	is_same_type (other: EWG_C_AST_TYPE): BOOLEAN
-		local
-			other_array: EWG_C_AST_ARRAY_TYPE
 		do
-			other_array ?= other
-			if other_array /= Void then
+			if attached {EWG_C_AST_ARRAY_TYPE} other as other_array then
 				if Current = other then
 					Result := true
 				else
@@ -142,14 +138,11 @@ feature -- Visitor Pattern
 feature {EWG_C_AST_BASED_TYPE}
 
 	number_of_pointer_or_array_types_between_current_and_type_recursive (a_type: EWG_C_AST_TYPE; a_indirections: INTEGER): INTEGER
-		local
-			base_based_type: EWG_C_AST_BASED_TYPE
 		do
 			if base = a_type then
 				Result := a_indirections + 1
 			else
-				base_based_type ?= base
-				if base_based_type /= Void then
+				if attached  {EWG_C_AST_BASED_TYPE} base as base_based_type then
 					Result := base_based_type.number_of_pointer_or_array_types_between_current_and_type_recursive (a_type, a_indirections + 1)
 				end
 			end
@@ -159,6 +152,6 @@ invariant
 
 	is_anonymous: is_anonymous
 	size_defined_equals_size_not_void: is_size_defined = (size /= Void)
-	size_defined_implies_size_not_empty: is_size_defined implies size.count > 0
+	size_defined_implies_size_not_empty:attached size as l_size implies l_size.count > 0
 
 end

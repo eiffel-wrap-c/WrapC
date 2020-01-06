@@ -60,11 +60,11 @@ feature
 
 feature
 
-	storage_class_specifiers: EWG_C_PHASE_1_STORAGE_CLASS_SPECIFIERS
+	storage_class_specifiers: detachable EWG_C_PHASE_1_STORAGE_CLASS_SPECIFIERS
 
-	type_qualifier: EWG_C_PHASE_1_TYPE_QUALIFIER
+	type_qualifier: detachable EWG_C_PHASE_1_TYPE_QUALIFIER
 
-	type_specifier: EWG_C_PHASE_1_TYPE_SPECIFIER
+	type_specifier: detachable EWG_C_PHASE_1_TYPE_SPECIFIER
 
 	declarators: DS_LINKED_LIST [EWG_C_PHASE_1_DECLARATOR]
 			-- if this is a parameter declaration
@@ -128,7 +128,7 @@ feature {ANY}
 
 feature {NONE}
 
-	merge_specifiers (a_declaration_specifiers: DS_LINKED_LIST [ANY]) 
+	merge_specifiers (a_declaration_specifiers: DS_LINKED_LIST [ANY])
 			-- input is supposed to contain objects of type:
 			-- EWG_C_PHASE_1_STORAGE_CLASS_SPECIFIERS and
 			-- EWG_C_PHASE_1_TYPE_QUALIFIER and
@@ -143,68 +143,73 @@ feature {NONE}
 			storage_class_specifiers_is_void: storage_class_specifiers = Void
 		local
 			cs: DS_LINKED_LIST_CURSOR [ANY]
-			type_spec: EWG_C_PHASE_1_TYPE_SPECIFIER
-			st_cls_spec: EWG_C_PHASE_1_STORAGE_CLASS_SPECIFIERS
-			type_qual: EWG_C_PHASE_1_TYPE_QUALIFIER
+			l_type_specifier: like type_specifier
+			l_type_qualifier: like type_qualifier
+			l_storage_class_specifiers: like storage_class_specifiers
 		do
+			l_type_specifier := type_specifier
+			l_type_qualifier := type_qualifier
+			l_storage_class_specifiers := storage_class_specifiers
 			from
 				cs := a_declaration_specifiers.new_cursor
 				cs.start
 			until
 				cs.off
 			loop
-				type_spec ?= cs.item
-				if type_spec /= Void then
-					if type_specifier = Void then
-						type_specifier := type_spec
+				if attached {EWG_C_PHASE_1_TYPE_SPECIFIER} cs.item as type_spec then
+					if l_type_specifier = Void then
+						l_type_specifier := type_spec
 					else
 						-- if there is more than one type specifier
 						-- non must be composite.
 						-- you cannot for example have a 'singed struct foo'
 							check
-								result_third_not_composite: not type_specifier.is_composite_type
+								result_third_not_composite: not l_type_specifier.is_composite_type
 								type_spec_not_composite: not type_spec.is_composite_type
 							end
 						-- since they are both non composite, we can safely
 						-- join the names
-						type_specifier.append_name (type_spec)
+						l_type_specifier.append_name (type_spec)
 					end
 				end
 
-				st_cls_spec ?= cs.item
-				if st_cls_spec /= Void then
-					if storage_class_specifiers = Void then
-						storage_class_specifiers := st_cls_spec
+				if attached {EWG_C_PHASE_1_STORAGE_CLASS_SPECIFIERS} cs.item as st_cls_spec then
+					if l_storage_class_specifiers = Void then
+						l_storage_class_specifiers := st_cls_spec
 					else
-						storage_class_specifiers.merge (st_cls_spec)
+						l_storage_class_specifiers.merge (st_cls_spec)
 					end
 				end
 
-				type_qual ?= cs.item
-				if type_qual /= Void then
-					if type_qualifier = Void then
-						type_qualifier := type_qual
+				if attached {EWG_C_PHASE_1_TYPE_QUALIFIER} cs.item as  type_qual then
+					if l_type_qualifier = Void then
+						l_type_qualifier := type_qual
 					else
-						type_qualifier.merge (type_qual)
+						l_type_qualifier.merge (type_qual)
 					end
 				end
 
 				cs.forth
 			end
-			if type_specifier = Void then
+			if l_type_specifier = Void then
 				-- weird rule of C number 321 says:
 				-- if the type specifier is missing
 				-- assume 'int'
-				create type_specifier.make ("int")
+				create l_type_specifier.make ("int")
 			end
 
-			if type_qualifier = Void then
-				create type_qualifier.make
+			if l_type_qualifier = Void then
+				create l_type_qualifier.make
 			end
 
-			if storage_class_specifiers = Void then
-				create storage_class_specifiers.make
+			if l_storage_class_specifiers = Void then
+				create l_storage_class_specifiers.make
 			end
+
+			type_specifier := l_type_specifier
+			type_qualifier := l_type_qualifier
+			storage_class_specifiers := l_storage_class_specifiers
+
 		end
 
 invariant

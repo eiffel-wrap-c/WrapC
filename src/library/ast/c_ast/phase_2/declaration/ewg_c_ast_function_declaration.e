@@ -19,7 +19,8 @@ inherit
 			make as make_declaration
 		redefine
 			is_same_declaration,
-			is_function_declaration
+			is_function_declaration,
+			type
 		end
 
 create
@@ -50,12 +51,15 @@ feature {ANY} -- Basic Access
 	function_type: EWG_C_AST_FUNCTION_TYPE
 			-- function type
 		do
-			Result ?= type
+			Result := type
 		ensure
 			function_type_not_void: Result /= Void
 			function_type_is_type: function_type = type
 		end
 
+feature  {NONE}-- Access
+
+		type: EWG_C_AST_FUNCTION_TYPE
 feature {ANY}
 
 	is_function_declaration: BOOLEAN
@@ -65,15 +69,12 @@ feature {ANY}
 
 feature {ANY} -- Comparsion
 
-	is_same_declaration  (other: EWG_C_AST_DECLARATION): BOOLEAN 
+	is_same_declaration  (other: EWG_C_AST_DECLARATION): BOOLEAN
 			-- Two function declarations are considered equal if their name is
 			-- equal. This simplification can be made, because there is no
 			-- function overloading in C.
-		local
-			other_function_declaration: EWG_C_AST_FUNCTION_DECLARATION
 		do
-			other_function_declaration ?= other
-			if other_function_declaration /= Void then
+			if attached {EWG_C_AST_FUNCTION_DECLARATION} other as other_function_declaration then
 				Result := string_equality_tester.test (declarator, other_function_declaration.declarator)
 			end
 		end

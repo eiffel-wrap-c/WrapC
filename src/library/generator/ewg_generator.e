@@ -201,7 +201,6 @@ feature {NONE} -- Implementation
 		do
 
 			create l_raw_file.make_create_read_write ((create {PATH}.make_from_string (directory_structure.c_include_directory_name)).extended ("ewg_eiffel.h").name)
-			l_raw_file.open_read_write
 			l_raw_file.put_string (ewg_eiffel_header)
 			l_raw_file.flush
 			l_raw_file.close
@@ -214,7 +213,6 @@ feature {NONE} -- Implementation
 		do
 
 			create l_raw_file.make_create_read_write ((create {PATH}.make_from_string (directory_structure.c_src_directory_name)).extended ("build.eant").name)
-			l_raw_file.open_read_write
 			l_raw_file.put_string (finish_freezing_eant)
 			l_raw_file.flush
 			l_raw_file.close

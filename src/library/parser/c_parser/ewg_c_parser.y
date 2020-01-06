@@ -852,6 +852,7 @@ struct_declarator
 		-- It is meant to specify padding in the struct.
 		-- We don't need this information.
 		-- Leaving it `Void', rules who use this rule need to deal with it.
+		{ create $$.make_default}
 	| declarator ':' constant_expression
 		{ $$ := $1 }
 	;
@@ -973,7 +974,7 @@ parameter_list
 			create $$.make
 			check
 				every_parameter_has_exactly_one_name: $1.declarators.count = 1 or
-										$1.type_specifier.is_void
+										(attached $1.type_specifier as l_type_specifier and then  l_type_specifier.is_void)
 			end
 			$$.put_last ($1)
 		}

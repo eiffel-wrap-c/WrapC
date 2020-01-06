@@ -71,7 +71,7 @@ feature -- Status
 
 feature -- Printing
 
-	print_declaration_from_type (a_type: EWG_C_AST_TYPE; a_declarator: STRING) 
+	print_declaration_from_type (a_type: EWG_C_AST_TYPE; a_declarator: STRING)
 		local
 			cs: DS_LIST_CURSOR [EWG_ABSTRACT_C_DECLARATION_PRINTER]
 		do
@@ -89,6 +89,6 @@ feature -- Printing
 invariant
 
 	printer_list_not_void: printer_list /= Void
-	printer_list_doesnt_have_void: not printer_list.has (Void)
+--	printer_list_doesnt_have_void: not printer_list.has (Void)
 
 end

@@ -60,7 +60,6 @@ feature
 			l_raw_file: RAW_FILE
 		do
 			create l_raw_file.make_create_read_write ((create {PATH}.make_from_string (directory_structure.c_src_directory_name)).extended (a_makefile_name).name)
-			l_raw_file.open_read_write
 			l_raw_file.put_string (a_content)
 			l_raw_file.flush
 			l_raw_file.close

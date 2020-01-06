@@ -102,13 +102,10 @@ feature
 		end
 
 	is_same_type (other: EWG_C_AST_TYPE): BOOLEAN
-		local
-			other_alias: EWG_C_AST_ALIAS_TYPE
 		do
-			other_alias ?= other
-			if other_alias /= Void then
-				Result := Current = other_alias or else (STRING_.same_string (name, other_alias.name) and
-					is_same_based_type (other_alias))
+			if attached {EWG_C_AST_ALIAS_TYPE} other as other_alias then
+				Result := Current = other_alias or else (attached name as l_name and then attached other_alias.name as other_name and then (STRING_.same_string (l_name, other_name) and
+					is_same_based_type (other_alias)))
 			end
 		end
 
@@ -119,7 +116,9 @@ feature
 
 	is_unicode_char_pointer_type: BOOLEAN
 		do
-			Result := name.has_substring ("wchar_t")
+			if attached name as l_name then
+				Result := l_name.has_substring ("wchar_t")
+			end
 		end
 
 invariant

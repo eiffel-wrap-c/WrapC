@@ -19,10 +19,14 @@ inherit
 	EWG_C_DECLARATION_PROCESSOR
 		redefine
 			process_function_type
+		select
+			make_internal
 		end
 
 	EWG_ABSTRACT_C_DECLARATION_PRINTER
-
+		rename
+			make_internal as make_internal_dp
+		end
 create
 
 	make,
@@ -54,7 +58,7 @@ feature -- Formatting
 
 feature {EWG_C_AST_TYPE_PROCESSOR} -- Processing
 
-	process_function_type (a_type: EWG_C_AST_FUNCTION_TYPE) 
+	process_function_type (a_type: EWG_C_AST_FUNCTION_TYPE)
 			-- Nested function declarations confuse the ISE external parser.
 			-- Replacing the with a void pointer.
 		do

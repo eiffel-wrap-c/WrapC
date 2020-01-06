@@ -25,12 +25,12 @@ feature
 			create type_qualifier.make
 		end
 
-	make_with_type_qualifier_list (a_type_qualifier_list: DS_LINKED_LIST [EWG_C_PHASE_1_TYPE_QUALIFIER]) 
+	make_with_type_qualifier_list (a_type_qualifier_list: DS_LINKED_LIST [EWG_C_PHASE_1_TYPE_QUALIFIER])
 			-- Create pointer with type qualifiers
 		require
 			a_type_qualifer_list_not_void: a_type_qualifier_list /= Void
 			a_type_qualifer_list_not_empty: not a_type_qualifier_list.is_empty
-			a_type_qualifer_list_not_has_void: not a_type_qualifier_list.has (Void)
+--			a_type_qualifer_list_not_has_void: not a_type_qualifier_list.has (Void)
 		local
 			cs: DS_LINKED_LIST_CURSOR [EWG_C_PHASE_1_TYPE_QUALIFIER]
 		do

@@ -18,14 +18,16 @@ inherit
 
 feature -- Status
 
-	can_be_printed (a_declaration: EWG_C_AST_DECLARATION): BOOLEAN 
+	can_be_printed (a_declaration: EWG_C_AST_DECLARATION): BOOLEAN
 		require
 			a_declaration_not_void: a_declaration /= Void
 		do
 			if a_declaration.is_anonymous then
 				Result := can_be_printed_from_type (a_declaration.type, "")
 			else
-				Result := can_be_printed_from_type (a_declaration.type, a_declaration.declarator)
+				if attached a_declaration.declarator as l_declarator then
+					Result := can_be_printed_from_type (a_declaration.type, l_declarator)
+				end
 			end
 		end
 
@@ -48,7 +50,9 @@ feature -- Declaring
 			if a_declaration.is_anonymous then
 				print_declaration_from_type (a_declaration.type, "")
 			else
-				print_declaration_from_type (a_declaration.type, a_declaration.declarator)
+				if attached  a_declaration.declarator as l_declarator then
+					print_declaration_from_type (a_declaration.type, l_declarator)
+				end
 			end
 		end
 

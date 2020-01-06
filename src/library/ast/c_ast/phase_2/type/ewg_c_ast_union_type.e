@@ -24,14 +24,11 @@ create
 
 	make
 
-feature
+feature -- Status Report
 
 	is_same_type (other: EWG_C_AST_TYPE): BOOLEAN
-		local
-			other_union: EWG_C_AST_UNION_TYPE
 		do
-			other_union ?= other
-			if other_union /= Void then
+			if attached {EWG_C_AST_UNION_TYPE} other as other_union then
 				Result := Current = other_union or else is_same_composite_type (other_union)
 			end
 		end
@@ -43,7 +40,7 @@ feature
 
 feature -- Visitor Pattern
 
-	process (a_processor: EWG_C_AST_TYPE_PROCESSOR) 
+	process (a_processor: EWG_C_AST_TYPE_PROCESSOR)
 			-- Process `Current' using `a_processor'.
 		do
 			a_processor.process_union_type (Current)

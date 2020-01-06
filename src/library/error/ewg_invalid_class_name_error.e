@@ -37,7 +37,10 @@ feature {NONE} -- Initialization
 			a_position_not_void: a_position /= Void
 		do
 			create parameters.make_filled ("", 1, 2)
-			parameters.put (an_element.attribute_by_name (name_attribute_name).value, 1)
+			if attached an_element.attribute_by_name (name_attribute_name) as l_name_attribute_name then
+				parameters.put (l_name_attribute_name.value, 1)
+			end
+
 			parameters.put (a_position.out, 2)
 		end
 

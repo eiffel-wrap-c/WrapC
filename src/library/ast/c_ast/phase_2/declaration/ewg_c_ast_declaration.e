@@ -25,7 +25,7 @@ create
 
 feature {NONE} -- Initialisation
 
-	make (a_declarator: STRING; a_type: EWG_C_AST_TYPE; a_header_file_name: STRING)
+	make (a_declarator: detachable STRING; a_type: like type; a_header_file_name: STRING)
 			-- Create a new declaration with the
 			-- declarator `a_declarator' and the type resp. signature
 			-- `a_type'.
@@ -46,7 +46,7 @@ feature {NONE} -- Initialisation
 
 feature {ANY} -- Access
 
-	declarator: STRING
+	declarator: detachable STRING
 			-- Declarator
 
 	type: EWG_C_AST_TYPE
@@ -64,7 +64,7 @@ feature {ANY} -- Access
 
 feature {ANY} -- Setting
 
-	set_type (a_type: EWG_C_AST_TYPE)
+	set_type (a_type: like type)
 			-- Make `a_type' the new `type'.
 		require
 			a_type_not_void: a_type /= Void
@@ -113,7 +113,7 @@ feature {ANY} -- Comparsion
 
 invariant
 
-	declarator_not_void_implies_not_empty: declarator /= Void implies not declarator.is_empty
+	declarator_not_void_implies_not_empty: attached declarator as l_declarator implies not l_declarator.is_empty
 	header_file_name_not_void: header_file_name /= Void
 	header_file_name_not_empty: header_file_name.count > 0
 	declarator_valid_c_identifier: True -- TODO:

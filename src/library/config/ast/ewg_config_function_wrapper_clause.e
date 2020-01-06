@@ -36,7 +36,7 @@ feature {NONE} -- Initialization
 
 feature {ANY} -- Access
 
-	class_name: STRING
+	class_name: detachable STRING
 
 	accepts_type (a_type: EWG_C_AST_TYPE): BOOLEAN
 		do
@@ -44,11 +44,8 @@ feature {ANY} -- Access
 		end
 
 	accepts_declaration (a_declaration: EWG_C_AST_DECLARATION): BOOLEAN
-		local
-			function_declaration: EWG_C_AST_FUNCTION_DECLARATION
 		do
-			function_declaration ?= a_declaration
-			Result := function_declaration /= Void
+			Result := attached {EWG_C_AST_FUNCTION_DECLARATION} a_declaration
 		end
 
 feature {ANY} -- Setting
@@ -80,27 +77,24 @@ feature {ANY} -- Basic Routines
 		local
 			member_list: DS_ARRAYED_LIST [EWG_MEMBER_WRAPPER]
 			function_wrapper: EWG_FUNCTION_WRAPPER
-			function_declaration: EWG_C_AST_FUNCTION_DECLARATION
 			actual_class_name: STRING
 		do
-			function_declaration ?= a_declaration
-				check
-					is_function_declaration: function_declaration /= Void
+			if attached {EWG_C_AST_FUNCTION_DECLARATION} a_declaration as function_declaration  then
+				create member_list.make_default
+				if attached class_name as l_class_name then
+					actual_class_name := l_class_name
+				else
+					actual_class_name := c_header_file_name_to_eiffel_class_name (a_declaration.header_file_name) + "_FUNCTIONS"
 				end
-			create member_list.make_default
-			if class_name /= Void then
-				actual_class_name := class_name
-			else
-				actual_class_name := c_header_file_name_to_eiffel_class_name (a_declaration.header_file_name) + "_FUNCTIONS"
+
+				create function_wrapper.make (eiffel_identifier_for_declaration (a_declaration),
+														a_include_header_file_name,
+														function_declaration,
+														member_list,
+														actual_class_name)
+
+				a_eiffel_wrapper_set.add_wrapper (function_wrapper)
 			end
-
-			create function_wrapper.make (eiffel_identifier_for_declaration (a_declaration),
-													a_include_header_file_name,
-													function_declaration,
-													member_list,
-													actual_class_name)
-
-			a_eiffel_wrapper_set.add_wrapper (function_wrapper)
 		end
 
 	deep_wrap_type (a_type: EWG_C_AST_TYPE;
@@ -121,34 +115,33 @@ feature {ANY} -- Basic Routines
 			cs: DS_BILINEAR_CURSOR [EWG_C_AST_DECLARATION]
 			function_wrapper: EWG_FUNCTION_WRAPPER
 			i: INTEGER
-			function_declaration: EWG_C_AST_FUNCTION_DECLARATION
 		do
-			function_declaration ?= a_declaration
-				check
-					is_function_declaration: function_declaration /= Void
+			if attached {EWG_C_AST_FUNCTION_DECLARATION} a_declaration as function_declaration then
+				function_wrapper := a_eiffel_wrapper_set.function_wrapper_from_function_declaration (function_declaration)
+				if attached function_declaration.function_type.members as l_members then
+					from
+						cs := l_members.new_cursor
+						cs.start
+					until
+						cs.off
+					loop
+						i := i + 1
+						wrap_function_parameter (function_wrapper,
+														 cs.item,
+														 i,
+														 a_include_header_file_name,
+														 a_eiffel_wrapper_set,
+														 a_config_system)
+						cs.forth
+					end
 				end
-			function_wrapper := a_eiffel_wrapper_set.function_wrapper_from_function_declaration (function_declaration)
-			from
-				cs := function_declaration.function_type.members.new_cursor
-				cs.start
-			until
-				cs.off
-			loop
-				i := i + 1
-				wrap_function_parameter (function_wrapper,
-												 cs.item,
-												 i,
-												 a_include_header_file_name,
-												 a_eiffel_wrapper_set,
-												 a_config_system)
-				cs.forth
-			end
 
-			if c_system.types.void_type /= function_declaration.function_type.return_type.skip_consts_and_aliases then
-				wrap_function_return_type (function_wrapper,
-													a_include_header_file_name,
-													a_eiffel_wrapper_set,
-													a_config_system)
+				if c_system.types.void_type /= function_declaration.function_type.return_type.skip_consts_and_aliases then
+					wrap_function_return_type (function_wrapper,
+														a_include_header_file_name,
+														a_eiffel_wrapper_set,
+														a_config_system)
+				end
 			end
 		end
 
@@ -166,7 +159,7 @@ feature {NONE}
 		require
 			a_function_wrapper_not_void: a_function_wrapper /= Void
 			a_parameter_not_void: a_parameter /= Void
-			a_parameter_is_parameter_of_a_function_declaration: a_function_wrapper.function_declaration.function_type.members.has (a_parameter)
+			a_parameter_is_parameter_of_a_function_declaration: attached a_function_wrapper.function_declaration.function_type.members as l_member and then l_member.has (a_parameter)
 			a_index_greater_equal_one: a_index >= 1
 			a_include_header_file_name_not_void: a_include_header_file_name /= Void
 			a_eiffel_wrapper_set_not_void: a_eiffel_wrapper_set /= Void
@@ -176,12 +169,12 @@ feature {NONE}
 			member_wrapper: EWG_MEMBER_WRAPPER
 			wrappable_type: EWG_C_AST_TYPE
 		do
-			if a_parameter.declarator = Void then
+			if attached a_parameter.declarator as l_declarator then
+				mapped_eiffel_name := eiffel_parameter_name_from_c_parameter_name (l_declarator)
+			else
 				create mapped_eiffel_name.make (("anonymous_").count + 3)
 				mapped_eiffel_name.append_string ("anonymous_")
 				mapped_eiffel_name.append_string (a_index.out)
-			else
-				mapped_eiffel_name := eiffel_parameter_name_from_c_parameter_name (a_parameter.declarator)
 			end
 
 			wrappable_type := a_parameter.type.skip_wrapper_irrelevant_types
@@ -235,24 +228,22 @@ feature {NONE}
 
 	default_eiffel_identifier_for_type (a_type: EWG_C_AST_TYPE): STRING
 		do
-				check
-					dead_end: False
+				-- TODO check
+				check attached a_type then
+					Result := ""
+					check dead_end: False end
 				end
 		end
 
-	default_eiffel_identifier_for_declaration (a_declaration: EWG_C_AST_DECLARATION): STRING 
-		local
-			function_declaration: EWG_C_AST_FUNCTION_DECLARATION
+	default_eiffel_identifier_for_declaration (a_declaration: EWG_C_AST_DECLARATION): STRING
 		do
-			function_declaration ?= a_declaration
-				check
-					is_function_declaration: function_declaration /= Void
-				end
-			Result := eiffel_feature_name_from_c_function (function_declaration)
+			check attached {EWG_C_AST_FUNCTION_DECLARATION} a_declaration as function_declaration then
+				Result := eiffel_feature_name_from_c_function (function_declaration)
+			end
 		end
 
 invariant
 
-	class_name_not_void_implies_not_empty: class_name /= Void implies class_name.count > 0
+	class_name_not_void_implies_not_empty: attached class_name as l_class_name implies l_class_name.count > 0
 
 end

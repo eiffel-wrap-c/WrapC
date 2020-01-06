@@ -145,9 +145,9 @@ feature {NONE} -- Implementation
 			output_stream.put_string ("_entry.feature (eif_access(")
 			output_stream.put_string (a_callback_wrapper.mapped_eiffel_name)
 			output_stream.put_string ("_entry.a_class)")
-			if a_callback_wrapper.c_pointer_type.function_type.members.count > 0 then
+			if attached a_callback_wrapper.c_pointer_type.function_type.members as l_members and then l_members.count > 0 then
 				output_stream.put_string (", ")
-				parameter_list_printer.print_declaration_list (a_callback_wrapper.c_pointer_type.function_type.members)
+				parameter_list_printer.print_declaration_list (l_members)
 			end
 			output_stream.put_line (");")
 			output_stream.put_line ("%T}")
@@ -200,45 +200,47 @@ feature {NONE} -- Implementation
 			declaration: EWG_C_AST_DECLARATION
 			cs: DS_LINEAR_CURSOR [EWG_C_AST_DECLARATION]
 		do
-			create members.make (a_callback_wrapper.c_pointer_type.function_type.members.count + 1)
-			create declaration.make ("a_function",
-											 c_system.types.void_pointer_type,
-											 directory_structure.relative_callback_c_glue_header_file_name)
-			members.force_last (declaration)
-			from
-				cs := a_callback_wrapper.c_pointer_type.function_type.members.new_cursor
-				cs.start
-			until
-				cs.off
-			loop
-				create declaration.make (cs.item.declarator, cs.item.type,
+			if attached a_callback_wrapper.c_pointer_type.function_type.members as l_members then
+				create members.make (l_members.count + 1)
+				create declaration.make ("a_function",
+												 c_system.types.void_pointer_type,
 												 directory_structure.relative_callback_c_glue_header_file_name)
 				members.force_last (declaration)
-				cs.forth
-			end
-			create function.make (directory_structure.relative_callback_c_glue_header_file_name,
-										 a_callback_wrapper.c_pointer_type.function_type.return_type,
-										 members)
+				from
+					cs := l_members.new_cursor
+					cs.start
+				until
+					cs.off
+				loop
+					create declaration.make (cs.item.declarator, cs.item.type,
+													 directory_structure.relative_callback_c_glue_header_file_name)
+					members.force_last (declaration)
+					cs.forth
+				end
+				create function.make (directory_structure.relative_callback_c_glue_header_file_name,
+											 a_callback_wrapper.c_pointer_type.function_type.return_type,
+											 members)
 
-			declarator := "call_"
-			declarator.append_string (a_callback_wrapper.mapped_eiffel_name)
-			declaration_printer.print_declaration_from_type (function, declarator)
-			output_stream.put_new_line
-			output_stream.put_line ("{")
-			output_stream.put_string ("%T")
-			if
-				a_callback_wrapper.c_pointer_type.function_type.return_type.skip_consts_and_aliases /= c_system.types.void_type
-			then
-				output_stream.put_string ("return ")
+				declarator := "call_"
+				declarator.append_string (a_callback_wrapper.mapped_eiffel_name)
+				declaration_printer.print_declaration_from_type (function, declarator)
+				output_stream.put_new_line
+				output_stream.put_line ("{")
+				output_stream.put_string ("%T")
+				if
+					a_callback_wrapper.c_pointer_type.function_type.return_type.skip_consts_and_aliases /= c_system.types.void_type
+				then
+					output_stream.put_string ("return ")
+				end
+				output_stream.put_string ("((")
+				declaration_printer.print_declaration_from_type (a_callback_wrapper.c_pointer_type, "")
+				output_stream.put_string (")")
+				output_stream.put_string ("a_function) (")
+				parameter_list_printer.print_declaration_list (l_members)
+				output_stream.put_line (");")
+				output_stream.put_line ("}")
+				output_stream.put_new_line
 			end
-			output_stream.put_string ("((")
-			declaration_printer.print_declaration_from_type (a_callback_wrapper.c_pointer_type, "")
-			output_stream.put_string (")")
-			output_stream.put_string ("a_function) (")
-			parameter_list_printer.print_declaration_list (a_callback_wrapper.c_pointer_type.function_type.members)
-			output_stream.put_line (");")
-			output_stream.put_line ("}")
-			output_stream.put_new_line
 		end
 
 	declaration_printer: EWG_C_DECLARATION_PRINTER
