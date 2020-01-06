@@ -117,6 +117,7 @@ feature -- Basic Operations
 			-- Process arguments (using the obsolete syntax)
 		local
 			header_file_name: STRING
+			l_path: PATH
 		do
 			if
 				match_long_option ("output-dir") and then
