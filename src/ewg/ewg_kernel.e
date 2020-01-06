@@ -68,7 +68,6 @@ feature -- Basic Ops: Primary
 			file: KL_TEXT_INPUT_FILE
 			rule: EWG_CONFIG_RULE
 			matching_clause: EWG_CONFIG_MATCHING_CLAUSE
-			wrapper_clause: EWG_CONFIG_DEFAULT_WRAPPER_CLAUSE
 		do
 			if attached config_file_name as l_config_file_name then
 				create parser.make (error_handler)
@@ -83,8 +82,7 @@ feature -- Basic Ops: Primary
 				end
 			else
 				create matching_clause.make
-				create wrapper_clause.make
-				create rule.make (matching_clause, wrapper_clause)
+				create rule.make (matching_clause, create {EWG_CONFIG_DEFAULT_WRAPPER_CLAUSE}.make)
 				config_system.append_rule (rule)
 			end
 			if error_handler.has_error then
@@ -320,6 +318,7 @@ feature -- Basic Ops: Sub-supporting
 							-- TODO check if to_string_8 is the right way to replace
 							-- obsolete feature call `as_string_8`
 							l_name := l_result.error_output.substring (1, l_index).to_string_8
+
 							l_name.append_string ("_cpp.h")
 							cpp_header_file_name := l_name.twin
 							create l_file.make_create_read_write (l_name)
@@ -387,7 +386,6 @@ feature -- Execute Plugin scripts
 						-- Error
 						-- TODO check if to_string_8 is the right way to replace
 						-- obsolete feature call `as_string_8`
-
 						report_info_message (l_result.error_output.to_string_8)
 					end
 				else

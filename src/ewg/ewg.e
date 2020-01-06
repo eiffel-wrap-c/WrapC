@@ -117,13 +117,14 @@ feature -- Basic Operations
 			-- Process arguments (using the obsolete syntax)
 		local
 			header_file_name: STRING
-			l_path: PATH
 		do
-			if match_long_option ("output-dir") then
-				if is_next_option_long_option and then has_next_option_value then
-					output_directory_name := next_option_value
-					consume_option
-				end
+			if
+				match_long_option ("output-dir") and then
+				is_next_option_long_option and then
+				has_next_option_value
+			then
+				output_directory_name := next_option_value
+				consume_option
 			end
 
 			if not match_long_option ("full-header")  then

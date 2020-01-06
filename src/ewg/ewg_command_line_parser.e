@@ -46,6 +46,37 @@ feature -- Operations
 
 feature -- Status report
 
+	has_long_option (an_option_name: STRING): BOOLEAN
+			-- Is there a long option on the command-line whose name is
+			-- `an_option_name' (note that `an_option_name' does not
+			-- contain the leading '--' characters)?
+		require
+			an_option_name_not_void: an_option_name /= Void
+		local
+			i: INTEGER
+			arg: STRING
+			nb: INTEGER
+		do
+			from
+				i := 1
+			until
+				(i > Arguments.argument_count) or Result
+			loop
+				arg := Arguments.argument (i)
+				nb := an_option_name.count + 2
+				if
+					arg.count >= nb and then
+					(arg.item (1) = '-' and
+					 arg.item (2) = '-') and then
+						STRING_.same_string (arg.substring (3, nb), an_option_name)
+				then
+					Result := arg.count = nb or else arg.item (nb + 1) = '='
+				end
+
+				i := i + 1
+			end
+		end
+
 	has_next_option: BOOLEAN
 			-- Is there an unconsumed token left?
 		do
@@ -75,7 +106,7 @@ feature -- Status report
 		do
 			arg := next_option
 			i := arg.index_of ('=', 1)
-			Result := (i >= 1 and i < arg.count)
+			Result := i >= 1 and i < arg.count
 		end
 
 feature -- Access
@@ -96,12 +127,10 @@ feature -- Access
 			next_option_is_long_option: is_next_option_long_option
 			has_next_option_value: has_next_option_value
 		local
-			i: INTEGER
 			arg: STRING
 		do
 			arg := next_option
-			i := arg.index_of ('=', 1)
-			Result := arg.substring (i + 1, arg.count)
+			Result := arg.substring (arg.index_of ('=', 1) + 1, arg.count)
 		ensure
 			next_option_value_not_void: Result /= Void
 		end
@@ -128,7 +157,7 @@ feature -- Matching
 					arg.item (2) = '-') and then
 					STRING_.same_string (arg.substring (3, nb), an_option_name)
 				then
-					Result := (arg.count = nb or else arg.item (nb + 1) = '=')
+					Result := arg.count = nb or else arg.item (nb + 1) = '='
 				end
 			end
 		end
@@ -141,40 +170,7 @@ feature {NONE} -- Implementation
 	is_valid_option_position (i: INTEGER): BOOLEAN
 			-- Is `i' a valid token position?
 		do
-			Result := (i >= 1 and i <= Arguments.argument_count)
-		end
-
-feature -- Status report
-
-	has_long_option (an_option_name: STRING): BOOLEAN
-			-- Is there a long option on the command-line whose name is
-			-- `an_option_name' (note that `an_option_name' does not
-			-- contain the leading '--' characters)?
-		require
-			an_option_name_not_void: an_option_name /= Void
-		local
-			i: INTEGER
-			arg: STRING
-			nb: INTEGER
-		do
-			from
-				i := 1
-			until
-				(i > Arguments.argument_count) or Result
-			loop
-				arg := Arguments.argument (i)
-				nb := an_option_name.count + 2
-				if
-					arg.count >= nb and then
-					(arg.item (1) = '-' and
-					 arg.item (2) = '-') and then
-						STRING_.same_string (arg.substring (3, nb), an_option_name)
-				then
-					Result := (arg.count = nb or else arg.item (nb + 1) = '=')
-				end
-
-				i := i + 1
-			end
+			Result := i >= 1 and i <= Arguments.argument_count
 		end
 
 end
