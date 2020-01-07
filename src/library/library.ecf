@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<system xmlns="http://www.eiffel.com/developers/xml/configuration-1-21-0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.eiffel.com/developers/xml/configuration-1-21-0 http://www.eiffel.com/developers/xml/configuration-1-21-0.xsd" name="ewg_library" uuid="D1BDA31A-2E5A-452D-B160-7E7F5E7F113E" library_target="ewg_library">
-	<target name="ewg_library">
+<system xmlns="http://www.eiffel.com/developers/xml/configuration-1-21-0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.eiffel.com/developers/xml/configuration-1-21-0 http://www.eiffel.com/developers/xml/configuration-1-21-0.xsd" name="wrapc_kernel" uuid="D1BDA31A-2E5A-452D-B160-7E7F5E7F113E" library_target="wrapc_kernel">
+	<target name="wrapc_kernel">
 		<root all_classes="true"/>
-		<option warning="warning" full_class_checking="false" is_attached_by_default="false" manifest_array_type="mismatch_warning">
-			<assertions precondition="true"/>
+		<option warning="warning" full_class_checking="false" is_attached_by_default="true" manifest_array_type="mismatch_warning">
+			<assertions precondition="true" postcondition="true" check="true" invariant="true" supplier_precondition="true"/>
 		</option>
 		<setting name="console_application" value="true"/>
 		<setting name="inlining_size" value="0"/>
@@ -11,7 +11,7 @@
 		<setting name="dead_code_removal" value="feature"/>
 		<capability>
 			<concurrency support="none" use="none"/>
-			<void_safety support="none" use="none"/>
+			<void_safety support="all" use="all"/>
 		</capability>
 		<library name="base" location="$ISE_LIBRARY\library\base\base.ecf"/>
 		<library name="base_process" location="$ISE_LIBRARY\library\process\base\base_process.ecf"/>
@@ -26,7 +26,7 @@
 		<library name="tools" location="$ISE_LIBRARY\contrib\library\gobo\library\tools\src\library.ecf"/>
 		<library name="utility" location="$ISE_LIBRARY\contrib\library\gobo\library\utility\src\library.ecf"/>
 		<library name="xml" location="$ISE_LIBRARY\contrib\library\gobo\library\xml\src\library.ecf"/>
-		<cluster name="ewg_library" location=".\" recursive="true">
+		<cluster name="wrapc_kernel" location=".\" recursive="true">
 			<file_rule>
 				<exclude>/EIFGENs$</exclude>
 				<exclude>/\.git$</exclude>

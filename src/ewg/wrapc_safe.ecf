@@ -3,8 +3,8 @@
 	<target name="wrap_c">
 		<root class="EWG" feature="make"/>
 		<option debug="true" warning="warning" full_class_checking="false" is_attached_by_default="true" manifest_array_type="mismatch_warning">
-			<debug name="gelex" enabled="true"/>
-			<debug name="geyacc" enabled="true"/>
+			<debug name="gelex" enabled="false"/>
+			<debug name="geyacc" enabled="false"/>
 			<assertions precondition="true" postcondition="true" check="true" invariant="true" supplier_precondition="true"/>
 		</option>
 		<setting name="console_application" value="true"/>
@@ -20,9 +20,9 @@
 		<library name="regexp" location="$ISE_LIBRARY\contrib\library\gobo\library\regexp\src\library.ecf" readonly="true"/>
 		<library name="time" location="${ISE_LIBRARY}\library\time\time.ecf" readonly="true"/>
 		<library name="wrapc_kernel" location="..\library\wrapc_kernel_safe.ecf" readonly="false">
-			<option debug="true">
-				<debug name="gelex" enabled="true"/>
-				<debug name="geyacc" enabled="true"/>
+			<option debug="false">
+				<debug name="gelex" enabled="false"/>
+				<debug name="geyacc" enabled="false"/>
 			</option>
 		</library>
 		<cluster name="ewg" location=".\"/>
