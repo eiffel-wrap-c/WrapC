@@ -8,8 +8,10 @@
 >
 	<target name="wrap_c">
 		<root class="EWG" feature="make"/>
-		<option warning="warning" full_class_checking="false" is_attached_by_default="false" manifest_array_type="mismatch_warning">
-			<assertions check="false" invariant="false" loop="false" postcondition="false" precondition="false" supplier_precondition="false"/>
+		<option debug="true" warning="warning" full_class_checking="false" is_attached_by_default="true" manifest_array_type="mismatch_warning">
+			<debug name="gelex" enabled="false"/>
+			<debug name="geyacc" enabled="false"/>
+			<assertions precondition="true" postcondition="true" check="true" invariant="true" supplier_precondition="true" loop="false"/>
 		</option>
 		<setting name="console_application" value="true"/>
 		<setting name="inlining_size" value="0"/>
@@ -17,13 +19,18 @@
 		<setting name="dead_code_removal" value="feature"/>
 		<capability>
 			<concurrency support="none" use="none"/>
-			<void_safety support="none" use="none"/>
+			<void_safety support="all" use="all"/>
 		</capability>
 		<library name="base" location="${ISE_LIBRARY}\library\base\base.ecf" readonly="true"/>
-		<library name="ewg_library" location="..\library\library.ecf" readonly="true"/>
 		<library name="kernel" location="$ISE_LIBRARY\contrib\library\gobo\library\kernel\src\library.ecf" readonly="true"/>
 		<library name="regexp" location="$ISE_LIBRARY\contrib\library\gobo\library\regexp\src\library.ecf" readonly="true"/>
 		<library name="time" location="${ISE_LIBRARY}\library\time\time.ecf" readonly="true"/>
+		<library name="wrapc_kernel" location="..\library\wrapc_kernel_safe.ecf" readonly="false">
+			<option debug="false">
+				<debug name="gelex" enabled="false"/>
+				<debug name="geyacc" enabled="false"/>
+			</option>
+		</library>
 		<cluster name="ewg" location=".\"/>
 	</target>
 </system>
