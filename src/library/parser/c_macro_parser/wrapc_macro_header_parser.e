@@ -49,6 +49,7 @@ feature {NONE} -- Initialization
 			compile_hexa_regex
 			compile_integer_expression
 			compile_double_expression
+			compile_comments_expression
 		end
 
 feature -- Parser
@@ -198,6 +199,7 @@ feature {NONE} -- Parser implementation
 					last_type := "CHARACTER_32"
 				end
 				skip_value
+				clean_comments
 				if last_type.is_empty then
 					if is_valid_integer (last_value) then
 						last_type := "INTEGER_64"
@@ -340,7 +342,6 @@ feature {NONE} -- Constants
 
 	define_id: STRING = "define"
 
-
 feature {NONE} -- Regex for Values.
 
 	is_valid_integer (a_string: STRING): BOOLEAN
@@ -377,6 +378,19 @@ feature {NONE} -- Regex for Values.
 			create l_str.make_from_string (a_string)
 			l_str.prune_all (' ')
 			Result := integer_expression.recognizes (l_str)
+		end
+
+	clean_comments
+			-- Remove comments from last_value.
+		local
+			l_str: STRING
+		do
+			create l_str.make_from_string (last_value)
+			comments_expression.match_substring (l_str, 1, l_str.count)
+			if comments_expression.match_count > 1 then
+				last_value.remove_tail ((comments_expression.captured_end_position (1) - comments_expression.captured_start_position (1)) + 1)
+				last_value.adjust
+			end
 		end
 
 	is_valid_double_expression (a_string: STRING): BOOLEAN
@@ -418,18 +432,27 @@ feature {NONE} -- Regex for Values.
 			double_expression.compile (double_expressions_pattern)
 		end
 
+	compile_comments_expression
+		do
+			create comments_expression.make
+			comments_expression.compile (comments_expressions_pattern)
+		end
+
+
 --For integers:         d+
 --For decimal numbers:  \b\d+.\d+
 --For scientific:       \b\d+e\d+
 --For hexadecimal:      ^0([xX]{1})?[A-Fa-f0-9]+
 --For integer expressions:  [-+(]*[\d]+[)]*([-+*/][-+(]*[\d]+[)]*)*
 --For double expressions :  [-+(]*[\d|\d+.\d*]+[)]*([-+*/][-+(]*[\d]+[)]*)*
+--For comments:				(/\*.*?\*/)|(//.*)
 
 	integer_regex: RX_PCRE_REGULAR_EXPRESSION
 	double_regex: RX_PCRE_REGULAR_EXPRESSION
 	hexa_regex :RX_PCRE_REGULAR_EXPRESSION
 	integer_expression: RX_PCRE_REGULAR_EXPRESSION
 	double_expression: RX_PCRE_REGULAR_EXPRESSION
+	comments_expression: RX_PCRE_REGULAR_EXPRESSION
 
 
 
@@ -443,7 +466,5 @@ feature {NONE} -- Regex for Values.
 
 	double_expressions_pattern: STRING = "[-+(]*[\d|\d*\.\d*]+[)]*[>]*[<]*([-+*/][-+(]*[\d]+[)]*)*"
 
-
-
-
+	comments_expressions_pattern: STRING = "(\/\*.*?\*\/)|(\/\/.*)"
 end
