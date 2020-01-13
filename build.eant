@@ -53,8 +53,9 @@
 		<!--copy file="${cwd}/src/ewg/system.ecf" to_file="${cwd}/bin/system.ecf"/>-->
 		<geant file="${cwd}/src/ewg/build.eant" target="compile" dir="src/ewg"/>
 		<geant file="${cwd}/src/ewg/build.eant" target="clean" dir="src/ewg"/>
-		<copy file="${cwd}/src/ewg/wrap_c.exe" to_file="${cwd}/bin/wrap_c.exe"/>
-		<!--delete file="${cwd}/bin/system.ecf"/>-->
+		<copy file="${cwd}/src/ewg/wrap_c.exe" to_file="${cwd}/bin/wrap_c.exe"  if="${is_windows}"/>
+		<copy file="${cwd}/src/ewg/wrap_c" to_file="${cwd}/bin/wrap_c"  unless="${is_windows}"/>			
+<!--delete file="${cwd}/bin/system.ecf"/>-->
 		<!--
 			geant file="${WRAP_C}/src/drc/build.eant" target="compile" dir="bin" if="${EPOSIX}"/>
 			<geant file="${WRAP_C}/src/drc/build.eant" target="clean" dir="bin" if="${EPOSIX}"/> 
