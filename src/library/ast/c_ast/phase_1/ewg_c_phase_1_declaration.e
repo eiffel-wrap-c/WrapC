@@ -26,7 +26,7 @@ feature
 		require
 			a_declaration_specifiers_not_void: a_declaration_specifiers /= Void
 			a_declarators_not_void: a_declarators /= Void
-			a_header_file_name_not_void: a_header_file_name /= Void
+			a_header_file_name_not_empty: not a_header_file_name.is_empty
 		do
 			declarators := a_declarators
 			header_file_name := a_header_file_name
@@ -39,7 +39,7 @@ feature
 		require
 			a_declaration_specifiers_not_void: a_declaration_specifiers /= Void
 			a_declarator_not_void: a_declarator /= Void
-			a_header_file_name_not_void: a_header_file_name /= Void
+			a_header_file_name_not_empty: not a_header_file_name.is_empty
 		do
 			create declarators.make
 			declarators.put_last (a_declarator)
@@ -51,7 +51,7 @@ feature
 			  a_header_file_name: STRING)
 		require
 			a_declaration_specifiers_not_void: a_declaration_specifiers /= Void
-			a_header_file_name_not_void: a_header_file_name /= Void
+			a_header_file_name_not_empty: not a_header_file_name.is_empty
 		do
 			create declarators.make
 			header_file_name := a_header_file_name

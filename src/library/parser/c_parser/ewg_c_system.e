@@ -373,6 +373,7 @@ feature {NONE} -- Implementation
 				end
 				outer_cs.forth
 			end
+
 			last_declaration_list := declaration_list
 		ensure
 			last_declartion_list_not_void: last_declaration_list /= Void

@@ -198,6 +198,13 @@ NL    [\r\n
 						report_type_or_identifier (text)
 					end
 				}
+"__ptr32"		{
+					if is_msc_extensions_enabled then
+						-- ignore, we don't need it
+					else
+						report_type_or_identifier (text)
+					end
+				}				
 "__ptr64"			{
 					if is_msc_extensions_enabled then
 						-- ignore, we don't need it
@@ -304,8 +311,16 @@ NL    [\r\n
 						report_type_or_identifier (text)
 					end
 					}
+"__unaligned"			{
+					if is_msc_extensions_enabled then
+						-- ignore, we don't need it
+					else
+						report_type_or_identifier (text)
+					end
+					}
 
 "__w64"			{ } -- ignore
+
 
 {L}({L}|{D})*		{ report_type_or_identifier (text)	}
 
