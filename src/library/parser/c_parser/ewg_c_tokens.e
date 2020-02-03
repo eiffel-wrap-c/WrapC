@@ -1,7 +1,7 @@
 note
 
 	description: "Parser token codes"
-	generator: "geyacc version 4.3"
+	generator: "geyacc"
 
 deferred class EWG_C_TOKENS
 

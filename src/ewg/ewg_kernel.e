@@ -173,6 +173,7 @@ feature -- Basic Ops: Supporting
 			file: PLAIN_TEXT_FILE
 			l_data: STRING
 			regex: RX_PCRE_REGULAR_EXPRESSION
+			regex2: RX_PCRE_REGULAR_EXPRESSION
 			count: INTEGER
 		do
 			if attached cpp_header_file_name as l_cpp_header_file_name then
@@ -185,6 +186,11 @@ feature -- Basic Ops: Supporting
 					regex.match (l_data)
 					count := regex.match_count
 					l_data := regex.replace_all ("")
+					create regex2.make
+					regex2.compile (";\n\s*;")
+					regex2.match (l_data)
+					count := regex2.match_count
+					l_data := regex2.replace_all (";")
 					file.close
 					file.wipe_out
 					file.open_write
