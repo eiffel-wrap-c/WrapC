@@ -467,7 +467,7 @@ It is important to understand that there is an inherent problem when wrapping ca
 
 	typedef void (*void_callback) (void);
 
-Does not convey any state when invoked (other than it has been invoked). This is the reason for the following limitation: One can only register one Eiffel callback receiver per callback type. If more receivers were allowed how would one decide on the invocation of a callback which receiver is meant? In practice this limitation is usually of no concern. Most C libraries have adopted a pseudo OO technique of supplying a user definable parameter as the first parameter on every callback. This parameter can be used to do further dispatching.
+Does not convey any state when invoked (other than it has been invoked). This is the reason for the following limitation: so by default one can only register one Eiffel callback receiver per callback type (more about this later). If more receivers were allowed how would one decide on the invocation of a callback which receiver is meant? In practice this limitation is usually of no concern. Most C libraries have adopted a pseudo OO technique of supplying a user definable parameter as the first parameter on every callback. This parameter can be used to do further dispatching.
 
 Let us look at the following declarations (taken from the callback-example)
 
@@ -479,7 +479,7 @@ Let us look at the following declarations (taken from the callback-example)
     // make all registered callbacks receive an event
     void trigger_event (int a_event_type);
 
-`sample_callback_type` is the actual callback. `register_callback` is used to register a given callback receiver, so that it gets called whenever one calls `trigger_event`. The two function declarations are wrapped as usual. For `sample_callback_type` `WrapC` generates two classes both are located in eiffel cluster. Actually `WrapC` generate an special C code. The two classes of interest are `SAMPLE_CALLBACK_TYPE_DISPATCHER` and `EWG_CALLBACK_CALLBACK_C_GLUE_CODE_FUNCTIONS_API`.
+`sample_callback_type` is the actual callback. `register_callback` is used to register a given callback receiver, so that it gets called whenever one calls `trigger_event`. The two function declarations are wrapped as usual. For `sample_callback_type` `WrapC` generates two classes both are located in `eiffel` cluster and also generates an special C glue code for callbacks support. The two classes of interest are `SAMPLE_CALLBACK_TYPE_DISPATCHER` and `EWG_CALLBACK_CALLBACK_C_GLUE_CODE_FUNCTIONS_API`.
 
 The first one is the one you have to create in order to establish the C-Eiffel bridge and register via an agent the Eiffel feature that you want to call on a callback. The second one is the Eiffel wrapper of the C glue code generated needed to implement callbacks.
 
@@ -491,59 +491,179 @@ First let's check generated dispatcher class for our example
 
 		EWG_CALLBACK_CALLBACK_C_GLUE_CODE_FUNCTIONS_API
 			export {NONE} all end
+		DISPOSABLE
 	create
 		make
 
 	feature -- Initialization
 
-		make (a_routine: like routine)
+		make
 					-- Dispatcher initialization
 			do
-				routine := a_routine
-				set_sample_callback_type_entry (Current, $on_callback)
+				routine_1 := agent default_routine
+				routine_2 := agent default_routine
+				routine_3 := agent default_routine
+				routine_4 := agent default_routine
+				routine_5 := agent default_routine
+				set_sample_callback_type_object ($Current)
 			end
 
-	feature --Access: Routine
+	feature --Access: Routine 
 
-		routine: PROCEDURE [TUPLE [a_pdata: POINTER; a_a_event_type: INTEGER]]  
+		routine_1: PROCEDURE [TUPLE [a_pdata: POINTER; a_a_event_type: INTEGER]] 
+				--Eiffel routine to be call on callback.
+		routine_2: PROCEDURE [TUPLE [a_pdata: POINTER; a_a_event_type: INTEGER]] 
+				--Eiffel routine to be call on callback.
+		routine_3: PROCEDURE [TUPLE [a_pdata: POINTER; a_a_event_type: INTEGER]] 
+				--Eiffel routine to be call on callback.
+		routine_4: PROCEDURE [TUPLE [a_pdata: POINTER; a_a_event_type: INTEGER]] 
+				--Eiffel routine to be call on callback.
+		routine_5: PROCEDURE [TUPLE [a_pdata: POINTER; a_a_event_type: INTEGER]] 
 				--Eiffel routine to be call on callback.
 
 	feature --Access: Dispatcher
 
-		c_dispatcher: POINTER
+
+		c_dispatcher_1: POINTER
 			do
-				Result := get_sample_callback_type_stub
+				Result := get_sample_callback_type_stub_1
+			end
+
+		c_dispatcher_2: POINTER
+			do
+				Result := get_sample_callback_type_stub_2
+			end
+
+		c_dispatcher_3: POINTER
+			do
+				Result := get_sample_callback_type_stub_3
+			end
+
+		c_dispatcher_4: POINTER
+			do
+				Result := get_sample_callback_type_stub_4
+			end
+
+		c_dispatcher_5: POINTER
+			do
+				Result := get_sample_callback_type_stub_5
 			end
 
 	feature --Access: Callback
 
-		on_callback (a_pdata: POINTER; a_a_event_type: INTEGER)  
+		on_callback_1 (a_pdata: POINTER; a_a_event_type: INTEGER)  
 			do
-				routine (a_pdata, a_a_event_type)
+				routine_1 (a_pdata, a_a_event_type)
 			end
+
+		on_callback_2 (a_pdata: POINTER; a_a_event_type: INTEGER)  
+			do
+				routine_2 (a_pdata, a_a_event_type)
+			end
+
+		on_callback_3 (a_pdata: POINTER; a_a_event_type: INTEGER)  
+			do
+				routine_3 (a_pdata, a_a_event_type)
+			end
+
+		on_callback_4 (a_pdata: POINTER; a_a_event_type: INTEGER)  
+			do
+				routine_4 (a_pdata, a_a_event_type)
+			end
+
+		on_callback_5 (a_pdata: POINTER; a_a_event_type: INTEGER)  
+			do
+				routine_5 (a_pdata, a_a_event_type)
+			end
+
+
+	feature --Register: Callbacks
+
+		register_callback_1 (a_routine: like routine_1)
+			do
+				routine_1 := a_routine
+				set_sample_callback_type_entry_1 ($on_callback_1)
+			end
+
+		register_callback_2 (a_routine: like routine_1)
+			do
+				routine_2 := a_routine
+				set_sample_callback_type_entry_2 ($on_callback_2)
+			end
+
+		register_callback_3 (a_routine: like routine_1)
+			do
+				routine_3 := a_routine
+				set_sample_callback_type_entry_3 ($on_callback_3)
+			end
+
+		register_callback_4 (a_routine: like routine_1)
+			do
+				routine_4 := a_routine
+				set_sample_callback_type_entry_4 ($on_callback_4)
+			end
+
+		register_callback_5 (a_routine: like routine_1)
+			do
+				routine_5 := a_routine
+				set_sample_callback_type_entry_5 ($on_callback_5)
+			end
+
+
+	feature --Access: Default routine
+
+		default_routine (a_pdata: POINTER; a_a_event_type: INTEGER)  
+			do
+				 print ("Default routine")
+			end
+
+
+	feature {NONE} -- Implementation
+
+		dispose
+				--Wean `Current'
+			do
+				release_sample_callback_type_object
+				set_sample_callback_type_object (default_pointer)
+			end
+
+
 	end
+
+To overcome the limitation to only register one Eiffel callback receiver per callback type, WrapC generate code to register a few numbers of Eiffel callback receivers per callback type, at the moment the number of Eiffel callbacks receivers is defined at 5, in
+the future the user will be able to define the number of Eiffel callbacks receiver per callback type in the configuration file.
 
 To use this wrapper you just need to create an object instance of `SAMPLE_CALLBACK_TYPE_DISPATCHER` to register via agent the Eiffel feature that you want to call on a callback.Then call an Eiffel function that will register the dispatcher with the C library usign `SAMPLE_CALLBACK_TYPE_DISPATCHER.c_dispatcher`. Let's look an example, taken from the callback example.
 
 
+
 	class CALLBACK_HELLO_WORLD
+
 	inherit
+
 		CALLBACK_FUNCTIONS_API
 			export {NONE} all end
 
+
 	create
+
 		make
 
 	feature
 
 		make
+			local
+				function_table: FUNCTION_TABLE_STRUCT_API
+				i: INTEGER
 			do
 					-- Create the callback dispatcher and
 					-- tell him to dispatch calls to `agent register_callback'
-					-- Note that there must be at most one dispatcher object
-					-- per callback type in every system.
-					-- It is a good idea to make it a singleton.
-				 create dispatcher.make (agent on_callback )
+				 create dispatcher.make
+
+				 create anonymous_dispatcher.make
+
+				 dispatcher.register_callback_1 (agent on_callback)
+				 anonymous_dispatcher.register_callback_1(agent sum)
 
 					-- Trigger a callback event without the dispatcher connected
 					-- to the c library. You will notice that `on_callback'
@@ -551,9 +671,28 @@ To use this wrapper you just need to create an object instance of `SAMPLE_CALLBA
 				trigger_event (27)
 
 					-- Now lets register the dispatcher with the c library.
-				register_callback (dispatcher.c_dispatcher, Default_pointer)
+				register_callback (dispatcher.c_dispatcher_1, Default_pointer)
 					-- This time the triggering will yield a call to `on_callback'.
 				trigger_event (28)
+
+					-- This demonstrates how to call function pointers as members of structs
+					-- Get a struct with a function pointer member
+				if attached get_function_table as l_table then
+					create function_table.make_by_pointer (l_table.item)
+						-- Call it using the appropriate caller
+						-- Create
+					anonymous_dispatcher.register_callback_1 (agent sum)
+					i := anonymous_dispatcher.call_int_int_int_anonymous_callback (function_table.callme, 7, 10)
+
+
+						-- The c function we called should have added the integers
+					print ("result of callme: " + i.out + "%N")
+
+					function_table.set_callme (anonymous_dispatcher.c_dispatcher_1)
+					i := anonymous_dispatcher.call_int_int_int_anonymous_callback (function_table.callme, 5, 5)
+						-- The c function we called should have added the integers
+					print ("result of callme: " + i.out + "%N")
+				end
 			end
 
 		dispatcher: SAMPLE_CALLBACK_TYPE_DISPATCHER
@@ -563,6 +702,9 @@ To use this wrapper you just need to create an object instance of `SAMPLE_CALLBA
 				-- `on_callback'. Whenn its C function gets called, the dispatcher
 				-- calls `on_callback' in the connected Eiffel object
 
+		anonymous_dispatcher: INT_INT_INT_ANONYMOUS_CALLBACK_DISPATCHER
+				-- function pointers as members of structs	
+
 
 		on_callback (a_data: POINTER; a_event_type: INTEGER)
 				-- Callback target. This feature gets called
@@ -570,7 +712,15 @@ To use this wrapper you just need to create an object instance of `SAMPLE_CALLBA
 			do
 				print ("on_callback has been called with: " + a_data.out + ", " + a_event_type.out + "%N")
 			end
-	end    	 
+
+
+		sum (a, b: INTEGER): INTEGER
+			do
+				Result := a + b
+			end
+
+	end
+
 
 <a name="macro"></a>
 ## Macros
@@ -606,7 +756,7 @@ In the second case that distintion is not needed
 
 <a name="config_file"></a>
 ## The configuration file
-To customize the way `WrapC` generates wrappers, you can provide a configuration file. This file usually named config.xml This section will describe it's structure.
+To customize the way `WrapC` generates wrappers, you can provide a configuration file. This file is named config.xml This section will describe it's structure.
 
 Configuration support is quite new many very interesting things have not yet been implemented. Basically all you can do so far is control what from a header should be wrapped and what not.
 
@@ -692,9 +842,69 @@ Note that the value of name can be a regular expression. In the above example an
         enum
         function
         callback
-	macro
+        macro
 
 You can choose more than one constraint per match clause. In which case you constrain the match clause to all individual constraints.
+
+
+Group funtions in a uniform class name filtered by identifier
+
+		<!-- Include all TF_.* functions in a uniform class-->
+	    <rule>
+	       <match>
+		  <identifier name="TF_.*"/>
+		  <type name="function"/>		
+	       </match>
+	       <wrapper type="default">
+		  <class_name name="TF_FUNCTIONS"/>
+	      </wrapper>
+	    </rule>
+
+
+Group functions in a uniform class that are in a particualr header
+
+	<!-- The next rules specify what headers should be wrapped -->
+	<!-- Thus we force a uniform class name for the function wrappers -->
+    <rule>
+      <match>
+	 <header name=".*some_header.h"/>
+	 <type name="function"/>
+      </match>
+      <wrapper type="default">
+	 <class_name name="UNIFORM_FUNCTIONS"/>
+      </wrapper>
+    </rule>
+    
+
+Grouping is available for `funtions` and `macros`.
+
+
+The following rules are experimental and could be updated in the future
+
+Exlude high level funtions
+
+WrapC generates low level C wrappers and also high level code, but sometimes this high level wrappers does not work
+as expected and require manual wrapping, so in those cases you can later update the config file an exclude them from 
+the code generation.
+
+	<rule>
+ 		<function_exclude name="fn_1">
+		...
+		<function_exclude name="fn_2">
+	</rule>
+
+
+Generate function pointers 
+
+If you need to get access to function pointers, you can include a list of funtions to get them.
+
+	 <rule>
+	 	<function_address name="fn_1"/>
+		...	
+		<function_address name="fn_1"/>	
+	 </rule> -
+		
+
 
 <a name="dependent_types"></a>
 ### Dependent Types

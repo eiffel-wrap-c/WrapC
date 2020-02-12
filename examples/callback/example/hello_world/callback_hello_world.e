@@ -33,8 +33,12 @@ feature
 				-- Note that there must be at most one dispatcher object
 				-- per callback type in every system.
 				-- It is a good idea to make it a singleton.
-			 create dispatcher.make (agent on_callback )
-			 create anonymous_dispatcher.make (agent sum)
+			 create dispatcher.make
+
+			 create anonymous_dispatcher.make
+
+			 dispatcher.register_callback_1 (agent on_callback)
+			 anonymous_dispatcher.register_callback_1(agent sum)
 
 				-- Trigger a callback event without the dispatcher connected
 				-- to the c library. You will notice that `on_callback'
@@ -42,7 +46,7 @@ feature
 			trigger_event (27)
 
 				-- Now lets register the dispatcher with the c library.
-			register_callback (dispatcher.c_dispatcher, Default_pointer)
+			register_callback (dispatcher.c_dispatcher_1, Default_pointer)
 				-- This time the triggering will yield a call to `on_callback'.
 			trigger_event (28)
 
@@ -52,19 +56,18 @@ feature
 				create function_table.make_by_pointer (l_table.item)
 					-- Call it using the appropriate caller
 					-- Create
-				create anonymous_dispatcher.make (agent sum)
+				anonymous_dispatcher.register_callback_1 (agent sum)
 				i := anonymous_dispatcher.call_int_int_int_anonymous_callback (function_table.callme, 7, 10)
 
 
 					-- The c function we called should have added the integers
 				print ("result of callme: " + i.out + "%N")
 
-				function_table.set_callme (anonymous_dispatcher.c_dispatcher)
+				function_table.set_callme (anonymous_dispatcher.c_dispatcher_1)
 				i := anonymous_dispatcher.call_int_int_int_anonymous_callback (function_table.callme, 5, 5)
 					-- The c function we called should have added the integers
 				print ("result of callme: " + i.out + "%N")
 			end
-
 		end
 
 	dispatcher: SAMPLE_CALLBACK_TYPE_DISPATCHER

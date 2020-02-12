@@ -98,10 +98,19 @@ feature {NONE} -- Implementation
 		require
 			a_callback_wrapper_not_void: a_callback_wrapper /= Void
 		do
-			generate_callback_entry_struct (a_callback_wrapper)
-			generate_stub_definition (a_callback_wrapper)
-			generate_entry_setter_definition (a_callback_wrapper)
-			generate_stub_getter_definition (a_callback_wrapper)
+			--generate_callback_entry_struct (a_callback_wrapper)
+
+			generate_callback_entry_object (a_callback_wrapper)
+			generate_callback_entry_effel_function_address (a_callback_wrapper, 5)
+
+			generate_set_object_definition (a_callback_wrapper)
+			generate_release_object_definition (a_callback_wrapper)
+
+			generate_stub_definition (a_callback_wrapper, 5)
+
+
+			generate_entry_setter_definition (a_callback_wrapper, 5)
+			generate_stub_getter_definition (a_callback_wrapper, 5)
 			generate_caller_definition (a_callback_wrapper)
 		end
 
@@ -118,76 +127,174 @@ feature {NONE} -- Implementation
 			output_stream.put_new_line
 		end
 
-	generate_stub_definition (a_callback_wrapper: EWG_CALLBACK_WRAPPER)
+
+	generate_callback_entry_object (a_callback_wrapper: EWG_CALLBACK_WRAPPER)
+		do
+			output_stream.put_string ("void* ")
+			output_stream.put_string (a_callback_wrapper.mapped_eiffel_name)
+			output_stream.put_line ("_object =  NULL;")
+		end
+
+	generate_callback_entry_effel_function_address (a_callback_wrapper: EWG_CALLBACK_WRAPPER; a_count: INTEGER)
+		local
+			i: INTEGER
+		do
+			from
+				i := 1
+			until
+				i > a_count
+			loop
+				output_stream.put_string (a_callback_wrapper.mapped_eiffel_name)
+				output_stream.put_string ("_eiffel_feature ")
+				output_stream.put_string (a_callback_wrapper.mapped_eiffel_name)
+				output_stream.put_string ("_address_")
+				output_stream.put_integer (i)
+				output_stream.put_line (" = NULL;")
+				i := i + 1
+			end
+			output_stream.put_new_line
+		end
+
+	generate_stub_definition (a_callback_wrapper: EWG_CALLBACK_WRAPPER; a_count: INTEGER)
 		require
 			a_callback_wrapper_not_void: a_callback_wrapper /= Void
 		local
 			declarator: STRING
+			i: INTEGER
 		do
-			create declarator.make (a_callback_wrapper.mapped_eiffel_name.count + ("_stub").count)
-			declarator.append_string (a_callback_wrapper.mapped_eiffel_name)
-			declarator.append_string ("_stub")
-			declaration_printer.print_declaration_from_type (a_callback_wrapper.c_pointer_type.function_type,
-																			 declarator)
-			output_stream.put_new_line
+			from
+				i := 1
+			until
+				i > a_count
+			loop
+				create declarator.make (a_callback_wrapper.mapped_eiffel_name.count + ("_stub").count + i.out.count)
+				declarator.append_string (a_callback_wrapper.mapped_eiffel_name)
+				declarator.append_string ("_stub_")
+				declarator.append_integer (i)
+				declaration_printer.print_declaration_from_type (a_callback_wrapper.c_pointer_type.function_type,
+																				 declarator)
+				output_stream.put_new_line
+				output_stream.put_line ("{")
+				output_stream.put_string ("%Tif (")
+				output_stream.put_string (a_callback_wrapper.mapped_eiffel_name)
+				output_stream.put_string ("_object != NULL && ")
+				output_stream.put_string (a_callback_wrapper.mapped_eiffel_name)
+				output_stream.put_string ("_address_")
+				output_stream.put_integer (i)
+				output_stream.put_line (" != NULL)")
+				output_stream.put_line ("%T{")
+				output_stream.put_string ("%T%T")
+				if a_callback_wrapper.c_pointer_type.function_type.return_type.skip_consts_and_aliases /= c_system.types.void_type then
+					output_stream.put_string ("return ")
+				end
+				output_stream.put_string (a_callback_wrapper.mapped_eiffel_name)
+				output_stream.put_string ("_address_")
+				output_stream.put_integer (i)
+				output_stream.put_string (" (eif_access(")
+				output_stream.put_string (a_callback_wrapper.mapped_eiffel_name)
+				output_stream.put_string ("_object)")
+				if attached a_callback_wrapper.c_pointer_type.function_type.members as l_members and then l_members.count > 0 then
+					output_stream.put_string (", ")
+					parameter_list_printer.print_declaration_list (l_members)
+				end
+				output_stream.put_line (");")
+				output_stream.put_line ("%T}")
+				output_stream.put_line ("}")
+				output_stream.put_new_line
+				i := i + 1
+			end
+		end
+
+	generate_set_object_definition (a_callback_wrapper: EWG_CALLBACK_WRAPPER)
+		do
+			output_stream.put_string ("void set_")
+			output_stream.put_string (a_callback_wrapper.mapped_eiffel_name)
+			output_stream.put_line ("_object (void* a_object)")
 			output_stream.put_line ("{")
-			output_stream.put_string ("%Tif (")
-			output_stream.put_string (a_callback_wrapper.mapped_eiffel_name)
-			output_stream.put_string ("_entry.a_class != NULL && ")
-			output_stream.put_string (a_callback_wrapper.mapped_eiffel_name)
-			output_stream.put_line ("_entry.feature != NULL)")
-			output_stream.put_line ("%T{")
+			output_stream.put_string ("%T")
+			output_stream.put_line ("if (a_object) {")
 			output_stream.put_string ("%T%T")
-			if a_callback_wrapper.c_pointer_type.function_type.return_type.skip_consts_and_aliases /= c_system.types.void_type then
-				output_stream.put_string ("return ")
-			end
 			output_stream.put_string (a_callback_wrapper.mapped_eiffel_name)
-			output_stream.put_string ("_entry.feature (eif_access(")
+			output_stream.put_line ("_object = eif_protect(a_object);")
+			output_stream.put_line ("%T} else { ")
+			output_stream.put_string ("%T%T")
 			output_stream.put_string (a_callback_wrapper.mapped_eiffel_name)
-			output_stream.put_string ("_entry.a_class)")
-			if attached a_callback_wrapper.c_pointer_type.function_type.members as l_members and then l_members.count > 0 then
-				output_stream.put_string (", ")
-				parameter_list_printer.print_declaration_list (l_members)
-			end
-			output_stream.put_line (");")
+			output_stream.put_line ("_object = NULL;")
 			output_stream.put_line ("%T}")
 			output_stream.put_line ("}")
 			output_stream.put_new_line
 		end
 
-	generate_entry_setter_definition (a_callback_wrapper: EWG_CALLBACK_WRAPPER)
-		require
-			a_callback_wrapper_not_void: a_callback_wrapper /= Void
+	generate_release_object_definition (a_callback_wrapper: EWG_CALLBACK_WRAPPER)
 		do
-			output_stream.put_string ("void set_")
+			output_stream.put_string ("void release_")
 			output_stream.put_string (a_callback_wrapper.mapped_eiffel_name)
-			output_stream.put_line ("_entry (void* a_class, void* a_feature)")
+			output_stream.put_line ("_object ()")
 			output_stream.put_line ("{")
 			output_stream.put_string ("%T")
+			output_stream.put_string ("eif_wean (")
 			output_stream.put_string (a_callback_wrapper.mapped_eiffel_name)
-			output_stream.put_line ("_entry.a_class = eif_adopt(a_class);")
-			output_stream.put_string ("%T")
-			output_stream.put_string (a_callback_wrapper.mapped_eiffel_name)
-			output_stream.put_string ("_entry.feature = (")
-			output_stream.put_string (a_callback_wrapper.mapped_eiffel_name)
-			output_stream.put_line ("_eiffel_feature) a_feature;")
+			output_stream.put_line ("_object);")
 			output_stream.put_line ("}")
 			output_stream.put_new_line
 		end
 
-	generate_stub_getter_definition (a_callback_wrapper: EWG_CALLBACK_WRAPPER)
+	generate_entry_setter_definition (a_callback_wrapper: EWG_CALLBACK_WRAPPER; a_count: INTEGER)
 		require
 			a_callback_wrapper_not_void: a_callback_wrapper /= Void
+		local
+			i:INTEGER
 		do
-			output_stream.put_string ("void* get_")
-			output_stream.put_string (a_callback_wrapper.mapped_eiffel_name)
-			output_stream.put_line ("_stub ()")
-			output_stream.put_line ("{")
-			output_stream.put_string ("%Treturn (void*) ")
-			output_stream.put_string (a_callback_wrapper.mapped_eiffel_name)
-			output_stream.put_line ("_stub;")
-			output_stream.put_line ("}")
-			output_stream.put_new_line
+			from
+				i := 1
+			until
+				i > a_count
+			loop
+				output_stream.put_string ("void set_")
+				output_stream.put_string (a_callback_wrapper.mapped_eiffel_name)
+				output_stream.put_string ("_entry_")
+				output_stream.put_integer (i)
+				output_stream.put_string (" (void* a_feature)")
+				output_stream.put_line ("{")
+				output_stream.put_string ("%T")
+				output_stream.put_string (a_callback_wrapper.mapped_eiffel_name)
+				output_stream.put_string ("_address_")
+				output_stream.put_integer (i)
+				output_stream.put_string (" = (")
+				output_stream.put_string (a_callback_wrapper.mapped_eiffel_name)
+				output_stream.put_line ("_eiffel_feature) a_feature;")
+				output_stream.put_line ("}")
+				output_stream.put_new_line
+				i := i + 1
+			end
+		end
+
+	generate_stub_getter_definition (a_callback_wrapper: EWG_CALLBACK_WRAPPER; a_count: INTEGER)
+		require
+			a_callback_wrapper_not_void: a_callback_wrapper /= Void
+		local
+			i: INTEGER
+		do
+			from
+				i := 1
+			until
+				i > a_count
+			loop
+				output_stream.put_string ("void* get_")
+				output_stream.put_string (a_callback_wrapper.mapped_eiffel_name)
+				output_stream.put_string ("_stub_")
+				output_stream.put_integer (i)
+				output_stream.put_string (" ()")
+				output_stream.put_line ("{")
+				output_stream.put_string ("%Treturn (void*) ")
+				output_stream.put_string (a_callback_wrapper.mapped_eiffel_name)
+				output_stream.put_string ("_stub_")
+				output_stream.put_integer (i)
+				output_stream.put_line (";")
+				output_stream.put_line ("}")
+				output_stream.put_new_line
+				i :=  i + 1
+			end
 		end
 
 	generate_caller_definition (a_callback_wrapper: EWG_CALLBACK_WRAPPER)
