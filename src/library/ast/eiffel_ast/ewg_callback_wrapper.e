@@ -63,6 +63,10 @@ feature
 
 	set_entry_struct: detachable EWG_FUNCTION_WRAPPER
 
+	setter_object: detachable EWG_FUNCTION_WRAPPER
+
+	release_object: detachable EWG_FUNCTION_WRAPPER
+
 	set_get_stub (a_function_wrapper: EWG_FUNCTION_WRAPPER)
 		require
 			a_function_wrapper_not_void: a_function_wrapper /= Void
@@ -80,6 +84,25 @@ feature
 		ensure
 			set_entry_struct_set: set_entry_struct = a_function_wrapper
 		end
+
+	set_setter_object (a_function_wrapper: EWG_FUNCTION_WRAPPER)
+		require
+			a_function_wrapper_not_void: a_function_wrapper /= Void
+		do
+			setter_object := a_function_wrapper
+		ensure
+			setter_object_set: setter_object = a_function_wrapper
+		end
+
+	set_release_object (a_function_wrapper: EWG_FUNCTION_WRAPPER)
+		require
+			a_function_wrapper_not_void: a_function_wrapper /= Void
+		do
+			release_object := a_function_wrapper
+		ensure
+			release_object_set: release_object = a_function_wrapper
+		end
+
 
 invariant
 

@@ -82,24 +82,126 @@ feature {NONE} -- Implementation
 			ext_class_name.append_string ("_FUNCTIONS_API")
 
 			if attached a_callback_wrapper.set_entry_struct as l_set_entry_struct and then
-				attached a_callback_wrapper.get_stub as l_get_stub
+				attached a_callback_wrapper.get_stub as l_get_stub and then
+				attached a_callback_wrapper.setter_object as l_setter and then
+				attached a_callback_wrapper.release_object as l_release
 			then
 				template_expander.expand_into_stream_from_array (output_stream,
 																	dispatcher_class_template,
 																			<<upper_name,
-																				l_set_entry_struct.mapped_eiffel_name,
-																				l_get_stub.mapped_eiffel_name,
+																				make_definition (l_setter.mapped_eiffel_name, 5),
+																				stub_definition (l_get_stub.mapped_eiffel_name, 5),
 																				ext_class_name,
-																				on_callback_agent (a_callback_wrapper),
-																				on_callback_signature (a_callback_wrapper, "on_callback"),
-																				routine_call (a_callback_wrapper)>>
-																					)
+																				agent_definitions (a_callback_wrapper, 5),
+																				callback_definition (a_callback_wrapper, 5),
+																				agent_default_routine_definition (a_callback_wrapper),
+																				dispose_definition (l_release.mapped_eiffel_name, l_setter.mapped_eiffel_name),
+																				register_callback_definition (a_callback_wrapper, l_set_entry_struct.mapped_eiffel_name, 5)
+																				>>	)
 			end
 		end
 
 
+	stub_definition (a_string: STRING; a_count: INTEGER): STRING
+		local
+			l_name: STRING
+			i: INTEGER
+			dispatcher: STRING
+		do
+			dispatcher := "c_dispatcher_"
+			create Result.make (100)
+			create l_name.make_from_string (a_string)
+			l_name.remove_tail (1)
+			from
+				i := 1
+			until
+				i > a_count
+			loop
+				Result.append ("%N")
+				Result.append ("%T")
+				Result.append (dispatcher)
+				Result.append_integer (i)
+				Result.append (": POINTER%N")
+				Result.append ("%T%Tdo%N")
+			    Result.append ("%T%T%TResult := ")
+			    Result.append (l_name)
+			    Result.append_integer (i)
+			    Result.append ("%N")
+				Result.append ("%T%Tend%N")
+				i := i + 1
+			end
+		end
 
-	routine_call (a_callback_wrapper: EWG_CALLBACK_WRAPPER): STRING
+	callback_definition (a_callback_wrapper: EWG_CALLBACK_WRAPPER; a_count: INTEGER): STRING
+		local
+			i: INTEGER
+			callback_name: STRING
+		do
+			callback_name := "on_callback_";
+			create Result.make (100)
+			from
+				i := 1
+			until
+				i > a_count
+			loop
+				Result.append ("%T")
+				Result.append (on_callback_signature (a_callback_wrapper, callback_name + i.out))
+				Result.append ("%N")
+				Result.append ("%T%Tdo%N")
+				Result.append ("%T%T%T")
+				Result.append (routine_call (a_callback_wrapper, i))
+				Result.append ("%N")
+				Result.append ("%T%Tend%N")
+				Result.append ("%N")
+				i := i + 1
+			end
+
+		end
+
+	register_callback_definition (a_callback_wrapper: EWG_CALLBACK_WRAPPER; setter_stub: STRING; a_count: INTEGER): STRING
+		local
+			i: INTEGER
+			register_name: STRING
+			routine_name: STRING
+			l_stub: STRING
+		do
+			register_name := "register_callback_";
+			routine_name := "routine_"
+			create l_stub.make_from_string (setter_stub)
+			l_stub.remove_tail (1)
+			create Result.make (100)
+			from
+				i := 1
+			until
+				i > a_count
+			loop
+				Result.append ("%T")
+				Result.append (register_name)
+				Result.append_integer (i)
+				Result.append (" (a_routine: like routine_1)")
+				Result.append ("%N")
+				Result.append ("%T%Tdo%N")
+				Result.append ("%T%T%T")
+				Result.append (routine_name)
+				Result.append_integer (i)
+				Result.append (" := a_routine")
+				Result.append ("%N")
+				Result.append ("%T%T%T")
+				Result.append (l_stub)
+				Result.append_integer (i)
+				Result.append (" ($on_callback_")
+				Result.append_integer (i)
+				Result.append (")")
+				Result.append ("%N")
+				Result.append ("%T%Tend%N")
+				Result.append ("%N")
+				i := i + 1
+			end
+
+		end
+
+
+	routine_call (a_callback_wrapper: EWG_CALLBACK_WRAPPER; i: INTEGER): STRING
 		require
 			a_callback_wrapper_not_void: a_callback_wrapper /= Void
 		local
@@ -109,7 +211,9 @@ feature {NONE} -- Implementation
 			if a_callback_wrapper.return_type /= Void then
 				Result.append("Result := ")
 			end
-			Result.append ("routine (")
+			Result.append ("routine_")
+			Result.append_integer ( i )
+			Result.append (" (")
 			if a_callback_wrapper.members.count > 0 then
 				from
 					cs := a_callback_wrapper.members.new_cursor
@@ -131,7 +235,93 @@ feature {NONE} -- Implementation
 			  Result.append ("[]")
 			end
 			Result.append (")")
+		end
 
+	agent_definitions (a_callback_wrapper: EWG_CALLBACK_WRAPPER; a_count: INTEGER): STRING
+		local
+			i: INTEGER
+			l_routine: STRING
+			definition: STRING
+		do
+			definition := on_callback_agent (a_callback_wrapper)
+			l_routine := "routine_"
+			create Result.make (100)
+			from
+				i := 1
+			until
+				i > a_count
+			loop
+				Result.append ("%T")
+				Result.append (l_routine)
+				Result.append_integer (i)
+				Result.append (": ")
+				Result.append (definition)
+				Result.append ("%N")
+				Result.append ("%T%T%T--Eiffel routine to be call on callback.%N")
+				i := i + 1
+			end
+		end
+
+	agent_default_routine_definition (a_callback_wrapper: EWG_CALLBACK_WRAPPER): STRING
+		do
+			create Result.make (100)
+			Result.append ("%T")
+			Result.append (on_callback_signature (a_callback_wrapper, "default_routine"))
+			Result.append ("%N")
+			Result.append ("%T%Tdo%N")
+			Result.append ("%T%T%T")
+			Result.append (" print (%"Default routine%")")
+			Result.append ("%N")
+			Result.append ("%T%Tend%N")
+			Result.append ("%N")
+		end
+
+	make_definition (a_val: STRING; a_count: INTEGER): STRING
+		local
+			i: INTEGER
+			l_routine: STRING
+		do
+			l_routine := "routine_"
+			create Result.make (100)
+			Result.append ("%Tmake%N")
+			Result.append ("%T%T%T%T-- Dispatcher initialization%N")
+			Result.append ("%T%Tdo%N")
+			from
+				i:= 1
+			until
+				i > a_count
+			loop
+				Result.append ("%T%T%T")
+				Result.append (l_routine)
+				Result.append_integer (i)
+				Result.append (" := agent default_routine%N" )
+				i := i + 1
+			end
+
+			Result.append ("%T%T%T")
+			Result.append (a_val)
+			Result.append (" ($Current)%N")
+			Result.append ("%T%Tend%N")
+		end
+
+	dispose_definition (a_release: STRING; a_setter: STRING): STRING
+		do
+			create Result.make (100)
+			Result.append ("%T")
+			Result.append ("dispose")
+			Result.append ("%N")
+			Result.append ("%T%T%T--Wean `Current'")
+			Result.append ("%N")
+			Result.append ("%T%Tdo%N")
+			Result.append ("%T%T%T")
+			Result.append (a_release)
+			Result.append ("%N")
+			Result.append ("%T%T%T")
+			Result.append (a_setter)
+			Result.append (" (default_pointer)")
+			Result.append ("%N")
+			Result.append ("%T%Tend%N")
+			Result.append ("%N")
 		end
 
 feature {NONE} -- Templates
@@ -143,7 +333,9 @@ feature {NONE} -- Templates
 			-- $4 ... class name of external function wrapper for callback glue
 			-- $5 ... routine definition PROCEDURE | FUNCTION
 			-- $6 ... on_callback signature
-			-- $7 ... agent call
+			-- $7 ... Default routine
+			-- $8 ... disposable routine
+			-- $9 ....Register template routines
 		once
 			Result := "class $1_DISPATCHER%N" +
 				"%N"+
@@ -152,6 +344,7 @@ feature {NONE} -- Templates
 				"%T$4%N" +
 				"%T%Texport {NONE} all end"+
 				"%N" +
+				"%TDISPOSABLE%N"+
 				"create" +
 				"%N" +
 				"%Tmake" +
@@ -159,34 +352,35 @@ feature {NONE} -- Templates
 				"%N" +
 				"feature -- Initialization%N" +
 				"%N" +
-				"%Tmake (a_routine: like routine) %N" +
-				"%T%T%T%T-- Dispatcher initialization%N" +
-				"%T%Tdo%N" +
-				"%T%T%Troutine := a_routine%N" +
-				"%T%T%T$2 (Current, $on_callback)%N" +
-				"%T%Tend%N" +
+				"$2" +
 				"%N" +
 				"feature --Access: Routine %N" +
 				"%N" +
-				"%Troutine: $5 %N" +
-				"%T%T%T--Eiffel routine to be call on callback." +
-				"%N" +
+				"$5" +
 				"%N" +
 				"feature --Access: Dispatcher%N" +
 				"%N" +
-				"%Tc_dispatcher: POINTER %N" +
-				"%T%Tdo%N" +
-				"%T%T%TResult := $3%N" +
-				"%T%Tend%N" +
+				"$3" +
 				"%N" +
 				"feature --Access: Callback%N" +
 				"%N" +
-				"%T$6%N"+
-				"%T%Tdo%N"+
-				"%T%T%T$7%N"+
-				"%T%Tend%N"+
+				"$6" +
+				"%N" +
+				"feature --Register: Callbacks%N" +
+				"%N" +
+				"$9" +
+				"%N" +
+				"feature --Access: Default routine%N" +
+				"%N" +
+				"$7" +
+				"%N" +
+				"feature {NONE} -- Implementation" +
+				"%N" +
+				"%N" +
+				"$8"+
 				"%N" +
 				"end%N"
 			end
+
 
 end

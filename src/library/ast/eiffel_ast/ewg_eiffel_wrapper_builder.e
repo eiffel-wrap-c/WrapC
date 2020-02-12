@@ -284,10 +284,13 @@ feature {NONE}
 			getter: EWG_C_AST_FUNCTION_TYPE
 			setter: EWG_C_AST_FUNCTION_TYPE
 			caller: EWG_C_AST_FUNCTION_TYPE
+			setobj: EWG_C_AST_FUNCTION_TYPE
+			release_obj: EWG_C_AST_FUNCTION_TYPE
 			parameters: DS_ARRAYED_LIST[EWG_C_AST_DECLARATION]
 			declaration: EWG_C_AST_DECLARATION
 			eiffel_object_type: EWG_C_AST_EIFFEL_OBJECT_TYPE
 			name: STRING
+			i: INTEGER
 		do
 			from
 				cs := eiffel_wrapper_set.new_callback_wrapper_cursor
@@ -296,42 +299,120 @@ feature {NONE}
 				cs.off
 			loop
 				callback := cs.item
-				-- create getter
-				create parameters.make (0)
-				create getter.make (directory_structure.relative_callback_c_glue_header_file_name,
-										  c_system.types.void_pointer_type,
-										  parameters)
-				c_system.types.add_type (getter)
-				if attached {EWG_C_AST_FUNCTION_TYPE} c_system.types.last_type as l_getter then
 
-					create name.make (4 + callback.mapped_eiffel_name.count + 5)
-					name.append_string ("get_")
-					name.append_string (callback.mapped_eiffel_name)
-					name.append_string ("_stub")
-					c_system.add_top_level_declaration_from_type_and_name (l_getter,
-																							 name,
-																							 directory_structure.relative_callback_c_glue_header_file_name)
-				end
-
-				if attached {EWG_C_AST_FUNCTION_DECLARATION} c_system.declarations.last_declaration as function_declaration  then
-
-					config_system.force_shallow_wrap_declaration (function_declaration,
-																				 directory_structure.relative_callback_c_glue_header_file_name,
-																				 eiffel_wrapper_set)
-					callback.set_get_stub (eiffel_wrapper_set.function_wrapper_from_function_declaration (function_declaration))
-					config_system.default_deep_wrap_declaration (function_declaration,
-																			 directory_structure.relative_callback_c_glue_header_file_name,
-																			 eiffel_wrapper_set)
-				end
-				create parameters.make (2)
-				name := eiffel_class_name_from_c_type_name (callback.mapped_eiffel_name)
-				name.append_string ("_DISPATCHER")
+					-- create set_object
+				create parameters.make (1)
+				name := eiffel_class_name_from_c_type_name ("POINTER")
 				create eiffel_object_type.make (name)
 				c_system.types.add_type (eiffel_object_type)
 				if attached {EWG_C_AST_EIFFEL_OBJECT_TYPE} c_system.types.last_type as l_eiffel_object_type  then
 					create declaration.make ("a_class", l_eiffel_object_type, directory_structure.relative_callback_c_glue_header_file_name)
 					parameters.put_last (declaration)
 				end
+				create setobj.make (directory_structure.relative_callback_c_glue_header_file_name,
+													  c_system.types.void_type,
+													  parameters)
+				c_system.types.add_type (setobj)
+				if attached {EWG_C_AST_FUNCTION_TYPE} c_system.types.last_type as l_setter then
+					create name.make (4 + callback.mapped_eiffel_name.count + 6)
+					name.append_string ("set_")
+					name.append_string (callback.mapped_eiffel_name)
+					name.append_string ("_object")
+					c_system.add_top_level_declaration_from_type_and_name (l_setter,
+																								 name,
+																								 directory_structure.relative_callback_c_glue_header_file_name)
+
+				end
+				if attached {EWG_C_AST_FUNCTION_DECLARATION} c_system.declarations.last_declaration as function_declaration  then
+
+					config_system.force_shallow_wrap_declaration (function_declaration,
+																				 directory_structure.relative_callback_c_glue_header_file_name,
+																				 eiffel_wrapper_set)
+					callback.set_setter_object (eiffel_wrapper_set.function_wrapper_from_function_declaration (function_declaration))
+					config_system.default_deep_wrap_declaration (function_declaration,
+																				 directory_structure.relative_callback_c_glue_header_file_name,
+																				 eiffel_wrapper_set)
+				end
+
+
+				-- create release
+				create parameters.make (0)
+				create release_obj.make (directory_structure.relative_callback_c_glue_header_file_name,
+													  c_system.types.void_type,
+													  parameters)
+				c_system.types.add_type (release_obj)
+				if attached {EWG_C_AST_FUNCTION_TYPE} c_system.types.last_type as l_release_obj then
+					create name.make (4 + callback.mapped_eiffel_name.count + 6)
+					name.append_string ("release_")
+					name.append_string (callback.mapped_eiffel_name)
+					name.append_string ("_object")
+					c_system.add_top_level_declaration_from_type_and_name (l_release_obj,
+																								 name,
+																								 directory_structure.relative_callback_c_glue_header_file_name)
+
+				end
+				if attached {EWG_C_AST_FUNCTION_DECLARATION} c_system.declarations.last_declaration as function_declaration  then
+
+					config_system.force_shallow_wrap_declaration (function_declaration,
+																				 directory_structure.relative_callback_c_glue_header_file_name,
+																				 eiffel_wrapper_set)
+					callback.set_release_object (eiffel_wrapper_set.function_wrapper_from_function_declaration (function_declaration))
+					config_system.default_deep_wrap_declaration (function_declaration,
+																				 directory_structure.relative_callback_c_glue_header_file_name,
+																				 eiffel_wrapper_set)
+				end
+
+
+
+
+				-- create getter
+
+				create parameters.make (0)
+				create getter.make (directory_structure.relative_callback_c_glue_header_file_name,
+											  c_system.types.void_pointer_type,
+											  parameters)
+				c_system.types.add_type (getter)
+				if attached {EWG_C_AST_FUNCTION_TYPE} c_system.types.last_type as l_getter then
+					create name.make (4 + callback.mapped_eiffel_name.count + 5)
+					name.append_string ("get_")
+					name.append_string (callback.mapped_eiffel_name)
+					name.append_string ("_stub_")
+					from
+						i := 1
+					until
+						i > 5
+					loop
+
+						c_system.add_top_level_declaration_from_type_and_name (l_getter,
+																									 name + i.out,
+																									 directory_structure.relative_callback_c_glue_header_file_name)
+
+
+						if attached {EWG_C_AST_FUNCTION_DECLARATION} c_system.declarations.last_declaration as function_declaration  then
+
+									config_system.force_shallow_wrap_declaration (function_declaration,
+																								 directory_structure.relative_callback_c_glue_header_file_name,
+																								 eiffel_wrapper_set)
+									callback.set_get_stub (eiffel_wrapper_set.function_wrapper_from_function_declaration (function_declaration))
+									config_system.default_deep_wrap_declaration (function_declaration,
+																							 directory_structure.relative_callback_c_glue_header_file_name,
+																							 eiffel_wrapper_set)
+						end
+						i :=  i  + 1
+					end
+				end
+
+
+
+				create parameters.make (1)
+--				name := eiffel_class_name_from_c_type_name (callback.mapped_eiffel_name)
+--				name.append_string ("_DISPATCHER")
+--				create eiffel_object_type.make (name)
+--				c_system.types.add_type (eiffel_object_type)
+--				if attached {EWG_C_AST_EIFFEL_OBJECT_TYPE} c_system.types.last_type as l_eiffel_object_type  then
+--					create declaration.make ("a_class", l_eiffel_object_type, directory_structure.relative_callback_c_glue_header_file_name)
+--					parameters.put_last (declaration)
+--				end
 
 				create declaration.make ("a_feature", c_system.types.void_pointer_type, directory_structure.relative_callback_c_glue_header_file_name)
 				parameters.put_last (declaration)
@@ -346,23 +427,32 @@ feature {NONE}
 					create name.make (4 + callback.mapped_eiffel_name.count + 6)
 					name.append_string ("set_")
 					name.append_string (callback.mapped_eiffel_name)
-					name.append_string ("_entry")
-					c_system.add_top_level_declaration_from_type_and_name (l_setter,
-																							 name,
-																							 directory_structure.relative_callback_c_glue_header_file_name)
+					name.append_string ("_entry_")
+					from
+						i := 1
+					until
+						i > 5
+					loop
+						c_system.add_top_level_declaration_from_type_and_name (l_setter,
+																						name + i.out,
+																						directory_structure.relative_callback_c_glue_header_file_name)
+
+
+						if attached {EWG_C_AST_FUNCTION_DECLARATION} c_system.declarations.last_declaration as function_declaration then
+
+							config_system.force_shallow_wrap_declaration (function_declaration,
+																					 directory_structure.relative_callback_c_glue_header_file_name,
+																					 eiffel_wrapper_set)
+
+							callback.set_set_entry_struct (eiffel_wrapper_set.function_wrapper_from_function_declaration (function_declaration))
+							config_system.default_deep_wrap_declaration (function_declaration,
+																					 directory_structure.relative_callback_c_glue_header_file_name,
+																					 eiffel_wrapper_set)
+						end
+						i := i + 1
+					end
 				end
 
-				if attached {EWG_C_AST_FUNCTION_DECLARATION} c_system.declarations.last_declaration as function_declaration then
-
-					config_system.force_shallow_wrap_declaration (function_declaration,
-																			 directory_structure.relative_callback_c_glue_header_file_name,
-																			 eiffel_wrapper_set)
-
-					callback.set_set_entry_struct (eiffel_wrapper_set.function_wrapper_from_function_declaration (function_declaration))
-					config_system.default_deep_wrap_declaration (function_declaration,
-																		 directory_structure.relative_callback_c_glue_header_file_name,
-																		 eiffel_wrapper_set)
-				end
 
 				-- create caller
 
