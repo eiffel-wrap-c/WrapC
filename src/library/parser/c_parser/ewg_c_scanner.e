@@ -470,57 +470,67 @@ end
 				-- gcc extension
 				last_token := TOK_SIGNED; last_string_value := text 			   
 when 50 then
+	yy_column := yy_column + 8
+	yy_position := yy_position + 8
+--|#line 139 "ewg_c_scanner.l"
+debug ("GELEX")
+	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 139")
+end
+
+				-- gcc extension MacOs
+				last_token := TOK_SIGNED; last_string_value := text 			   
+when 51 then
 	yy_column := yy_column + 13
 	yy_position := yy_position + 13
---|#line 141 "ewg_c_scanner.l"
+--|#line 146 "ewg_c_scanner.l"
 debug ("GELEX")
-	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 141")
+	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 146")
 end
  
-when 51 then
+when 52 then
 	yy_column := yy_column + 7
 	yy_position := yy_position + 7
---|#line 144 "ewg_c_scanner.l"
+--|#line 149 "ewg_c_scanner.l"
 debug ("GELEX")
-	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 144")
+	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 149")
 end
  last_token := TOK_CONST; last_string_value := text 
-when 52 then
+when 53 then
 	yy_column := yy_column + 10
 	yy_position := yy_position + 10
---|#line 145 "ewg_c_scanner.l"
+--|#line 150 "ewg_c_scanner.l"
 debug ("GELEX")
-	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 145")
+	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 150")
 end
  
-when 53 then
+when 54 then
 	yy_column := yy_column + 13
 	yy_position := yy_position + 13
---|#line 147 "ewg_c_scanner.l"
+--|#line 152 "ewg_c_scanner.l"
 debug ("GELEX")
-	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 147")
+	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 152")
 end
 
 				 -- eat, hopefully this thing is not usefull for us
 					gcc_attribute_bracket_counter := 0
 					set_start_condition (SC_GCC_ATTRIBUTE)
 				
-when 54 then
+when 55 then
 	yy_column := yy_column + 1
 	yy_position := yy_position + 1
---|#line 153 "ewg_c_scanner.l"
+--|#line 158 "ewg_c_scanner.l"
 debug ("GELEX")
-	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 153")
+	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 158")
 end
 
 				gcc_attribute_bracket_counter := gcc_attribute_bracket_counter + 1
 			 
-when 55 then
+when 56 then
 	yy_column := yy_column + 1
 	yy_position := yy_position + 1
---|#line 156 "ewg_c_scanner.l"
+--|#line 161 "ewg_c_scanner.l"
 debug ("GELEX")
-	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 156")
+	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 161")
 end
 
 				gcc_attribute_bracket_counter := gcc_attribute_bracket_counter - 1
@@ -528,36 +538,36 @@ end
 					set_start_condition (INITIAL)
 				end
 			 
-when 56 then
+when 57 then
 	yy_column := yy_column + 1
 	yy_position := yy_position + 1
---|#line 162 "ewg_c_scanner.l"
+--|#line 167 "ewg_c_scanner.l"
 debug ("GELEX")
-	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 162")
-end
-
-when 57 then
-	yy_column := yy_column + 8
-	yy_position := yy_position + 8
---|#line 164 "ewg_c_scanner.l"
-debug ("GELEX")
-	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 164")
+	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 167")
 end
 
 when 58 then
-	yy_column := yy_column + 10
-	yy_position := yy_position + 10
---|#line 166 "ewg_c_scanner.l"
-debug ("GELEX")
-	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 166")
-end
-
-when 59 then
-	yy_column := yy_column + 6
-	yy_position := yy_position + 6
+	yy_column := yy_column + 8
+	yy_position := yy_position + 8
 --|#line 169 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 169")
+end
+
+when 59 then
+	yy_column := yy_column + 10
+	yy_position := yy_position + 10
+--|#line 171 "ewg_c_scanner.l"
+debug ("GELEX")
+	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 171")
+end
+
+when 60 then
+	yy_column := yy_column + 6
+	yy_position := yy_position + 6
+--|#line 174 "ewg_c_scanner.l"
+debug ("GELEX")
+	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 174")
 end
 
 					if is_msc_extensions_enabled then
@@ -567,12 +577,12 @@ end
 						report_type_or_identifier (text)
 					end
 				
-when 60 then
+when 61 then
 	yy_column := yy_column + 7
 	yy_position := yy_position + 7
---|#line 177 "ewg_c_scanner.l"
+--|#line 182 "ewg_c_scanner.l"
 debug ("GELEX")
-	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 177")
+	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 182")
 end
 
 					if is_msc_extensions_enabled then
@@ -582,12 +592,12 @@ end
 						report_type_or_identifier (text)
 					end
 				
-when 61 then
+when 62 then
 	yy_column := yy_column + 7
 	yy_position := yy_position + 7
---|#line 185 "ewg_c_scanner.l"
+--|#line 190 "ewg_c_scanner.l"
 debug ("GELEX")
-	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 185")
+	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 190")
 end
 
 					if is_msc_extensions_enabled then
@@ -597,12 +607,12 @@ end
 						report_type_or_identifier (text)
 					end
 				
-when 62 then
+when 63 then
 	yy_column := yy_column + 7
 	yy_position := yy_position + 7
---|#line 193 "ewg_c_scanner.l"
+--|#line 198 "ewg_c_scanner.l"
 debug ("GELEX")
-	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 193")
+	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 198")
 end
 
 					if is_msc_extensions_enabled then
@@ -612,26 +622,12 @@ end
 						report_type_or_identifier (text)
 					end
 				
-when 63 then
-	yy_column := yy_column + 7
-	yy_position := yy_position + 7
---|#line 201 "ewg_c_scanner.l"
-debug ("GELEX")
-	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 201")
-end
-
-					if is_msc_extensions_enabled then
-						-- ignore, we don't need it
-					else
-						report_type_or_identifier (text)
-					end
-				
 when 64 then
 	yy_column := yy_column + 7
 	yy_position := yy_position + 7
---|#line 208 "ewg_c_scanner.l"
+--|#line 206 "ewg_c_scanner.l"
 debug ("GELEX")
-	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 208")
+	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 206")
 end
 
 					if is_msc_extensions_enabled then
@@ -641,11 +637,25 @@ end
 					end
 				
 when 65 then
+	yy_column := yy_column + 7
+	yy_position := yy_position + 7
+--|#line 213 "ewg_c_scanner.l"
+debug ("GELEX")
+	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 213")
+end
+
+					if is_msc_extensions_enabled then
+						-- ignore, we don't need it
+					else
+						report_type_or_identifier (text)
+					end
+				
+when 66 then
 	yy_column := yy_column + 10
 	yy_position := yy_position + 10
---|#line 215 "ewg_c_scanner.l"
+--|#line 220 "ewg_c_scanner.l"
 debug ("GELEX")
-	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 215")
+	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 220")
 end
 
 					if is_msc_extensions_enabled then
@@ -655,12 +665,12 @@ end
 						report_type_or_identifier (text)
 					end
 				
-when 66 then
+when 67 then
 	yy_column := yy_column + 7
 	yy_position := yy_position + 7
---|#line 223 "ewg_c_scanner.l"
+--|#line 228 "ewg_c_scanner.l"
 debug ("GELEX")
-	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 223")
+	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 228")
 end
 
 					if is_msc_extensions_enabled then
@@ -671,12 +681,12 @@ end
 						report_type_or_identifier (text)
 					end
 				
-when 67 then
+when 68 then
 	yy_column := yy_column + 5
 	yy_position := yy_position + 5
---|#line 232 "ewg_c_scanner.l"
+--|#line 237 "ewg_c_scanner.l"
 debug ("GELEX")
-	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 232")
+	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 237")
 end
 
 					if is_msc_extensions_enabled then
@@ -688,12 +698,12 @@ end
 						set_start_condition (SC_GCC_ATTRIBUTE)
 					end
 				
-when 68 then
+when 69 then
 	yy_column := yy_column + 7
 	yy_position := yy_position + 7
---|#line 242 "ewg_c_scanner.l"
+--|#line 247 "ewg_c_scanner.l"
 debug ("GELEX")
-	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 242")
+	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 247")
 end
 
 					if is_msc_extensions_enabled then
@@ -704,12 +714,12 @@ end
 						set_start_condition (SC_GCC_ATTRIBUTE)
 					end
 				
-when 69 then
+when 70 then
 	yy_column := yy_column + 4
 	yy_position := yy_position + 4
---|#line 251 "ewg_c_scanner.l"
+--|#line 256 "ewg_c_scanner.l"
 debug ("GELEX")
-	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 251")
+	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 256")
 end
 
 					if is_msc_extensions_enabled then
@@ -719,12 +729,12 @@ end
 						report_type_or_identifier (text)
 					end
 				
-when 70 then
+when 71 then
 	yy_column := yy_column + 7
 	yy_position := yy_position + 7
---|#line 259 "ewg_c_scanner.l"
+--|#line 264 "ewg_c_scanner.l"
 debug ("GELEX")
-	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 259")
+	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 264")
 end
 
 					if is_msc_extensions_enabled then
@@ -735,27 +745,12 @@ end
 						report_type_or_identifier (text)
 					end
 				
-when 71 then
+when 72 then
 	yy_column := yy_column + 7
 	yy_position := yy_position + 7
---|#line 268 "ewg_c_scanner.l"
+--|#line 273 "ewg_c_scanner.l"
 debug ("GELEX")
-	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 268")
-end
-
-					if is_msc_extensions_enabled then
-						last_token := TOK_CL_CDECL
-						last_string_value := text
-					else
-						report_type_or_identifier (text)
-					end
-				
-when 72 then
-	yy_column := yy_column + 6
-	yy_position := yy_position + 6
---|#line 276 "ewg_c_scanner.l"
-debug ("GELEX")
-	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 276")
+	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 273")
 end
 
 					if is_msc_extensions_enabled then
@@ -766,11 +761,26 @@ end
 					end
 				
 when 73 then
+	yy_column := yy_column + 6
+	yy_position := yy_position + 6
+--|#line 281 "ewg_c_scanner.l"
+debug ("GELEX")
+	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 281")
+end
+
+					if is_msc_extensions_enabled then
+						last_token := TOK_CL_CDECL
+						last_string_value := text
+					else
+						report_type_or_identifier (text)
+					end
+				
+when 74 then
 	yy_column := yy_column + 9
 	yy_position := yy_position + 9
---|#line 284 "ewg_c_scanner.l"
+--|#line 289 "ewg_c_scanner.l"
 debug ("GELEX")
-	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 284")
+	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 289")
 end
 
 					if is_msc_extensions_enabled then
@@ -780,12 +790,12 @@ end
 						report_type_or_identifier (text)
 					end
 				
-when 74 then
+when 75 then
 	yy_column := yy_column + 8
 	yy_position := yy_position + 8
---|#line 292 "ewg_c_scanner.l"
+--|#line 297 "ewg_c_scanner.l"
 debug ("GELEX")
-	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 292")
+	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 297")
 end
 
 					if is_msc_extensions_enabled then
@@ -795,26 +805,12 @@ end
 						report_type_or_identifier (text)
 					end
 					
-when 75 then
+when 76 then
 	yy_column := yy_column + 12
 	yy_position := yy_position + 12
---|#line 300 "ewg_c_scanner.l"
+--|#line 305 "ewg_c_scanner.l"
 debug ("GELEX")
-	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 300")
-end
-
-					if is_msc_extensions_enabled then
-						-- ignore, we don't need it
-					else
-						report_type_or_identifier (text)
-					end
-					
-when 76 then
-	yy_column := yy_column + 13
-	yy_position := yy_position + 13
---|#line 307 "ewg_c_scanner.l"
-debug ("GELEX")
-	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 307")
+	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 305")
 end
 
 					if is_msc_extensions_enabled then
@@ -824,11 +820,11 @@ end
 					end
 					
 when 77 then
-	yy_column := yy_column + 11
-	yy_position := yy_position + 11
---|#line 314 "ewg_c_scanner.l"
+	yy_column := yy_column + 13
+	yy_position := yy_position + 13
+--|#line 312 "ewg_c_scanner.l"
 debug ("GELEX")
-	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 314")
+	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 312")
 end
 
 					if is_msc_extensions_enabled then
@@ -838,54 +834,36 @@ end
 					end
 					
 when 78 then
+	yy_column := yy_column + 11
+	yy_position := yy_position + 11
+--|#line 319 "ewg_c_scanner.l"
+debug ("GELEX")
+	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 319")
+end
+
+					if is_msc_extensions_enabled then
+						-- ignore, we don't need it
+					else
+						report_type_or_identifier (text)
+					end
+					
+when 79 then
 	yy_column := yy_column + 5
 	yy_position := yy_position + 5
---|#line 322 "ewg_c_scanner.l"
-debug ("GELEX")
-	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 322")
-end
- 
-when 79 then
-	yy_column := yy_column + yy_end - yy_start - yy_more_len
-	yy_position := yy_position + yy_end - yy_start - yy_more_len
---|#line 325 "ewg_c_scanner.l"
-debug ("GELEX")
-	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 325")
-end
- report_type_or_identifier (text)	
-when 80 then
-	yy_column := yy_column + yy_end - yy_start - yy_more_len
-	yy_position := yy_position + yy_end - yy_start - yy_more_len
 --|#line 327 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 327")
 end
- last_token := TOK_CONSTANT; last_string_value := text 
-when 81 then
+ 
+when 80 then
 	yy_column := yy_column + yy_end - yy_start - yy_more_len
-	yy_position := yy_position + yy_end - yy_start - yy_more_len
---|#line 328 "ewg_c_scanner.l"
-debug ("GELEX")
-	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 328")
-end
- last_token := TOK_CONSTANT; last_string_value := text 
-when 82 then
-	yy_column := yy_column + yy_end - yy_start - yy_more_len
-	yy_position := yy_position + yy_end - yy_start - yy_more_len
---|#line 329 "ewg_c_scanner.l"
-debug ("GELEX")
-	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 329")
-end
- last_token := TOK_CONSTANT; last_string_value := text 
-when 83 then
-yy_set_line_column
 	yy_position := yy_position + yy_end - yy_start - yy_more_len
 --|#line 330 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 330")
 end
- last_token := TOK_CONSTANT; last_string_value := text 
-when 84 then
+ report_type_or_identifier (text)	
+when 81 then
 	yy_column := yy_column + yy_end - yy_start - yy_more_len
 	yy_position := yy_position + yy_end - yy_start - yy_more_len
 --|#line 332 "ewg_c_scanner.l"
@@ -893,7 +871,7 @@ debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 332")
 end
  last_token := TOK_CONSTANT; last_string_value := text 
-when 85 then
+when 82 then
 	yy_column := yy_column + yy_end - yy_start - yy_more_len
 	yy_position := yy_position + yy_end - yy_start - yy_more_len
 --|#line 333 "ewg_c_scanner.l"
@@ -901,7 +879,7 @@ debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 333")
 end
  last_token := TOK_CONSTANT; last_string_value := text 
-when 86 then
+when 83 then
 	yy_column := yy_column + yy_end - yy_start - yy_more_len
 	yy_position := yy_position + yy_end - yy_start - yy_more_len
 --|#line 334 "ewg_c_scanner.l"
@@ -909,399 +887,431 @@ debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 334")
 end
  last_token := TOK_CONSTANT; last_string_value := text 
-when 87 then
+when 84 then
 yy_set_line_column
 	yy_position := yy_position + yy_end - yy_start - yy_more_len
---|#line 336 "ewg_c_scanner.l"
+--|#line 335 "ewg_c_scanner.l"
 debug ("GELEX")
-	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 336")
+	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 335")
 end
- last_token := TOK_STRING_LITERAL; last_string_value := text 
-when 88 then
-	yy_column := yy_column + 3
-	yy_position := yy_position + 3
+ last_token := TOK_CONSTANT; last_string_value := text 
+when 85 then
+	yy_column := yy_column + yy_end - yy_start - yy_more_len
+	yy_position := yy_position + yy_end - yy_start - yy_more_len
+--|#line 337 "ewg_c_scanner.l"
+debug ("GELEX")
+	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 337")
+end
+ last_token := TOK_CONSTANT; last_string_value := text 
+when 86 then
+	yy_column := yy_column + yy_end - yy_start - yy_more_len
+	yy_position := yy_position + yy_end - yy_start - yy_more_len
 --|#line 338 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 338")
 end
- last_token := TOK_ELLIPSIS; last_string_value := text 
-when 89 then
-	yy_column := yy_column + 3
-	yy_position := yy_position + 3
+ last_token := TOK_CONSTANT; last_string_value := text 
+when 87 then
+	yy_column := yy_column + yy_end - yy_start - yy_more_len
+	yy_position := yy_position + yy_end - yy_start - yy_more_len
 --|#line 339 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 339")
 end
- last_token := TOK_RIGHT_ASSIGN; last_string_value := text 
-when 90 then
-	yy_column := yy_column + 3
-	yy_position := yy_position + 3
---|#line 340 "ewg_c_scanner.l"
-debug ("GELEX")
-	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 340")
-end
- last_token := TOK_LEFT_ASSIGN; last_string_value := text 
-when 91 then
-	yy_column := yy_column + 2
-	yy_position := yy_position + 2
+ last_token := TOK_CONSTANT; last_string_value := text 
+when 88 then
+yy_set_line_column
+	yy_position := yy_position + yy_end - yy_start - yy_more_len
 --|#line 341 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 341")
 end
- last_token := TOK_ADD_ASSIGN; last_string_value := text 
-when 92 then
-	yy_column := yy_column + 2
-	yy_position := yy_position + 2
---|#line 342 "ewg_c_scanner.l"
-debug ("GELEX")
-	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 342")
-end
- last_token := TOK_SUB_ASSIGN; last_string_value := text 
-when 93 then
-	yy_column := yy_column + 2
-	yy_position := yy_position + 2
+ last_token := TOK_STRING_LITERAL; last_string_value := text 
+when 89 then
+	yy_column := yy_column + 3
+	yy_position := yy_position + 3
 --|#line 343 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 343")
 end
- last_token := TOK_MUL_ASSIGN; last_string_value := text 
-when 94 then
-	yy_column := yy_column + 2
-	yy_position := yy_position + 2
+ last_token := TOK_ELLIPSIS; last_string_value := text 
+when 90 then
+	yy_column := yy_column + 3
+	yy_position := yy_position + 3
 --|#line 344 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 344")
 end
- last_token := TOK_DIV_ASSIGN; last_string_value := text 
-when 95 then
-	yy_column := yy_column + 2
-	yy_position := yy_position + 2
+ last_token := TOK_RIGHT_ASSIGN; last_string_value := text 
+when 91 then
+	yy_column := yy_column + 3
+	yy_position := yy_position + 3
 --|#line 345 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 345")
 end
- last_token := TOK_MOD_ASSIGN; last_string_value := text 
-when 96 then
+ last_token := TOK_LEFT_ASSIGN; last_string_value := text 
+when 92 then
 	yy_column := yy_column + 2
 	yy_position := yy_position + 2
 --|#line 346 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 346")
 end
- last_token := TOK_AND_ASSIGN; last_string_value := text 
-when 97 then
+ last_token := TOK_ADD_ASSIGN; last_string_value := text 
+when 93 then
 	yy_column := yy_column + 2
 	yy_position := yy_position + 2
 --|#line 347 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 347")
 end
- last_token := TOK_XOR_ASSIGN; last_string_value := text 
-when 98 then
+ last_token := TOK_SUB_ASSIGN; last_string_value := text 
+when 94 then
 	yy_column := yy_column + 2
 	yy_position := yy_position + 2
 --|#line 348 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 348")
 end
- last_token := TOK_OR_ASSIGN; last_string_value := text 
-when 99 then
+ last_token := TOK_MUL_ASSIGN; last_string_value := text 
+when 95 then
 	yy_column := yy_column + 2
 	yy_position := yy_position + 2
 --|#line 349 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 349")
 end
- last_token := TOK_RIGHT_OP; last_string_value := text 
-when 100 then
+ last_token := TOK_DIV_ASSIGN; last_string_value := text 
+when 96 then
 	yy_column := yy_column + 2
 	yy_position := yy_position + 2
 --|#line 350 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 350")
 end
- last_token := TOK_LEFT_OP; last_string_value := text 
-when 101 then
+ last_token := TOK_MOD_ASSIGN; last_string_value := text 
+when 97 then
 	yy_column := yy_column + 2
 	yy_position := yy_position + 2
 --|#line 351 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 351")
 end
- last_token := TOK_INC_OP; last_string_value := text 
-when 102 then
+ last_token := TOK_AND_ASSIGN; last_string_value := text 
+when 98 then
 	yy_column := yy_column + 2
 	yy_position := yy_position + 2
 --|#line 352 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 352")
 end
- last_token := TOK_DEC_OP; last_string_value := text 
-when 103 then
+ last_token := TOK_XOR_ASSIGN; last_string_value := text 
+when 99 then
 	yy_column := yy_column + 2
 	yy_position := yy_position + 2
 --|#line 353 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 353")
 end
- last_token := TOK_PTR_OP; last_string_value := text 
-when 104 then
+ last_token := TOK_OR_ASSIGN; last_string_value := text 
+when 100 then
 	yy_column := yy_column + 2
 	yy_position := yy_position + 2
 --|#line 354 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 354")
 end
- last_token := TOK_AND_OP; last_string_value := text 
-when 105 then
+ last_token := TOK_RIGHT_OP; last_string_value := text 
+when 101 then
 	yy_column := yy_column + 2
 	yy_position := yy_position + 2
 --|#line 355 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 355")
 end
- last_token := TOK_OR_OP; last_string_value := text 
-when 106 then
+ last_token := TOK_LEFT_OP; last_string_value := text 
+when 102 then
 	yy_column := yy_column + 2
 	yy_position := yy_position + 2
 --|#line 356 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 356")
 end
- last_token := TOK_LE_OP; last_string_value := text 
-when 107 then
+ last_token := TOK_INC_OP; last_string_value := text 
+when 103 then
 	yy_column := yy_column + 2
 	yy_position := yy_position + 2
 --|#line 357 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 357")
 end
- last_token := TOK_GE_OP; last_string_value := text 
-when 108 then
+ last_token := TOK_DEC_OP; last_string_value := text 
+when 104 then
 	yy_column := yy_column + 2
 	yy_position := yy_position + 2
 --|#line 358 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 358")
 end
- last_token := TOK_EQ_OP; last_string_value := text 
-when 109 then
+ last_token := TOK_PTR_OP; last_string_value := text 
+when 105 then
 	yy_column := yy_column + 2
 	yy_position := yy_position + 2
 --|#line 359 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 359")
 end
- last_token := TOK_NE_OP; last_string_value := text 
-when 110 then
-	yy_column := yy_column + 1
-	yy_position := yy_position + 1
+ last_token := TOK_AND_OP; last_string_value := text 
+when 106 then
+	yy_column := yy_column + 2
+	yy_position := yy_position + 2
+--|#line 360 "ewg_c_scanner.l"
+debug ("GELEX")
+	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 360")
+end
+ last_token := TOK_OR_OP; last_string_value := text 
+when 107 then
+	yy_column := yy_column + 2
+	yy_position := yy_position + 2
 --|#line 361 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 361")
 end
- last_token := Semicolon_code; last_string_value := text
-when 111 then
-	yy_column := yy_column + yy_end - yy_start - yy_more_len
-	yy_position := yy_position + yy_end - yy_start - yy_more_len
+ last_token := TOK_LE_OP; last_string_value := text 
+when 108 then
+	yy_column := yy_column + 2
+	yy_position := yy_position + 2
 --|#line 362 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 362")
 end
- last_token := Left_brace_code; last_string_value := text 
-when 112 then
-	yy_column := yy_column + yy_end - yy_start - yy_more_len
-	yy_position := yy_position + yy_end - yy_start - yy_more_len
+ last_token := TOK_GE_OP; last_string_value := text 
+when 109 then
+	yy_column := yy_column + 2
+	yy_position := yy_position + 2
 --|#line 363 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 363")
 end
- last_token := Right_brace_code; last_string_value := text 
-when 113 then
-	yy_column := yy_column + 1
-	yy_position := yy_position + 1
+ last_token := TOK_EQ_OP; last_string_value := text 
+when 110 then
+	yy_column := yy_column + 2
+	yy_position := yy_position + 2
 --|#line 364 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 364")
 end
- last_token := Comma_code; last_string_value := text 
-when 114 then
-	yy_column := yy_column + 1
-	yy_position := yy_position + 1
---|#line 365 "ewg_c_scanner.l"
-debug ("GELEX")
-	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 365")
-end
- last_token := Colon_code; last_string_value := text 
-when 115 then
+ last_token := TOK_NE_OP; last_string_value := text 
+when 111 then
 	yy_column := yy_column + 1
 	yy_position := yy_position + 1
 --|#line 366 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 366")
 end
- last_token := Equal_code; last_string_value := text 
-when 116 then
-	yy_column := yy_column + 1
-	yy_position := yy_position + 1
+ last_token := Semicolon_code; last_string_value := text
+when 112 then
+	yy_column := yy_column + yy_end - yy_start - yy_more_len
+	yy_position := yy_position + yy_end - yy_start - yy_more_len
 --|#line 367 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 367")
 end
- last_token := Left_parenthesis_code; last_string_value := text 
-when 117 then
-	yy_column := yy_column + 1
-	yy_position := yy_position + 1
+ last_token := Left_brace_code; last_string_value := text 
+when 113 then
+	yy_column := yy_column + yy_end - yy_start - yy_more_len
+	yy_position := yy_position + yy_end - yy_start - yy_more_len
 --|#line 368 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 368")
 end
- last_token := Right_parenthesis_code; last_string_value := text 
-when 118 then
-	yy_column := yy_column + yy_end - yy_start - yy_more_len
-	yy_position := yy_position + yy_end - yy_start - yy_more_len
+ last_token := Right_brace_code; last_string_value := text 
+when 114 then
+	yy_column := yy_column + 1
+	yy_position := yy_position + 1
 --|#line 369 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 369")
 end
- last_token := Left_bracket_code; last_string_value := text 
-when 119 then
-	yy_column := yy_column + yy_end - yy_start - yy_more_len
-	yy_position := yy_position + yy_end - yy_start - yy_more_len
+ last_token := Comma_code; last_string_value := text 
+when 115 then
+	yy_column := yy_column + 1
+	yy_position := yy_position + 1
 --|#line 370 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 370")
 end
- last_token := Right_bracket_code; last_string_value := text 
-when 120 then
+ last_token := Colon_code; last_string_value := text 
+when 116 then
 	yy_column := yy_column + 1
 	yy_position := yy_position + 1
 --|#line 371 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 371")
 end
- last_token := Dot_code; last_string_value := text 
-when 121 then
+ last_token := Equal_code; last_string_value := text 
+when 117 then
 	yy_column := yy_column + 1
 	yy_position := yy_position + 1
 --|#line 372 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 372")
 end
- last_token := 38; last_string_value := text 
-when 122 then
+ last_token := Left_parenthesis_code; last_string_value := text 
+when 118 then
 	yy_column := yy_column + 1
 	yy_position := yy_position + 1
 --|#line 373 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 373")
 end
- last_token := Exclamation_code; last_string_value := text 
-when 123 then
-	yy_column := yy_column + 1
-	yy_position := yy_position + 1
+ last_token := Right_parenthesis_code; last_string_value := text 
+when 119 then
+	yy_column := yy_column + yy_end - yy_start - yy_more_len
+	yy_position := yy_position + yy_end - yy_start - yy_more_len
 --|#line 374 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 374")
 end
- last_token := 126; last_string_value := text 
-when 124 then
-	yy_column := yy_column + 1
-	yy_position := yy_position + 1
+ last_token := Left_bracket_code; last_string_value := text 
+when 120 then
+	yy_column := yy_column + yy_end - yy_start - yy_more_len
+	yy_position := yy_position + yy_end - yy_start - yy_more_len
 --|#line 375 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 375")
 end
- last_token := Minus_code; last_string_value := text 
-when 125 then
+ last_token := Right_bracket_code; last_string_value := text 
+when 121 then
 	yy_column := yy_column + 1
 	yy_position := yy_position + 1
 --|#line 376 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 376")
 end
- last_token := Plus_code; last_string_value := text 
-when 126 then
+ last_token := Dot_code; last_string_value := text 
+when 122 then
 	yy_column := yy_column + 1
 	yy_position := yy_position + 1
 --|#line 377 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 377")
 end
- last_token := Star_code; last_string_value := text 
-when 127 then
+ last_token := 38; last_string_value := text 
+when 123 then
 	yy_column := yy_column + 1
 	yy_position := yy_position + 1
 --|#line 378 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 378")
 end
- last_token := Slash_code; last_string_value := text 
-when 128 then
+ last_token := Exclamation_code; last_string_value := text 
+when 124 then
 	yy_column := yy_column + 1
 	yy_position := yy_position + 1
 --|#line 379 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 379")
 end
- last_token := 37; last_string_value := text 
-when 129 then
+ last_token := 126; last_string_value := text 
+when 125 then
 	yy_column := yy_column + 1
 	yy_position := yy_position + 1
 --|#line 380 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 380")
 end
- last_token := Less_than_code; last_string_value := text 
-when 130 then
+ last_token := Minus_code; last_string_value := text 
+when 126 then
 	yy_column := yy_column + 1
 	yy_position := yy_position + 1
 --|#line 381 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 381")
 end
- last_token := Greater_than_code; last_string_value := text 
-when 131 then
+ last_token := Plus_code; last_string_value := text 
+when 127 then
 	yy_column := yy_column + 1
 	yy_position := yy_position + 1
 --|#line 382 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 382")
 end
- last_token := Caret_code; last_string_value := text 
-when 132 then
+ last_token := Star_code; last_string_value := text 
+when 128 then
 	yy_column := yy_column + 1
 	yy_position := yy_position + 1
 --|#line 383 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 383")
 end
- last_token := Bar_code; last_string_value := text 
-when 133 then
+ last_token := Slash_code; last_string_value := text 
+when 129 then
 	yy_column := yy_column + 1
 	yy_position := yy_position + 1
 --|#line 384 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 384")
 end
- last_token := Question_mark_code; last_string_value := text 
-when 134 then
-yy_set_line_column
+ last_token := 37; last_string_value := text 
+when 130 then
+	yy_column := yy_column + 1
+	yy_position := yy_position + 1
+--|#line 385 "ewg_c_scanner.l"
+debug ("GELEX")
+	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 385")
+end
+ last_token := Less_than_code; last_string_value := text 
+when 131 then
+	yy_column := yy_column + 1
 	yy_position := yy_position + 1
 --|#line 386 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 386")
 end
- 
-when 135 then
+ last_token := Greater_than_code; last_string_value := text 
+when 132 then
 	yy_column := yy_column + 1
 	yy_position := yy_position + 1
 --|#line 387 "ewg_c_scanner.l"
 debug ("GELEX")
 	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 387")
 end
+ last_token := Caret_code; last_string_value := text 
+when 133 then
+	yy_column := yy_column + 1
+	yy_position := yy_position + 1
+--|#line 388 "ewg_c_scanner.l"
+debug ("GELEX")
+	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 388")
+end
+ last_token := Bar_code; last_string_value := text 
+when 134 then
+	yy_column := yy_column + 1
+	yy_position := yy_position + 1
+--|#line 389 "ewg_c_scanner.l"
+debug ("GELEX")
+	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 389")
+end
+ last_token := Question_mark_code; last_string_value := text 
+when 135 then
+yy_set_line_column
+	yy_position := yy_position + 1
+--|#line 391 "ewg_c_scanner.l"
+debug ("GELEX")
+	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 391")
+end
  
 when 136 then
+	yy_column := yy_column + 1
+	yy_position := yy_position + 1
+--|#line 392 "ewg_c_scanner.l"
+debug ("GELEX")
+	std.error.put_line ("Executing scanner user-code from file 'ewg_c_scanner.l' at line 392")
+end
+ 
+when 137 then
 yy_set_line_column
 	yy_position := yy_position + 1
 --|#line 0 "ewg_c_scanner.l"
@@ -1846,7 +1856,7 @@ feature {NONE} -- Table templates
 		once
 			create an_array.make_filled (0, 0, 472)
 			yy_accept_template_1 (an_array)
-			an_array.area.fill_with (79, 182, 210)
+			an_array.area.fill_with (80, 182, 210)
 			yy_accept_template_2 (an_array)
 			yy_accept_template_3 (an_array)
 			Result := yy_fixed_array (an_array)
@@ -1857,25 +1867,25 @@ feature {NONE} -- Table templates
 		do
 			yy_array_subcopy (an_array, <<
 			    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-			    0,  137,  135,  134,  134,  122,  135,  128,  121,  135,
-			  116,  117,  126,  125,  113,  124,  120,  127,   82,   82,
-			  114,  110,  129,  115,  130,  133,   79,   79,  118,  119,
-			  131,   79,   79,   79,   79,   79,   79,   79,   79,   79,
-			   79,   79,   79,   79,   79,   79,   79,  111,  132,  112,
-			  123,  134,    1,    5,    5,  136,  136,    5,    5,   10,
-			   10,   10,   10,   10,    7,    8,   14,   12,   13,   56,
-			   54,   55,  109,    0,   87,    0,   95,  112,  104,   96,
-			    0,    0,   93,  101,   91,  102,   92,  103,    0,   85,
+			    0,  138,  136,  135,  135,  123,  136,  129,  122,  136,
+			  117,  118,  127,  126,  114,  125,  121,  128,   83,   83,
+			  115,  111,  130,  116,  131,  134,   80,   80,  119,  120,
+			  132,   80,   80,   80,   80,   80,   80,   80,   80,   80,
+			   80,   80,   80,   80,   80,   80,   80,  112,  133,  113,
+			  124,  135,    1,    5,    5,  137,  137,    5,    5,   10,
+			   10,   10,   10,   10,    7,    8,   14,   12,   13,   57,
+			   55,   56,  110,    0,   88,    0,   96,  113,  105,   97,
+			    0,    0,   94,  102,   92,  103,   93,  104,    0,   86,
 
-			   94,   86,   81,    0,   82,    0,   82,  119,  111,  118,
-			  100,  106,  108,  107,   99,   79,    0,   97,   79,   79,
-			   79,   79,   79,   79,   79,   79,   79,   79,   79,   79,
-			   79,   22,   79,   79,   79,   79,   79,   79,   30,   79,
-			   79,   79,   79,   79,   79,   79,   79,   79,   79,   79,
-			   98,  105,    0,    1,    5,    5,    5,    5,    0,    6,
-			    5,    0,    5,    5,    0,    9,    0,    8,    7,   83,
-			   88,    0,   85,   85,    0,   86,   81,    0,   84,   80,
-			   90,   89, yy_Dummy>>,
+			   95,   87,   82,    0,   83,    0,   83,  120,  112,  119,
+			  101,  107,  109,  108,  100,   80,    0,   98,   80,   80,
+			   80,   80,   80,   80,   80,   80,   80,   80,   80,   80,
+			   80,   22,   80,   80,   80,   80,   80,   80,   30,   80,
+			   80,   80,   80,   80,   80,   80,   80,   80,   80,   80,
+			   99,  106,    0,    1,    5,    5,    5,    5,    0,    6,
+			    5,    0,    5,    5,    0,    9,    0,    8,    7,   84,
+			   89,    0,   86,   86,    0,   87,   82,    0,   85,   81,
+			   91,   90, yy_Dummy>>,
 			1, 182, 0)
 		end
 
@@ -1883,27 +1893,27 @@ feature {NONE} -- Table templates
 			-- Fill chunk #2 of template for `yy_accept'.
 		do
 			yy_array_subcopy (an_array, <<
-			   28,   79,   79,   31,   79,   79,   79,   79,   79,   79,
-			   79,   79,   79,   79,   79,   79,   79,   79,   79,    5,
-			    0,    5,    5,    0,   85,    0,   85,    0,   86,   84,
-			   80,   79,   79,   79,   79,   79,   79,   79,   79,   79,
-			   79,   79,   79,   79,   79,   79,   79,   79,   69,   79,
-			   79,   79,   79,   15,   79,   17,   18,   79,   79,   79,
-			   79,   24,   25,   79,   79,   29,   79,   33,   79,   79,
-			   79,   79,   79,   79,   79,   79,   79,   79,   79,   46,
-			   79,   79,    5,    0,    5,    5,    0,   85,   32,   67,
-			   79,   79,   79,   79,   79,   79,   79,   79,   79,   79,
+			   28,   80,   80,   31,   80,   80,   80,   80,   80,   80,
+			   80,   80,   80,   80,   80,   80,   80,   80,   80,    5,
+			    0,    5,    5,    0,   86,    0,   86,    0,   87,   85,
+			   81,   80,   80,   80,   80,   80,   80,   80,   80,   80,
+			   80,   80,   80,   80,   80,   80,   80,   80,   70,   80,
+			   80,   80,   80,   15,   80,   17,   18,   80,   80,   80,
+			   80,   24,   25,   80,   80,   29,   80,   33,   80,   80,
+			   80,   80,   80,   80,   80,   80,   80,   80,   80,   46,
+			   80,   80,    5,    0,    5,    5,    0,   86,   32,   68,
+			   80,   80,   80,   80,   80,   80,   80,   80,   80,   80,
 
-			   79,   79,   79,   79,   79,   78,   79,   79,   79,   79,
-			   16,   19,   79,   79,   79,   79,   27,   79,   79,   79,
-			   36,   79,   79,   79,   79,   79,   79,   44,   79,   79,
-			   48,    2,    5,    5,   79,   79,   79,   79,   79,   79,
-			   79,   79,   79,   79,   79,   79,   79,   59,   79,   79,
-			   79,   79,   79,   79,   72,   79,   79,   79,   79,   79,
-			   23,   26,   40,   79,   35,   37,   38,   39,   41,   42,
-			   79,   79,   79,    5,    0,    5,   68,   79,   66,   71,
-			   51,   79,   79,   79,   79,   79,   60,   61,   62,   63,
-			   64,   79,   79,   79,   79,   79,   70,   79,   79,   21, yy_Dummy>>,
+			   80,   80,   80,   80,   80,   79,   80,   80,   80,   80,
+			   16,   19,   80,   80,   80,   80,   27,   80,   80,   80,
+			   36,   80,   80,   80,   80,   80,   80,   44,   80,   80,
+			   48,    2,    5,    5,   80,   80,   80,   80,   80,   80,
+			   80,   80,   80,   80,   80,   80,   80,   60,   80,   80,
+			   80,   80,   80,   80,   73,   80,   80,   80,   80,   80,
+			   23,   26,   40,   80,   35,   37,   38,   39,   41,   42,
+			   80,   80,   80,    5,    0,    5,   69,   80,   67,   72,
+			   52,   80,   80,   80,   80,   80,   61,   62,   63,   64,
+			   65,   80,   80,   80,   80,   80,   71,   80,   80,   21, yy_Dummy>>,
 			1, 200, 211)
 		end
 
@@ -1911,13 +1921,13 @@ feature {NONE} -- Table templates
 			-- Fill chunk #3 of template for `yy_accept'.
 		do
 			yy_array_subcopy (an_array, <<
-			   79,   43,   79,   79,    5,    0,    5,   79,   79,   79,
-			   79,   79,   57,   79,   79,   79,   79,   79,   74,   20,
-			   34,   45,   47,    5,    0,    4,    0,   79,   79,   79,
-			   79,   79,   79,   79,   79,   73,   79,   79,    3,   79,
-			   11,   79,   65,   79,   58,   52,   49,   79,   79,   79,
-			   79,   79,   77,   79,   79,   79,   79,   75,   53,   50,
-			   76,    0, yy_Dummy>>,
+			   80,   43,   80,   80,    5,    0,    5,   80,   80,   80,
+			   80,   80,   58,   80,   50,   80,   80,   80,   75,   20,
+			   34,   45,   47,    5,    0,    4,    0,   80,   80,   80,
+			   80,   80,   80,   80,   80,   74,   80,   80,    3,   80,
+			   11,   80,   66,   80,   59,   53,   49,   80,   80,   80,
+			   80,   80,   78,   80,   80,   80,   80,   76,   54,   51,
+			   77,    0, yy_Dummy>>,
 			1, 62, 411)
 		end
 
@@ -1953,10 +1963,10 @@ feature {NONE} -- Constants
 			-- regular expression with both leading
 			-- and trailing parts having variable length?
 
-	yyNb_rules: INTEGER = 136
+	yyNb_rules: INTEGER = 137
 			-- Number of rules
 
-	yyEnd_of_buffer: INTEGER = 137
+	yyEnd_of_buffer: INTEGER = 138
 			-- End of buffer rule code
 
 	yyLine_used: BOOLEAN = true

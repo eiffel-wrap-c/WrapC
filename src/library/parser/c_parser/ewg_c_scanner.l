@@ -136,6 +136,11 @@ NL    [\r\n
 "__signed__"		{
 				-- gcc extension
 				last_token := TOK_SIGNED; last_string_value := text 			   }
+"__signed"		{
+				-- gcc extension MacOs
+				last_token := TOK_SIGNED; last_string_value := text 			   }
+
+
 
 
 "__extension__" { } -- eat, has no effect other than
