@@ -1,7 +1,7 @@
 # How to generate the code?
 
 ## Requirements
-You need to have a binary version of WrapC tool and be able to execute it form the library folder.
+You need to have a binary version of WrapC tool and be able to execute it from the library folder.
 
 Before to regenerate the generated code, remove the folder `generated_wrapper`. If you are using geant, just run `geant clean` in other 
 case remove it manually.
@@ -20,7 +20,7 @@ generator.bat
 ```
 
 ## Using WrapC with geant
-$LIB_PATH is the path to the library folder where you checkout the wrap_libusb library.
+$LIB_PATH is the path to the library folder where you checkout the WrapC source code. For example c:/WrapC/examples/callback.
 
 ### Wrap libusb library
 
@@ -32,7 +32,7 @@ Go to the $LIB_PATH/library
 
 ### Compile the C library
  ```
-    geant compile -- Build the C library, in this case generate the eif_callbacl.(lib|a)
+    geant compile -- Build the C library, in this case generate the eif_callback.(lib|a)
   ```
 ***
 

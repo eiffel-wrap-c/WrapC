@@ -11,6 +11,7 @@
 		<echo message=" geant wrap_c"/>
 		<echo message=" geant compile"/>
 		<echo message=" geant clean"/>
+		<echo message=" geant clobber"/>
 	</target>
 	
 

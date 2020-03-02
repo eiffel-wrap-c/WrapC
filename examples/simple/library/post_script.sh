@@ -2,10 +2,9 @@
 # Post processing script
 
 # copy c file is there any
-cp ./manual_wrapper/c/src/*.c  ./generated_wrapper/c/src	
+cp ./manual_wrapper/c/src/*.c  ./generated_wrapper/c/src
+cp ./manual_wrapper/c/include/*.h  ./generated_wrapper/c/include		
 
-#copy geant script
-cp finish_freezing.eant  ./generated_wrapper/c/src/geant.eant	
 
 #copy Makefile
 cp Makefile.SH  ./generated_wrapper/c/src
