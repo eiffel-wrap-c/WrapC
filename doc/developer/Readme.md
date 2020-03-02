@@ -160,7 +160,7 @@ To generate the Eiffel wrapper for a given example go into the library subdirect
 This will use the wrap_c tool to generate Eiffel and C files that make the C library accessible from within Eiffel. It may sound weird that C files are generated too, but it is unfortunately necessary. The generated C files will be compiled and put into a static link library.
 
 #### Using Automated scripts
-Automated scripts will run wrapc with pre and post processing scripts and compiling the C glue codeneeded for the library.
+Automated scripts are just bat scripts or shell scripts, and will run `WrapC` with pre and post processing scripts and compiling the C glue code needed for the library if you don't have Geant tool. 
 
 #### Windows
 ```
@@ -177,11 +177,6 @@ To compile and run an example application go into the example applications direc
 	then Compile
 	then Run
 
-
-
-
-
-
-<a name="understanding_wrapc"></a>
+a name="understanding_wrapc"></a>
 
 
