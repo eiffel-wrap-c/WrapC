@@ -122,13 +122,14 @@ For an up-to-date list of WrapC based wrapper libraries please visit the [WrapC 
 <a name="build_examples"></a>
 ## Building and Running the examples
 
-This step requires that you already have compiled the wrap_c tool. If you have downloaded a release package for you platform, you are lucky, since these packages already come with the wrap_c tool pre-compiled.
+This step requires that you already have compiled the wrap_c tool. If you have downloaded a release package for you platform, you are lucky, since these packages already come with the wrap_c tool pre-compiled. 
 
 You can find examples on how to use `WrapC` to create wrappers for C libraries in the directory `${WRAP_C}/examples`. These examples are fully functional, in that they include the necessary build automation to build the examples using Eiffel and C compiler combinations.
 
 <a name="build_automation"></a>
 ### Build Automation Explained
 
+#### Using Geant
 `WrapC` uses Geant a build tool specifically tailored for the Eiffel programming language. 
 To learn more about Geant check the following links
 * 	[Overview of Geant](http://www.gobosoft.com/eiffel/gobo/geant/overview.html)
@@ -138,27 +139,49 @@ Available targets for `WrapC` libraries.
 
 	geant
 	usage:
-	   geant wrap_c			-- Generate wrap_c wrappers for the target C library.
+	   geant wrap_c			-- Generate wrap_c wrappers for the target C library. 
 	   geant wrap_c_pre_script      -- Generate wrap_c wrappers for the target C library, executing a pre processing script
 	   geant wrap_c_post_script     -- Generate wrap_c wrappers for the target C library, executing a post processing script
 	   geant compile  		-- Build C code
 	   geant clean			-- remove intermediary generated files
 	   geant clobber   		-- remove all generated files
 
-Most examples wrap a 3rd party C library. If you want to build such an example please read the Readme.md file in the examples directory. It is usually necessary for you to install certain development versions of the libraries to wrap. The Readme.md file gives details on what is necessary.
+By default in the examples the target `geant wrap_c` will also call the pre and post processing scripts. For development purposes
+then other targets like `wrap_c_pre_script`  or `wrap_c_post_script` could be useful to add.
 
-To generate the Eiffel wrapper for a given example go into the library subdirectory of the examples directory. The examples usually have two subdirectories. library contains the files necessary to build the wrapper and hello_world contains the source code for an actual Eiffel application that uses the wrapper. For example to generate the wrappers for the simple-example do:
+Most examples wrap a 3rd party C library. If you want to build such an example please read the `Readme.md` file in the examples directory. It is usually necessary for you to install certain development versions of the libraries to wrap. The Readme.md file gives details on what is necessary.
+
+To generate the Eiffel wrapper for a given example go into the library subdirectory of the examples directory. The examples usually have two subdirectories. 
+	`library` contains the files necessary to build the wrapper and `hello_world` contains the source code for an actual Eiffel application that uses the wrapper. For example to generate the wrappers for the simple-example do:
 
 	cd ${WRAP_C}/examples/simple/library
-	geant install
+	geant wrap_c
 	
-This will use the wrap_c tool to generate Eiffel and C files that make the c library accessible from within Eiffel. It may sound weird that C files are generated too, but it is unfortunately necessary. The generated C files will be compiled and put into a static link library.
+This will use the wrap_c tool to generate Eiffel and C files that make the C library accessible from within Eiffel. It may sound weird that C files are generated too, but it is unfortunately necessary. The generated C files will be compiled and put into a static link library.
+
+#### Using Automated scripts
+Automated scripts will run wrapc with pre and post processing scripts and compiling the C glue codeneeded for the library.
+
+#### Windows
+```
+generator.bat
+```
+#### Linux
+```
+./generator.sh
+```
 
 To compile and run an example application go into the example applications directory. For example to build the hello_world application of the simple example do:
-
-	cd ${WRAP_C}/examples/simple/example/hello_world
-	geant install
-	geant compile
-	./simple_hello_world
 	
+	estudio system.ecf
+	then Compile
+	then Run
+
+
+
+
+
+
 <a name="understanding_wrapc"></a>
+
+
