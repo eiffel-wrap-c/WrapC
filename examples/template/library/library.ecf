@@ -14,27 +14,44 @@
 				<platform value="windows"/>
 			</condition>
 		</external_include>
-		<external_include location="$ECF_CONFIG_PATH\manual_wrapper\c\include">
-			<condition>
-				<platform value="windows"/>
-			</condition>		
-		</external_include>
 		<external_include location="$ECF_CONFIG_PATH/generated_wrapper/c/include">
 			<condition>
 				<platform excluded_value="windows"/>
 			</condition>
 		</external_include>
+		<external_include location="$HEADER_TEMPLATE_PATH">
+			<condition>
+				<platform value="windows"/>
+			</condition>		
+		</external_include>
+		<external_include location="$HEADER_TEMPLATE_PATH">
+			<condition>
+				<platform excluded_value="windows"/>
+			</condition>
+		</external_include>
+		
+		<!-- Manual Wrapper add this only if it's needed 
+		
+		<external_include location="$ECF_CONFIG_PATH\manual_wrapper\c\include">
+			<condition>
+				<platform value="windows"/>
+			</condition>		
+		</external_include>
+
 		<external_include location="$ECF_CONFIG_PATH/manual_wrapper/c/include">
 			<condition>
 				<platform excluded_value="windows"/>
 			</condition>		
 		</external_include>
-		<external_object location="$ECF_CONFIG_PATH/C/spec/$ISE_C_COMPILER/$ISE_PLATFORM/lib/eif_template_library.lib">
+
+
+		-->
+		<external_object location="$ECF_CONFIG_PATH/C/spec/$ISE_C_COMPILER/$ISE_PLATFORM/lib/eif_$template_library.lib">
 			<condition>
 				<platform value="windows"/>
 			</condition>
 		</external_object>
-		<external_object location="$ECF_CONFIG_PATH/C/spec/$(ISE_PLATFORM)/lib/eif_template_library.a">
+		<external_object location="$ECF_CONFIG_PATH/C/spec/$(ISE_PLATFORM)/lib/eif_$template_library.a">
 			<condition>
 				<platform excluded_value="windows"/>
 			</condition>

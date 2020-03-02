@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<ewg_config name="simple">
+<ewg_config name="$template">
 
   <rule_list>
     <rule>
