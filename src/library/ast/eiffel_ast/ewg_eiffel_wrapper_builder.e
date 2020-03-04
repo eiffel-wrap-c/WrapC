@@ -380,7 +380,7 @@ feature {NONE}
 					from
 						i := 1
 					until
-						i > 5
+						i > callback.callbacks_per_type
 					loop
 
 						c_system.add_top_level_declaration_from_type_and_name (l_getter,

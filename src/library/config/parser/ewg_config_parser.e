@@ -350,7 +350,7 @@ feature {NONE} -- Implementation
 			end
 		end
 
-	new_callback_wrapper_clause (a_config_system: EWG_CONFIG_SYSTEM; a_wrapper_element: XM_ELEMENT; a_position_table: XM_POSITION_TABLE): EWG_CONFIG_WRAPPER_CLAUSE
+	new_callback_wrapper_clause (a_config_system: EWG_CONFIG_SYSTEM; a_wrapper_element: XM_ELEMENT; a_position_table: XM_POSITION_TABLE): EWG_CONFIG_CALLBACK_WRAPPER_CLAUSE
 			-- New wrapper clause from `a_wrapper_element'
 		require
 			a_config_system_not_void: a_config_system /= Void
@@ -358,7 +358,17 @@ feature {NONE} -- Implementation
 			is_wrapper_element: STRING_.same_string (a_wrapper_element.name, wrapper_element_name)
 			a_position_table: a_position_table /= Void
 		do
-			create {EWG_CONFIG_CALLBACK_WRAPPER_CLAUSE} Result.make
+			create Result.make
+			if
+				attached a_wrapper_element.element_by_name (callbacks_per_type_element_name) as callbacks_per_type_element and then
+				attached callbacks_per_type_element.attribute_by_name (value_attribute_name) as l_value_attribute_name
+			then
+				if l_value_attribute_name.value.is_integer and then
+					l_value_attribute_name.value.to_integer > 0
+				then
+					Result.set_callbacks_per_type (l_value_attribute_name.value.to_integer)
+				end
+			end
 		end
 
 	new_macro_wrapper_clause (a_config_system: EWG_CONFIG_SYSTEM; a_wrapper_element: XM_ELEMENT; a_position_table: XM_POSITION_TABLE): WRAPC_CONFIG_MACRO_WRAPPER_CLAUSE

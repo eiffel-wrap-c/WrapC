@@ -49,7 +49,13 @@ NL    [\r\n
 				set_header_line_number ((text_substring (3, text_count - 2)).to_integer)
 				}
 <SC_FILE>{WS_NON_NEWLINE}*#line{WS}+[0-9]+{WS}+\" {  -- Visual C++ style
-				set_header_line_number ((text_substring (7, text_count - 2)).to_integer)
+				if (text_substring (7, text_count - 2)).is_integer then
+					set_header_line_number ((text_substring (7, text_count - 2)).to_integer)
+				elseif (text_substring (11, text_count - 2)).is_integer then
+					set_header_line_number ((text_substring (11, text_count - 2)).to_integer)
+				else
+					set_header_line_number ((text_substring (15, text_count - 2)).to_integer)
+				end			
 			}
 <SC_FILE>{WS_NON_NEWLINE}*(_+|#)pragma.*\n   {  set_start_condition (INITIAL) } -- eat pragmas
 <SC_FILE>[^"\n]+       { set_header_file_name (text) }

@@ -61,6 +61,13 @@ feature -- Constants
 			--	macro element name.
 
 
+	callbacks_per_type_element_name: STRING = "callbacks_per_type"
+			-- Callbacks per type
+
+
+	value_attribute_name: STRING = "value"
+			-- "value" attribute name
+
 
 
 end

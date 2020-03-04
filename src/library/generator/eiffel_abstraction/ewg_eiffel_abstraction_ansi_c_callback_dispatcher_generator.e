@@ -89,14 +89,14 @@ feature {NONE} -- Implementation
 				template_expander.expand_into_stream_from_array (output_stream,
 																	dispatcher_class_template,
 																			<<upper_name,
-																				make_definition (l_setter.mapped_eiffel_name, 5),
-																				stub_definition (l_get_stub.mapped_eiffel_name, 5),
+																				make_definition (l_setter.mapped_eiffel_name, a_callback_wrapper.callbacks_per_type),
+																				stub_definition (l_get_stub.mapped_eiffel_name, a_callback_wrapper.callbacks_per_type),
 																				ext_class_name,
-																				agent_definitions (a_callback_wrapper, 5),
-																				callback_definition (a_callback_wrapper, 5),
+																				agent_definitions (a_callback_wrapper, a_callback_wrapper.callbacks_per_type),
+																				callback_definition (a_callback_wrapper, a_callback_wrapper.callbacks_per_type),
 																				agent_default_routine_definition (a_callback_wrapper),
 																				dispose_definition (l_release.mapped_eiffel_name, l_setter.mapped_eiffel_name),
-																				register_callback_definition (a_callback_wrapper, l_set_entry_struct.mapped_eiffel_name, 5)
+																				register_callback_definition (a_callback_wrapper, l_set_entry_struct.mapped_eiffel_name, a_callback_wrapper.callbacks_per_type)
 																				>>	)
 			end
 		end
