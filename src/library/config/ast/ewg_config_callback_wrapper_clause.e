@@ -14,6 +14,9 @@ class EWG_CONFIG_CALLBACK_WRAPPER_CLAUSE
 inherit
 
 	EWG_CONFIG_WRAPPER_CLAUSE
+		redefine
+			make
+		end
 
 	EWG_RENAMER
 		export {NONE} all end
@@ -24,7 +27,19 @@ create
 
 	make
 
+
+feature {NONE} -- Initialization
+
+	make
+		do
+			Precursor
+				-- By default set callbacks per type as 3.
+		end
+
 feature {ANY} -- Access
+
+	callbacks_per_type: INTEGER
+			-- Number of callbacks receivers per type.
 
 	accepts_type (a_type: EWG_C_AST_TYPE): BOOLEAN
 		do
@@ -36,6 +51,15 @@ feature {ANY} -- Access
 			Result := False
 		end
 
+	set_callbacks_per_type (a_val: INTEGER)
+		require
+			valid_val: a_val > 0
+		do
+			callbacks_per_type := a_val
+		ensure
+			callbacks_per_type_set: callbacks_per_type = a_val
+		end
+
 feature {ANY} -- Basic Routines
 
 	shallow_wrap_type (a_type: EWG_C_AST_TYPE;
@@ -44,13 +68,19 @@ feature {ANY} -- Basic Routines
 		local
 			member_list: DS_ARRAYED_LIST [EWG_MEMBER_WRAPPER]
 			callback_wrapper: EWG_CALLBACK_WRAPPER
+			l_callbacks_per_type: INTEGER
 		do
 			if attached {EWG_C_AST_POINTER_TYPE} a_type.skip_wrapper_irrelevant_types as pointer_type then
 				create member_list.make_default
+				if callbacks_per_type > 0 then
+					l_callbacks_per_type := callbacks_per_type
+				else
+					l_callbacks_per_type := 3
+				end
 				create {EWG_ANSI_C_CALLBACK_WRAPPER} callback_wrapper.make (eiffel_identifier_for_type (pointer_type),
 																								a_include_header_file_name,
 																								pointer_type,
-																								member_list)
+																								member_list, l_callbacks_per_type)
 				a_eiffel_wrapper_set.add_wrapper (callback_wrapper)
 			end
 		end

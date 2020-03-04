@@ -126,7 +126,7 @@ feature {ANY} -- Operations
 				Result := False
 			elseif construct_type_code = construct_type_names.callback_code then
 				-- Only callbacks will be accepted
-				if not a_type.based_type_recursive.is_callback then
+				if not (a_type.based_type_recursive.is_callback or a_type.skip_wrapper_irrelevant_types.is_callback) then
 					Result := False
 				end
 			else

@@ -331,16 +331,23 @@ feature {NONE} -- Validation
 				child ?= cs.item
 				if child = Void then
 					-- Not an element. Ignore.
-				elseif
-					STRING_.same_string (child.name, class_name_element_name) and (
-					a_construct_type_code = construct_type_names.function_code	or
-					a_construct_type_code = construct_type_names.macro_code)
-				then
-					-- OK
-					validate_class_name (child, a_position_table)
 				else
-					has_error := True
-					error_handler.report_unknown_config_element_error (a_wrapper, child, a_position_table.item (child))
+					if
+						STRING_.same_string (child.name, class_name_element_name) and (
+						a_construct_type_code = construct_type_names.function_code	or
+						a_construct_type_code = construct_type_names.macro_code)
+					then
+						-- OK
+							validate_class_name (child, a_position_table)
+					elseif 	STRING_.same_string (child.name, callbacks_per_type_element_name) and
+						a_construct_type_code = construct_type_names.callback_code
+					then
+						-- OK
+							validate_callbacks_per_type (child, a_position_table)
+					else
+						has_error := True
+						error_handler.report_unknown_config_element_error (a_wrapper, child, a_position_table.item (child))
+					end
 				end
 				cs.forth
 			end
@@ -498,6 +505,45 @@ feature {NONE} -- Validation
 				else
 					has_error := True
 					error_handler.report_unknown_config_element_error (a_class_name, child, a_position_table.item (child))
+				end
+				cs.forth
+			end
+		end
+
+
+	validate_callbacks_per_type (a_callback: XM_ELEMENT; a_position_table: XM_POSITION_TABLE)
+			-- Check whether `a_callback' is a valid EWG config "callbacks_per_type" element.
+			-- Set `has_error' to `True' if not.
+		require
+			a_class_name_not_void: a_callback /= Void
+			a_class_name_is_class_name: STRING_.same_string (a_callback.name, callbacks_per_type_element_name)
+			a_position_table_not_void: a_position_table /= Void
+		local
+			cs: DS_BILINEAR_CURSOR [XM_NODE]
+			child: XM_ELEMENT
+			value: STRING
+		do
+			if attached a_callback.attribute_by_name (value_attribute_name) as l_value_attribute_name then
+				value := l_value_attribute_name.value
+				if
+					not value.is_natural
+				then
+					has_error := True
+					error_handler.report_invalid_class_name_error (a_callback, a_position_table.item (a_callback))
+				end
+			else
+				has_error := True
+				error_handler.report_missing_config_attribute_error (a_callback, value_attribute_name, a_position_table.item (a_callback))
+			end
+
+			cs := a_callback.new_cursor
+			from cs.start until cs.after loop
+				child ?= cs.item
+				if child = Void then
+					-- Not an element. Ignore.
+				else
+					has_error := True
+					error_handler.report_unknown_config_element_error (a_callback, child, a_position_table.item (child))
 				end
 				cs.forth
 			end

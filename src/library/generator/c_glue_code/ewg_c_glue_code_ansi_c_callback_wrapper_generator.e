@@ -101,16 +101,16 @@ feature {NONE} -- Implementation
 			--generate_callback_entry_struct (a_callback_wrapper)
 
 			generate_callback_entry_object (a_callback_wrapper)
-			generate_callback_entry_effel_function_address (a_callback_wrapper, 5)
+			generate_callback_entry_effel_function_address (a_callback_wrapper, a_callback_wrapper.callbacks_per_type)
 
 			generate_set_object_definition (a_callback_wrapper)
 			generate_release_object_definition (a_callback_wrapper)
 
-			generate_stub_definition (a_callback_wrapper, 5)
+			generate_stub_definition (a_callback_wrapper, a_callback_wrapper.callbacks_per_type)
 
 
-			generate_entry_setter_definition (a_callback_wrapper, 5)
-			generate_stub_getter_definition (a_callback_wrapper, 5)
+			generate_entry_setter_definition (a_callback_wrapper, a_callback_wrapper.callbacks_per_type)
+			generate_stub_getter_definition (a_callback_wrapper, a_callback_wrapper.callbacks_per_type)
 			generate_caller_definition (a_callback_wrapper)
 		end
 

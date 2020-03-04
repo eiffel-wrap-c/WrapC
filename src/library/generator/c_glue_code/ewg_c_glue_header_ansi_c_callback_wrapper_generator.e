@@ -96,14 +96,14 @@ feature {NONE} -- Implementation
 			output_stream.put_new_line
 			generate_typedef (a_callback_wrapper)
 			generate_entry_object (a_callback_wrapper)
-			generate_entry_effel_function_address (a_callback_wrapper, 5)
+			generate_entry_effel_function_address (a_callback_wrapper, a_callback_wrapper.callbacks_per_type)
 			generate_set_object_prototype (a_callback_wrapper)
 			generate_release_object_prototype (a_callback_wrapper)
-			generate_stub_getter_prototype (a_callback_wrapper, 5)
+			generate_stub_getter_prototype (a_callback_wrapper, a_callback_wrapper.callbacks_per_type)
 			generate_entry_struct (a_callback_wrapper)
 
 
-			generate_entry_setter_prototype (a_callback_wrapper, 5)
+			generate_entry_setter_prototype (a_callback_wrapper, a_callback_wrapper.callbacks_per_type)
 			generate_caller_declaration_prototype (a_callback_wrapper)
 			output_stream.put_new_line
 		end
