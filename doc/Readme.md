@@ -503,8 +503,6 @@ First let's check generated dispatcher class for our example
 				routine_1 := agent default_routine
 				routine_2 := agent default_routine
 				routine_3 := agent default_routine
-				routine_4 := agent default_routine
-				routine_5 := agent default_routine
 				set_sample_callback_type_object ($Current)
 			end
 
@@ -516,11 +514,6 @@ First let's check generated dispatcher class for our example
 				--Eiffel routine to be call on callback.
 		routine_3: PROCEDURE [TUPLE [a_pdata: POINTER; a_a_event_type: INTEGER]] 
 				--Eiffel routine to be call on callback.
-		routine_4: PROCEDURE [TUPLE [a_pdata: POINTER; a_a_event_type: INTEGER]] 
-				--Eiffel routine to be call on callback.
-		routine_5: PROCEDURE [TUPLE [a_pdata: POINTER; a_a_event_type: INTEGER]] 
-				--Eiffel routine to be call on callback.
-
 	feature --Access: Dispatcher
 
 
@@ -539,15 +532,6 @@ First let's check generated dispatcher class for our example
 				Result := get_sample_callback_type_stub_3
 			end
 
-		c_dispatcher_4: POINTER
-			do
-				Result := get_sample_callback_type_stub_4
-			end
-
-		c_dispatcher_5: POINTER
-			do
-				Result := get_sample_callback_type_stub_5
-			end
 
 	feature --Access: Callback
 
@@ -564,16 +548,6 @@ First let's check generated dispatcher class for our example
 		on_callback_3 (a_pdata: POINTER; a_a_event_type: INTEGER)  
 			do
 				routine_3 (a_pdata, a_a_event_type)
-			end
-
-		on_callback_4 (a_pdata: POINTER; a_a_event_type: INTEGER)  
-			do
-				routine_4 (a_pdata, a_a_event_type)
-			end
-
-		on_callback_5 (a_pdata: POINTER; a_a_event_type: INTEGER)  
-			do
-				routine_5 (a_pdata, a_a_event_type)
 			end
 
 
@@ -597,18 +571,6 @@ First let's check generated dispatcher class for our example
 				set_sample_callback_type_entry_3 ($on_callback_3)
 			end
 
-		register_callback_4 (a_routine: like routine_1)
-			do
-				routine_4 := a_routine
-				set_sample_callback_type_entry_4 ($on_callback_4)
-			end
-
-		register_callback_5 (a_routine: like routine_1)
-			do
-				routine_5 := a_routine
-				set_sample_callback_type_entry_5 ($on_callback_5)
-			end
-
 
 	feature --Access: Default routine
 
@@ -630,11 +592,20 @@ First let's check generated dispatcher class for our example
 
 	end
 
-To overcome the limitation to only register one Eiffel callback receiver per callback type, WrapC generate code to register a few numbers of Eiffel callback receivers per callback type, at the moment the number of Eiffel callbacks receivers is defined at 5, in
-the future the user will be able to define the number of Eiffel callbacks receiver per callback type in the configuration file.
+To overcome the limitation to only register one Eiffel callback receiver per callback type, WrapC generate code to register a few numbers of Eiffel callback receivers per callback type, at the moment the number of Eiffel callbacks receivers is defined at 3, if you need to define a different number of callbacks you can use the configuration file as follow to 
+define a different number of callbacks per type
+
+	<rule>
+     <match>
+ 		<identifier name=".*"/>
+        <type name="callback"/>		
+      </match>
+   	  <wrapper type="default">
+	 	    <callbacks_per_type value="10"/>
+      </wrapper>
+    </rule>
 
 To use this wrapper you just need to create an object instance of `SAMPLE_CALLBACK_TYPE_DISPATCHER` to register via agent the Eiffel feature that you want to call on a callback.Then call an Eiffel function that will register the dispatcher with the C library usign `SAMPLE_CALLBACK_TYPE_DISPATCHER.c_dispatcher`. Let's look an example, taken from the callback example.
-
 
 
 	class CALLBACK_HELLO_WORLD
@@ -871,7 +842,7 @@ Group functions in a uniform class that are in a particualr header
 	 <type name="function"/>
       </match>
       <wrapper type="default">
-	 <class_name name="UNIFORM_FUNCTIONS"/>
+		 <class_name name="UNIFORM_FUNCTIONS"/>
       </wrapper>
     </rule>
     
@@ -903,7 +874,19 @@ If you need to get access to function pointers, you can include a list of funtio
 		...	
 		<function_address name="fn_1"/>	
 	 </rule> -
-		
+
+Callbacks per type
+
+If you need to define an specific number of callbacks per type you can use the following rule.
+
+ 	  <rule>
+       <match>
+ 		  <type name="callback"/>		
+      </match>
+   	  <wrapper type="default">
+	 	  <callbacks_per_type value="5"/>
+      </wrapper>
+     </rule>    		
 
 
 <a name="dependent_types"></a>
