@@ -53,7 +53,7 @@ feature -- Generation
 					if not file.is_open_write then
 						error_handler.report_cannot_write_error (file_name)
 					else
-						file.put_line (Generated_file_warning_eiffel_comment)
+						file.put_line (Generated_file_callback_eiffel_comment)
 						file.put_new_line
 						output_stream := file
 						generate_callback_wrapper (cs.item)
@@ -96,7 +96,9 @@ feature {NONE} -- Implementation
 																				callback_definition (a_callback_wrapper, a_callback_wrapper.callbacks_per_type),
 																				agent_default_routine_definition (a_callback_wrapper),
 																				dispose_definition (l_release.mapped_eiffel_name, l_setter.mapped_eiffel_name),
-																				register_callback_definition (a_callback_wrapper, l_set_entry_struct.mapped_eiffel_name, a_callback_wrapper.callbacks_per_type)
+																				register_callback_definition (a_callback_wrapper, l_set_entry_struct.mapped_eiffel_name, a_callback_wrapper.callbacks_per_type),
+																				release_callback_definition (a_callback_wrapper, a_callback_wrapper.callbacks_per_type),
+																				status_report_callback_definition (a_callback_wrapper, a_callback_wrapper.callbacks_per_type)
 																				>>	)
 			end
 		end
@@ -155,7 +157,6 @@ feature {NONE} -- Implementation
 				Result.append ("%N")
 				i := i + 1
 			end
-
 		end
 
 	register_callback_definition (a_callback_wrapper: EWG_CALLBACK_WRAPPER; setter_stub: STRING; a_count: INTEGER): STRING
@@ -180,6 +181,13 @@ feature {NONE} -- Implementation
 				Result.append_integer (i)
 				Result.append (" (a_routine: like routine_1)")
 				Result.append ("%N")
+				Result.append ("%T%Trequire%N")
+				Result.append ("%T%T%Tis_callback_")
+				Result.append_integer (i)
+				Result.append ("_unset: is_callback_")
+				Result.append_integer (i)
+				Result.append (".available")
+				Result.append ("%N")
 				Result.append ("%T%Tdo%N")
 				Result.append ("%T%T%T")
 				Result.append (routine_name)
@@ -193,13 +201,85 @@ feature {NONE} -- Implementation
 				Result.append_integer (i)
 				Result.append (")")
 				Result.append ("%N")
+				Result.append ("%T%Tensure%N")
+				Result.append ("%T%T%Tcallback_")
+				Result.append_integer (i)
+				Result.append ("_set: not routine_")
+				Result.append_integer (i)
+				Result.append (".is_equal ( agent default_routine ) implies routine_")
+				Result.append_integer (i)
+				Result.append (".is_equal ( a_routine )%N")
 				Result.append ("%T%Tend%N")
 				Result.append ("%N")
 				i := i + 1
 			end
-
 		end
 
+	release_callback_definition (a_callback_wrapper: EWG_CALLBACK_WRAPPER; a_count: INTEGER): STRING
+		local
+			i: INTEGER
+			register_name: STRING
+			routine_name: STRING
+		do
+			register_name := "release_callback_";
+			routine_name := "routine_"
+			create Result.make (100)
+			from
+				i := 1
+			until
+				i > a_count
+			loop
+				Result.append ("%T")
+				Result.append (register_name)
+				Result.append_integer (i)
+				Result.append ("%N")
+				Result.append ("%T%Tdo%N")
+				Result.append ("%T%T%T")
+				Result.append (routine_name)
+				Result.append_integer (i)
+				Result.append (" := a_routine")
+				Result.append ("%N")
+				Result.append ("%T%Tensure%N")
+				Result.append ("%T%T%Tcallback_")
+				Result.append_integer (i)
+				Result.append ("_unset: routine_")
+				Result.append_integer (i)
+				Result.append (".is_equal ( agent default_routine )%N")
+				Result.append ("%T%Tend%N")
+				Result.append ("%N")
+				i := i + 1
+			end
+		end
+
+	status_report_callback_definition (a_callback_wrapper: EWG_CALLBACK_WRAPPER; a_count: INTEGER): STRING
+		local
+			i: INTEGER
+			register_name: STRING
+		do
+			register_name := "is_callback_";
+			create Result.make (100)
+			from
+				i := 1
+			until
+				i > a_count
+			loop
+				Result.append ("%T")
+				Result.append (register_name)
+				Result.append_integer (i)
+				Result.append ("_available: BOOLEAN")
+				Result.append ("%N")
+				Result.append ("%T%Tdo%N")
+				Result.append ("%T%T%T")
+				Result.append ("Result")
+				Result.append (" := a_routine_")
+				Result.append_integer (i)
+				Result.append (".is_equal ( agent default_routine )")
+				Result.append ("%N")
+				Result.append ("%T%Tend%N")
+				Result.append ("%N")
+				i := i + 1
+			end
+		end
 
 	routine_call (a_callback_wrapper: EWG_CALLBACK_WRAPPER; i: INTEGER): STRING
 		require
@@ -324,7 +404,81 @@ feature {NONE} -- Implementation
 			Result.append ("%N")
 		end
 
+
+	description_callback_definition: STRING = "[
+		WrapC generate code to register a few numbers of Eiffel callback receivers per callback type, at the moment the number of Eiffel callbacks receivers is defined at 3, 
+		if you need to define a different number of callbacks you can use the configuration file as follow to define a different number of callbacks per type
+		
+		<rule>
+ 			<match>
+				<identifier name=".*"/>
+				<type name="callback"/>		
+  			</match>
+  			<wrapper type="default">
+				<callbacks_per_type value="10"/>
+			</wrapper>
+		</rule>
+		
+		How to use this wrapper?
+			1. create an object instance of this class 
+				create object.make
+			2. register a callback calling the feature register_callaback_n where n is between 1 and the number of callbacks per type by default 3.
+			2.1 before to register the callback check that's available using the feature is_callback_n available.
+				if object.is_callback_n_available then
+					object.register_callack_n (agent my_eiffel_callback)
+					...
+			3. call the dispatcher
+				object.c_dispatcher_n
+			4. If you need release a callaback and register a new one, call the feature release_callabck_n
+				object.release_callback_n
+				
+		To learn more check the web: https://github.com/eiffel-wrap-c/WrapC/blob/master/doc/Readme.md#callbacks
+
+	]"
+
 feature {NONE} -- Templates
+
+	Generated_file_callback_eiffel_comment: STRING =
+		"{
+note
+
+	description: "[
+		WrapC generate code to register a few numbers of Eiffel callback receivers per callback type, by default the number of Eiffel callbacks receivers per type is 3, 
+		if you need to define a different number of callbacks per type  you can use the configuration file as follow:
+		
+		<rule>
+ 			<match>
+				<identifier name=".*"/>
+				<type name="callback"/>		
+  			</match>
+  			<wrapper type="default">
+				<callbacks_per_type value="10"/>
+			</wrapper>
+		</rule>
+		
+		identifier: Constrains the name of elements: here any identifer.
+		type: Constrains the construct type: here callback
+		callbacks_per_type: Number of callbacks iff the type name is a callback.
+		
+		How to use this wrapper?
+			1. create an object instance of this class 
+				create object.make
+			2. register a callback calling the feature register_callaback_n where n is between 1 and the number of callbacks per type by default 3.
+			2.1 before to register the callback check that's available using the feature is_callback_n_available.
+				if object.is_callback_n_available then
+					object.register_callack_n (agent my_eiffel_callback)
+					...
+			3. call the dispatcher
+				object.c_dispatcher_n
+			4. If you need to release a callaback, call the feature release_callback_n
+				object.release_callback_n
+				
+		To learn more check the web: https://github.com/eiffel-wrap-c/WrapC/blob/master/doc/Readme.md#callbacks
+	]"
+
+	generator: "Eiffel Wrapper Generator"
+      }"
+
 
 	dispatcher_class_template: STRING
 			-- $1 ... callback name in upper case
@@ -366,9 +520,17 @@ feature {NONE} -- Templates
 				"%N" +
 				"$6" +
 				"%N" +
+				"feature --Access: Status Report%N" +
+				"%N" +
+				"$11" +
+				"%N" +
 				"feature --Register: Callbacks%N" +
 				"%N" +
 				"$9" +
+				"%N" +
+				"feature --Release: Callbacks%N" +
+				"%N" +
+				"$10" +
 				"%N" +
 				"feature --Access: Default routine%N" +
 				"%N" +
