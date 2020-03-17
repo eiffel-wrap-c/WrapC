@@ -485,6 +485,7 @@ The first one is the one you have to create in order to establish the C-Eiffel b
 
 First let's check generated dispatcher class for our example
 
+
 	class SAMPLE_CALLBACK_TYPE_DISPATCHER
 
 	inherit
@@ -492,120 +493,192 @@ First let's check generated dispatcher class for our example
 		EWG_CALLBACK_CALLBACK_C_GLUE_CODE_FUNCTIONS_API
 			export {NONE} all end
 		DISPOSABLE
+
 	create
 		make
 
 	feature -- Initialization
-
+	
 		make
-					-- Dispatcher initialization
+				-- Dispatcher initialization.
 			do
-				routine_1 := agent default_routine
-				routine_2 := agent default_routine
-				routine_3 := agent default_routine
 				set_sample_callback_type_object ($Current)
 			end
 
-	feature --Access: Routine 
+	feature -- Access: Routine 
 
-		routine_1: PROCEDURE [TUPLE [a_pdata: POINTER; a_a_event_type: INTEGER]] 
-				--Eiffel routine to be call on callback.
-		routine_2: PROCEDURE [TUPLE [a_pdata: POINTER; a_a_event_type: INTEGER]] 
-				--Eiffel routine to be call on callback.
-		routine_3: PROCEDURE [TUPLE [a_pdata: POINTER; a_a_event_type: INTEGER]] 
-				--Eiffel routine to be call on callback.
-	feature --Access: Dispatcher
+		routine_1: detachable PROCEDURE [TUPLE [a_pdata: POINTER; a_a_event_type: INTEGER]] 
+			--Eiffel routine to be call on callback.
 
+		routine_2: detachable PROCEDURE [TUPLE [a_pdata: POINTER; a_a_event_type: INTEGER]] 
+			--Eiffel routine to be call on callback.
+
+		routine_3: detachable PROCEDURE [TUPLE [a_pdata: POINTER; a_a_event_type: INTEGER]] 
+			--Eiffel routine to be call on callback.
+
+	feature -- Access: Dispatcher
 
 		c_dispatcher_1: POINTER
+				-- The dispatcher `c_dispatcher_1` is connected to a C function,
+				-- that can be given to the C library as a callback target
+				-- and on the other hand the Eiffel feature `on_callback_1`
+				-- When its C function gets called, the dispatcher
+				-- calls`on_callback_1`on the Eiffel side.
 			do
 				Result := get_sample_callback_type_stub_1
 			end
 
 		c_dispatcher_2: POINTER
+				-- The dispatcher `c_dispatcher_2` is connected to a C function,
+				-- that can be given to the C library as a callback target
+				-- and on the other hand the Eiffel feature `on_callback_2`
+				-- When its C function gets called, the dispatcher
+				-- calls`on_callback_2`on the Eiffel side.
 			do
 				Result := get_sample_callback_type_stub_2
 			end
 
 		c_dispatcher_3: POINTER
+				-- The dispatcher `c_dispatcher_3` is connected to a C function,
+				-- that can be given to the C library as a callback target
+				-- and on the other hand the Eiffel feature `on_callback_3`
+				-- When its C function gets called, the dispatcher
+				-- calls`on_callback_3`on the Eiffel side.
 			do
 				Result := get_sample_callback_type_stub_3
 			end
 
-
-	feature --Access: Callback
+	feature -- Access: Callback
 
 		on_callback_1 (a_pdata: POINTER; a_a_event_type: INTEGER)  
+				-- Callback target.
 			do
-				routine_1 (a_pdata, a_a_event_type)
+				if attached routine_1 as l_routine then 
+					l_routine (a_pdata, a_a_event_type)
+				end
 			end
 
 		on_callback_2 (a_pdata: POINTER; a_a_event_type: INTEGER)  
+				-- Callback target.
 			do
-				routine_2 (a_pdata, a_a_event_type)
+				if attached routine_2 as l_routine then 
+					l_routine (a_pdata, a_a_event_type)
+				end
 			end
 
 		on_callback_3 (a_pdata: POINTER; a_a_event_type: INTEGER)  
+				-- Callback target.
 			do
-				routine_3 (a_pdata, a_a_event_type)
+				if attached routine_3 as l_routine then 
+					l_routine (a_pdata, a_a_event_type)
+				end
 			end
 
+	feature -- Access: Status Report
 
-	feature --Register: Callbacks
+		is_callback_1_available: BOOLEAN
+				-- Is callback available?
+			do
+				Result := routine_1 = Void 
+			end
+
+		is_callback_2_available: BOOLEAN
+				-- Is callback available?
+			do
+				Result := routine_2 = Void 
+			end
+
+		is_callback_3_available: BOOLEAN
+				-- Is callback available?
+			do
+				Result := routine_3 = Void 
+			end
+
+	feature -- Register: Callbacks
 
 		register_callback_1 (a_routine: like routine_1)
+				-- Register callback target `a_routine`.
+			require
+				is_callback_1_unset: is_callback_1_available
 			do
 				routine_1 := a_routine
 				set_sample_callback_type_entry_1 ($on_callback_1)
+			ensure
+				callback_1_set: attached routine_1
 			end
 
 		register_callback_2 (a_routine: like routine_1)
+				-- Register callback target `a_routine`.
+			require
+				is_callback_2_unset: is_callback_2_available
 			do
 				routine_2 := a_routine
 				set_sample_callback_type_entry_2 ($on_callback_2)
+			ensure
+				callback_2_set: attached routine_2
 			end
 
 		register_callback_3 (a_routine: like routine_1)
+				-- Register callback target `a_routine`.
+			require
+				is_callback_3_unset: is_callback_3_available
 			do
 				routine_3 := a_routine
 				set_sample_callback_type_entry_3 ($on_callback_3)
+			ensure
+				callback_3_set: attached routine_3
 			end
 
+	feature -- Release: Callbacks
 
-	feature --Access: Default routine
-
-		default_routine (a_pdata: POINTER; a_a_event_type: INTEGER)  
+		release_callback_1
+				-- Release callback target.
 			do
-				 print ("Default routine")
+				routine_1 := Void
+			ensure
+				callback_1_unset: routine_1 = Void
 			end
 
+		release_callback_2
+				-- Release callback target.
+			do
+				routine_2 := Void
+			ensure
+				callback_2_unset: routine_2 = Void
+			end
+
+		release_callback_3
+				-- Release callback target.
+			do
+				routine_3 := Void
+			ensure
+				callback_3_unset: routine_3 = Void
+			end
 
 	feature {NONE} -- Implementation
 
 		dispose
-				--Wean `Current'
+				-- Wean `Current`.
 			do
 				release_sample_callback_type_object
 				set_sample_callback_type_object (default_pointer)
 			end
 
-
 	end
 
-To overcome the limitation to only register one Eiffel callback receiver per callback type, WrapC generate code to register a few numbers of Eiffel callback receivers per callback type, at the moment the number of Eiffel callbacks receivers is defined at 3, if you need to define a different number of callbacks you can use the configuration file as follow to 
-define a different number of callbacks per type
+To overcome the limitation to only register one Eiffel callback receiver per callback type, WrapC generates code to register a few numbers of Eiffel callback receivers per callback type, by default the number of Eiffel callbacks receivers is defined at 3, if you need to define a different number of callbacks you can use the configuration file as follows to define a different number of callbacks per type
 
 	<rule>
-     <match>
- 		<identifier name=".*"/>
-        <type name="callback"/>		
-      </match>
-   	  <wrapper type="default">
-	 	    <callbacks_per_type value="10"/>
-      </wrapper>
-    </rule>
+     		<match>
+ 			<identifier name=".*"/>
+        		<type name="callback"/>		
+      		</match>
+   	  	<wrapper type="default">
+			<callbacks_per_type value="10"/>
+      		</wrapper>
+    	</rule>
 
-To use this wrapper you just need to create an object instance of `SAMPLE_CALLBACK_TYPE_DISPATCHER` to register via agent the Eiffel feature that you want to call on a callback.Then call an Eiffel function that will register the dispatcher with the C library usign `SAMPLE_CALLBACK_TYPE_DISPATCHER.c_dispatcher`. Let's look an example, taken from the callback example.
+To use this wrapper you just need to create an object instance of `SAMPLE_CALLBACK_TYPE_DISPATCHER`, then register the Eiffel feature that you want to call on a callback, using the feature `SAMPLE_CALLBACK_TYPE_DISPATCHER.register_callback_1`, before to register a callback, you should call the feature `SAMPLE_CALLBACK_TYPE_DISPATCHER.is_callback_1_available`, to be sure the callback is available. Then call an Eiffel function that will register the dispatcher with the C library usign `SAMPLE_CALLBACK_TYPE_DISPATCHER.c_dispatcher`. Let's look an example, taken from the callback example.
 
 
 	class CALLBACK_HELLO_WORLD
