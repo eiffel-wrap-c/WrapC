@@ -74,8 +74,8 @@ feature
 			-- The dispatcher is on the one side connected to a C function,
 			-- that can be given to the C library as a callback target
 			-- and on the other hand to an Eiffel object with a feature
-			-- `on_callback'. Whenn its C function gets called, the dispatcher
-			-- calls `on_callback' in the connected Eiffel object
+			-- `on_callback'. When its C function gets called, the dispatcher
+			-- calls `on_callback' in the connected Eiffel object.
 
 	anonymous_dispatcher: INT_INT_INT_ANONYMOUS_CALLBACK_DISPATCHER
 			-- function pointers as members of structs	

@@ -123,6 +123,20 @@ feature {NONE} -- Implementation
 				Result.append (dispatcher)
 				Result.append_integer (i)
 				Result.append (": POINTER%N")
+				Result.append ("%T%T%T-- The dispatcher `")
+				Result.append (dispatcher)
+				Result.append_integer (i)
+				Result.append ("` is connected to a C function,%N")
+				Result.append ("%T%T%T-- that can be given to the C library as a callback target%N")
+				Result.append ("%T%T%T-- and on the other hand the Eiffel feature ")
+				Result.append ("`on_callback_")
+				Result.append_integer (i)
+				Result.append ("`%N")
+				Result.append ("%T%T%T-- When its C function gets called, the dispatcher%N")
+				Result.append ("%T%T%T-- calls")
+				Result.append ("`on_callback_")
+				Result.append_integer (i)
+				Result.append ("`on the Eiffel side.%N")
 				Result.append ("%T%Tdo%N")
 			    Result.append ("%T%T%TResult := ")
 			    Result.append (l_name)
@@ -148,6 +162,7 @@ feature {NONE} -- Implementation
 				Result.append ("%T")
 				Result.append (on_callback_signature (a_callback_wrapper, callback_name + i.out))
 				Result.append ("%N")
+				Result.append ("%T%T%T-- Callback target.%N")
 				Result.append ("%T%Tdo%N")
 				Result.append ("%T%T%T")
 				Result.append (routine_call (a_callback_wrapper, i))
@@ -180,6 +195,7 @@ feature {NONE} -- Implementation
 				Result.append_integer (i)
 				Result.append (" (a_routine: like routine_1)")
 				Result.append ("%N")
+				Result.append ("%T%T%T-- Register callback target `a_routine`.%N")
 				Result.append ("%T%Trequire%N")
 				Result.append ("%T%T%Tis_callback_")
 				Result.append_integer (i)
@@ -229,6 +245,7 @@ feature {NONE} -- Implementation
 				Result.append (register_name)
 				Result.append_integer (i)
 				Result.append ("%N")
+				Result.append ("%T%T%T-- Release callback target.%N")
 				Result.append ("%T%Tdo%N")
 				Result.append ("%T%T%T")
 				Result.append (routine_name)
@@ -264,6 +281,7 @@ feature {NONE} -- Implementation
 				Result.append_integer (i)
 				Result.append ("_available: BOOLEAN")
 				Result.append ("%N")
+				Result.append ("%T%T%T-- Is callback available?%N")
 				Result.append ("%T%Tdo%N")
 				Result.append ("%T%T%T")
 				Result.append ("Result")
@@ -288,9 +306,11 @@ feature {NONE} -- Implementation
 			Result.append_integer ( i )
 			Result.append (" as l_routine then %N")
 			if a_callback_wrapper.return_type /= Void then
-						Result.append("%T%T%T%TResult := ")
+				Result.append("%T%T%T%TResult := ")
+				Result.append (" l_routine")
+			else
+				Result.append ("%T%T%T%Tl_routine")
 			end
-			Result.append (" l_routine")
 			Result.append (" (")
 			if a_callback_wrapper.members.count > 0 then
 				from
@@ -336,23 +356,9 @@ feature {NONE} -- Implementation
 				Result.append (": detachable ")
 				Result.append (definition)
 				Result.append ("%N")
-				Result.append ("%T%T%T--Eiffel routine to be call on callback.%N")
+				Result.append ("%T%T%T--Eiffel routine to be call on callback.%N%N")
 				i := i + 1
 			end
-		end
-
-	agent_default_routine_definition (a_callback_wrapper: EWG_CALLBACK_WRAPPER): STRING
-		do
-			create Result.make (100)
-			Result.append ("%T")
-			Result.append (on_callback_signature (a_callback_wrapper, "default_routine"))
-			Result.append ("%N")
-			Result.append ("%T%Tdo%N")
-			Result.append ("%T%T%T")
-			Result.append (" print (%"Default routine%")")
-			Result.append ("%N")
-			Result.append ("%T%Tend%N")
-			Result.append ("%N")
 		end
 
 	make_definition (a_val: STRING; a_count: INTEGER): STRING
@@ -363,20 +369,8 @@ feature {NONE} -- Implementation
 			l_routine := "routine_"
 			create Result.make (100)
 			Result.append ("%Tmake%N")
-			Result.append ("%T%T%T%T-- Dispatcher initialization%N")
+			Result.append ("%T%T%T%T-- Dispatcher initialization.%N")
 			Result.append ("%T%Tdo%N")
---			from
---				i:= 1
---			until
---				i > a_count
---			loop
---				Result.append ("%T%T%T")
---				Result.append (l_routine)
---				Result.append_integer (i)
---				Result.append (" := agent default_routine%N" )
---				i := i + 1
---			end
-
 			Result.append ("%T%T%T")
 			Result.append (a_val)
 			Result.append (" ($Current)%N")
@@ -389,7 +383,7 @@ feature {NONE} -- Implementation
 			Result.append ("%T")
 			Result.append ("dispose")
 			Result.append ("%N")
-			Result.append ("%T%T%T--Wean `Current'")
+			Result.append ("%T%T%T-- Wean `Current`.")
 			Result.append ("%N")
 			Result.append ("%T%Tdo%N")
 			Result.append ("%T%T%T")
@@ -410,8 +404,8 @@ feature {NONE} -- Templates
 note
 
 	description: "[
-		WrapC generate code to register a few numbers of Eiffel callback receivers per callback type, by default the number of Eiffel callbacks receivers per type is 3, 
-		if you need to define a different number of callbacks per type  you can use the configuration file as follow:
+		WrapC generates code to register a few numbers of Eiffel callback receivers per callback type, by default the number of Eiffel callbacks receivers per type is 3. 
+		If you need to define a different number of callbacks per type  you can use the configuration file as follows:
 		
 		<rule>
  			<match>
@@ -424,18 +418,18 @@ note
 		</rule>
 		
 		identifier: Constrains the name of elements: here any identifer.
-		type: Constrains the construct type: here callback
-		callbacks_per_type: Number of callbacks iff the type name is a callback.
+		type: Constrains the construct type: here callback.
+		callbacks_per_type: Number of callbacks.
 		
 		How to use this wrapper?
-			1. create an object instance of this class 
+			1. Create an object instance of this class 
 				create object.make
-			2. register a callback calling the feature register_callaback_n where n is between 1 and the number of callbacks per type by default 3.
-			2.1 before to register the callback check that's available using the feature is_callback_n_available.
+			2. Register a callback calling the feature register_callaback_n where n is between 1 and the number of callbacks per type by default 3.
+			2.1 Before to register the callback check that's available using the feature is_callback_n_available.
 				if object.is_callback_n_available then
 					object.register_callack_n (agent my_eiffel_callback)
 					...
-			3. call the dispatcher
+			3. Call the dispatcher
 				object.c_dispatcher_n
 			4. If you need to release a callaback, call the feature release_callback_n
 				object.release_callback_n
@@ -467,6 +461,7 @@ note
 				"%T%Texport {NONE} all end"+
 				"%N" +
 				"%TDISPOSABLE%N"+
+				"%N" +
 				"create" +
 				"%N" +
 				"%Tmake" +
@@ -476,27 +471,26 @@ note
 				"%N" +
 				"$2" +
 				"%N" +
-				"feature --Access: Routine %N" +
+				"feature -- Access: Routine %N" +
 				"%N" +
 				"$5" +
-				"%N" +
-				"feature --Access: Dispatcher%N" +
+				"feature -- Access: Dispatcher%N" +
 				"%N" +
 				"$3" +
 				"%N" +
-				"feature --Access: Callback%N" +
+				"feature -- Access: Callback%N" +
 				"%N" +
 				"$6" +
 				"%N" +
-				"feature --Access: Status Report%N" +
+				"feature -- Access: Status Report%N" +
 				"%N" +
 				"$10" +
 				"%N" +
-				"feature --Register: Callbacks%N" +
+				"feature -- Register: Callbacks%N" +
 				"%N" +
 				"$8" +
 				"%N" +
-				"feature --Release: Callbacks%N" +
+				"feature -- Release: Callbacks%N" +
 				"%N" +
 				"$9" +
 				"%N" +
