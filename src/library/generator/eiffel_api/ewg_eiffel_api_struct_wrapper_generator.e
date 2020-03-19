@@ -504,7 +504,7 @@ feature -- Generate Eiffel API
 					output_stream.put_line ("%T%Tend")
 					output_stream.put_new_line
 
-					if not a_c_declaration.type.skip_consts_and_aliases.is_array_type then
+					if not a_c_declaration.type.skip_consts_and_aliases.is_array_type and not a_c_declaration.type.is_const_type then
 						-- the setter
 						output_stream.put_string ("%Tset_")
 						output_stream.put_string (escaped_mapped_eiffel_name)
@@ -557,7 +557,7 @@ feature -- Generate Eiffel API
 					output_stream.put_line ("%T%Tend")
 					output_stream.put_new_line
 
-					if not a_c_declaration.type.skip_consts_and_aliases.is_array_type then
+					if not a_c_declaration.type.skip_consts_and_aliases.is_array_type and not a_c_declaration.type.is_const_type then
 									-- the setter
 						output_stream.put_string ("%Tset_")
 						output_stream.put_string (escaped_mapped_eiffel_name)
@@ -636,7 +636,7 @@ feature -- Generate Eiffel API
 					output_stream.put_new_line
 
 
-					if not a_struct_wrapper.c_declaration.type.skip_consts_and_aliases.is_array_type then
+					if not a_struct_wrapper.c_declaration.type.skip_consts_and_aliases.is_array_type and not a_struct_wrapper.c_declaration.type.is_const_type then
 						-- the setter
 						output_stream.put_string ("%Tset_")
 						output_stream.put_string (a_struct_wrapper.mapped_eiffel_name)
@@ -688,7 +688,7 @@ feature -- Generate Eiffel API
 					output_stream.put_line ("%T%Tend")
 					output_stream.put_new_line
 
-					if not a_struct_wrapper.c_declaration.type.skip_consts_and_aliases.is_array_type then
+					if not a_struct_wrapper.c_declaration.type.skip_consts_and_aliases.is_array_type and not a_struct_wrapper.c_declaration.type.is_const_type then
 									-- the setter
 						output_stream.put_string ("%Tset_")
 						output_stream.put_string (escaped_struct_feature_name (a_struct_wrapper.mapped_eiffel_name))
@@ -812,7 +812,7 @@ feature -- Generate Eiffel API
 						output_stream.put_new_line
 					end
 					if
-						not a_c_declaration.type.skip_consts_and_aliases.is_array_type
+						not a_c_declaration.type.skip_consts_and_aliases.is_array_type and not a_c_declaration.type.is_const_type
 					then
 							-- the setter
 						output_stream.put_string ("%Tset_")
@@ -1122,7 +1122,7 @@ feature -- Generate Eiffel low level C API
 														a_struct_wrapper.header_file_name,
 														type_name,
 														cast_with_one_pointer_indirection)
-						if not cs.item.type.skip_consts_and_aliases.is_array_type then
+						if not cs.item.type.skip_consts_and_aliases.is_array_type and not cs.item.type.is_const_type then
 							generate_member_setter (cs.item,
 															escaped_struct_name,
 															a_struct_wrapper.header_file_name,
