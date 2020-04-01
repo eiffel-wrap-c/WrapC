@@ -60,6 +60,7 @@ feature
 				a_string.append_string ("?members?")
 				from
 					cs := l_members.new_cursor
+					cs.start
 				until
 					cs.off
 				loop
