@@ -16,6 +16,7 @@ inherit
 
 	KL_IMPORTED_STRING_ROUTINES
 		export {NONE} all end
+	ANY
 
 
 feature {NONE} -- Initialization

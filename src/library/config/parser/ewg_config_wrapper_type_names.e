@@ -16,6 +16,7 @@ inherit
 
 	EWG_SHARED_STRING_EQUALITY_TESTER
 		export {NONE} all end
+	ANY
 
 feature -- Constants
 
