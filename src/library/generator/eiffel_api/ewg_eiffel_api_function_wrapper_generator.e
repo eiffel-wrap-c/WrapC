@@ -516,6 +516,9 @@ feature {NONE} -- Generate Eiffel Routine calls
 						output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
 						output_stream.put_string (".code")
 					end
+				elseif attached {EWG_C_AST_PRIMITIVE_TYPE} l_ast_array.skip_const_pointer_and_array_types as l_base  then
+					output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
+					output_stream.put_string (".area.base_address")
 				else
 					output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
 				end

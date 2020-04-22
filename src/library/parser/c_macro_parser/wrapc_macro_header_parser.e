@@ -144,7 +144,6 @@ feature {NONE} -- Parser implementation
 
 	skip_white_spaces
 			-- Remove white spaces
-		local
 		do
 			from
 			until
