@@ -22,6 +22,7 @@ inherit
 
 	EWG_C_AST_SHARED_DECLARATION_EQUALITY_TESTER
 		export {NONE} all end
+	ANY
 
 create
 

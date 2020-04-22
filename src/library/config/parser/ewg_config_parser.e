@@ -28,6 +28,7 @@ inherit
 
 	EWG_CONFIG_SHARED_CONSTRUCT_TYPE_NAMES
 		export {NONE} all end
+	ANY
 
 create
 

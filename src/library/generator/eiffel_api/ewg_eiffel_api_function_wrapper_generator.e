@@ -946,14 +946,21 @@ feature {NONE} -- Generate Eiffel to C inline code.
 					function_type.return_type.skip_consts_and_aliases.is_struct_type or
 						function_type.return_type.skip_consts_and_aliases.is_union_type
 				then
-					create pointer.make (function_type.return_type.header_file_name, function_type.return_type)
-					c_declaration_printer.print_declaration_from_type (pointer, "result")
-					output_stream.put_string (" = ")
-					c_cast_printer.print_declaration_from_type (pointer, "")
-					output_stream.put_string (" malloc (sizeof(")
-					c_declaration_printer.print_declaration_from_type (function_type.return_type, "")
-					output_stream.put_line ("));")
-					output_stream.put_string ("%T%T%T%T*result = ")
+					if (attached {EWG_C_AST_STRUCT_TYPE} function_type.return_type.skip_consts_and_aliases as l_struct and then attached l_struct.members as  l_members and then has_member_const (l_members)) or else
+						(attached {EWG_C_AST_UNION_TYPE} function_type.return_type.skip_consts_and_aliases as l_union and then attached l_union.members as  l_members and then has_member_const (l_members))
+					 then
+						c_declaration_printer.print_declaration_from_type (function_type.return_type, "temp")
+						output_stream.put_string (" = ")
+					else
+						create pointer.make (function_type.return_type.header_file_name, function_type.return_type)
+						c_declaration_printer.print_declaration_from_type (pointer, "result")
+						output_stream.put_string (" = ")
+						c_cast_printer.print_declaration_from_type (pointer, "")
+						output_stream.put_string (" malloc (sizeof(")
+						c_declaration_printer.print_declaration_from_type (function_type.return_type, "")
+						output_stream.put_line ("));")
+						output_stream.put_string ("%T%T%T%T*result = ")
+					end
 				else
 					output_stream.put_string ("return ")
 				end
@@ -971,12 +978,50 @@ feature {NONE} -- Generate Eiffel to C inline code.
 					function_type.return_type.skip_consts_and_aliases.is_struct_type or
 						function_type.return_type.skip_consts_and_aliases.is_union_type
 				then
-					output_stream.put_line (";")
+					if attached {EWG_C_AST_STRUCT_TYPE} function_type.return_type.skip_consts_and_aliases as l_struct and then attached l_struct.members as  l_members and then has_member_const (l_members) or else
+						attached {EWG_C_AST_UNION_TYPE} function_type.return_type.skip_consts_and_aliases as l_union and then attached l_union.members as  l_members and then has_member_const (l_members)
+					then
+						output_stream.put_line (";")
+						output_stream.put_string ("%T%T%T%T")
+						create pointer.make (function_type.return_type.header_file_name, function_type.return_type)
+						c_declaration_printer.print_declaration_from_type (pointer, "result")
+						output_stream.put_string (" = ")
+						c_cast_printer.print_declaration_from_type (pointer, "")
+						output_stream.put_string (" malloc (sizeof(")
+						c_declaration_printer.print_declaration_from_type (function_type.return_type, "")
+						output_stream.put_line ("));")
+						output_stream.put_line ("%T%T%T%Tif (result == NULL) {")
+						output_stream.put_line ("%T%T%T%T%Treturn NULL;")
+						output_stream.put_line ("%T%T%T%T}")
+						output_stream.put_string ("%T%T%T%Tmemcpy(result, &temp, sizeof(")
+						c_declaration_printer.print_declaration_from_type (function_type.return_type, "")
+						output_stream.put_line ("));")
+					else
+						output_stream.put_line (";")
+					end
 					output_stream.put_string ("%T%T%T%Treturn result")
 				end
 			end
 			output_stream.put_character (';')
 			output_stream.put_new_line
+		end
+
+
+	has_member_const (a_members: DS_ARRAYED_LIST [EWG_C_AST_DECLARATION]): BOOLEAN
+		local
+			cs: DS_BILINEAR_CURSOR [EWG_C_AST_DECLARATION]
+		do
+			from
+				cs := a_members.new_cursor
+				cs.start
+			until
+				cs.off or Result
+			loop
+				if cs.item.type.is_const_type then
+					Result := True
+				end
+				cs.forth
+			end
 		end
 
 

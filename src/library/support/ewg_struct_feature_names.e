@@ -17,6 +17,8 @@ inherit
 	EWG_SHARED_STRING_EQUALITY_TESTER
 		export {NONE} all end
 
+	ANY
+
 create {EWG_SHARED_STRUCT_FEATURE_NAMES}
 
 	make

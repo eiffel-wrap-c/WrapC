@@ -19,6 +19,8 @@ inherit
 
 	EWG_SHARED_EIFFEL_COMPILER_NAMES
 		export {NONE} all end
+	ANY
+
 
 create
 
