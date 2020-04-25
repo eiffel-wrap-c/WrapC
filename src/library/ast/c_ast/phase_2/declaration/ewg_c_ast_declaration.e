@@ -74,6 +74,15 @@ feature {ANY} -- Setting
 			type_set: type = a_type
 		end
 
+
+	set_declarator (a_declarator: STRING)
+			-- Rename a delcarator `declarator` with `a_declarator`.
+		do
+			declarator := a_declarator
+		ensure
+			declarator_set: declarator = a_declarator
+		end
+
 feature {ANY}
 
 	is_anonymous: BOOLEAN
