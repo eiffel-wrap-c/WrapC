@@ -119,6 +119,7 @@ feature {ANY} -- Basic Routines
 			if attached {EWG_C_AST_FUNCTION_DECLARATION} a_declaration as function_declaration then
 				function_wrapper := a_eiffel_wrapper_set.function_wrapper_from_function_declaration (function_declaration)
 				if attached function_declaration.function_type.members as l_members then
+					rename_function_parameter_duplicate (l_members)
 					from
 						cs := l_members.new_cursor
 						cs.start
@@ -146,6 +147,46 @@ feature {ANY} -- Basic Routines
 		end
 
 feature {NONE}
+
+
+	rename_function_parameter_duplicate (members: DS_ARRAYED_LIST [EWG_C_AST_DECLARATION])
+		local
+			cs_out: DS_BILINEAR_CURSOR [EWG_C_AST_DECLARATION]
+			cs_in: DS_BILINEAR_CURSOR [EWG_C_AST_DECLARATION]
+			j, i, k: INTEGER
+			out_item: EWG_C_AST_DECLARATION
+			in_item: EWG_C_AST_DECLARATION
+		do
+			from
+				cs_out := members.new_cursor
+				cs_out.start
+				j := 1
+			until
+				cs_out.off
+			loop
+				out_item :=  cs_out.item
+				from
+					i := j + 1
+					k := 1
+				until
+					i > members.count
+				loop
+
+					in_item := members.at (i)
+					if attached in_item.declarator as in_declarator and then
+						attached out_item.declarator as out_declarator and then
+						in_declarator.is_case_insensitive_equal (out_declarator)
+					then
+							-- Rename in declarator
+						 in_item.set_declarator (in_declarator + "_" + k.out)
+						 k := k + 1
+					end
+					i := i + 1
+				end
+				j := j + 1
+				cs_out.forth
+			end
+		end
 
 
 	wrap_function_parameter (a_function_wrapper: EWG_FUNCTION_WRAPPER;
