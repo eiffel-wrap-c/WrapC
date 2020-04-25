@@ -5,8 +5,7 @@ It can be used to create libraries that bridge the gap between Eiffel and C. It 
 
 
 ## WrapC Status
-Wrap C is a new version of an old project named [EWG](http://www.sourceforge.net/projects/ewg).
-It was updated to use the latest Eiffel version. `WrapC` generates Eiffel wrappers using inline externals whenever is possible.  Updated callback code generation to usign agent to register Eiffel feature to be called after a callback. Updated framework to automate building libraries and applications that use Wrap_c.
+Wrap C is a new version of an old project named [EWG](http://www.sourceforge.net/projects/ewg). It was updated to use the latest Eiffel version. WrapC generates Eiffel wrappers using inline externals whenever is possible. Updated callback code generation to use an agent to register the Eiffel feature to be called after a callback. Updated framework to automate building libraries and applications that use WrapC.
 
 ### Current Features
 
