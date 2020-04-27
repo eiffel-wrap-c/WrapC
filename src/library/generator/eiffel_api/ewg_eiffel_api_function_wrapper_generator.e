@@ -325,11 +325,15 @@ feature {NONE} -- Generate Eiffel High Level Access
 						-- todo check
 					if l_ast_array.corresponding_eiffel_type.has_substring ("POINTER") then
 						if l_base.is_char_type then
-							output_stream.put_string ("STRING")
+								-- Using C_STRING instead of STRING
+								-- output_stream.put_string ("STRING")
+							output_stream.put_string ("C_STRING")
 						else
-							output_stream.put_string ("ARRAY [")
-							output_stream.put_string (l_base.corresponding_eiffel_type_api)
-							output_stream.put_string ("]")
+								-- Using MANGED_POINTER instead of ARRAY [TYPE]
+								-- output_stream.put_string ("ARRAY [")
+								-- output_stream.put_string (l_base.corresponding_eiffel_type_api)
+								-- output_stream.put_string ("]")
+							output_stream.put_string ("MANAGED_POINTER")
 						end
 					else
 						output_stream.put_string ("CHARACTER")
@@ -338,35 +342,21 @@ feature {NONE} -- Generate Eiffel High Level Access
 					attached l_alias.name as l_name and then l_name.has_substring ("wchar")
 				then
 					if l_ast_array.corresponding_eiffel_type.has_substring ("POINTER") then
-						output_stream.put_string ("STRING_32")
+							-- Using NATIVE_STRING instead of STRING_32
+							-- output_stream.put_string ("STRING_32")
+							output_stream.put_string ("NATIVE_STRING")
 					else
 						output_stream.put_string ("CHARACTER_32")
 					end
 				elseif attached {EWG_C_AST_PRIMITIVE_TYPE} l_ast_array.skip_const_pointer_and_array_types as l_base  then
-					output_stream.put_string ("ARRAY [")
-					output_stream.put_string (l_base.corresponding_eiffel_type_api)
-					output_stream.put_string ("]")
+						-- Using MANAGED_POINTER instead of ARRAY [TYPE]
+						-- output_stream.put_string ("ARRAY [")
+						-- output_stream.put_string (l_base.corresponding_eiffel_type_api)
+						-- output_stream.put_string ("]")
+					output_stream.put_string ("MANAGED_POINTER")
 				else
 					output_stream.put_string (a_native_member_wrapper.eiffel_type)
 				end
---			elseif attached {EWG_C_AST_ALIAS_TYPE} a_native_member_wrapper.c_declaration.type as l_ast_alias and then
---				attached {EWG_C_AST_POINTER_TYPE} l_ast_alias.base as l_base_type and then
---				attached {EWG_C_AST_POINTER_TYPE} l_base_type.base as l_type then
---					output_stream.put_string (a_native_member_wrapper.mapped_eiffel_name)
---					output_stream.put_string (": ")
---								-- TODO check\
---					if attached {EWG_C_AST_PRIMITIVE_TYPE} l_type.skip_wrapper_irrelevant_types as l_base then
---						output_stream.put_string ("ARRAY [")
---						if l_base.is_char_type then
---							output_stream.put_string ("STRING")
---						else
---							output_stream.put_string (l_base.corresponding_eiffel_type_api)
---						end
---						output_stream.put_string ("]")
-
---					else
---						output_stream.put_string (a_native_member_wrapper.eiffel_type)
---					end
 			elseif attached {EWG_C_AST_STRUCT_TYPE} a_native_member_wrapper.c_declaration.type as l_ast_struct then
 				output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
 				output_stream.put_string (": ")
@@ -413,12 +403,16 @@ feature {NONE} -- Generate Eiffel High Level Access
 			elseif is_char_pointer_type (a_native_member_wrapper.c_declaration) then
 				output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
 				output_stream.put_string (": ")
-				output_stream.put_string ("STRING")
+				-- Using C_STRING instead of STRING
+				-- output_stream.put_string ("STRING")
+				output_stream.put_string ("C_STRING")
 			elseif is_unicode_char_pointer_type (a_native_member_wrapper.c_declaration) then
 				output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
 				output_stream.put_string (": ")
 				if a_native_member_wrapper.c_declaration.type.corresponding_eiffel_type.has_substring ("POINTER") then
-					output_stream.put_string ("STRING_32")
+					-- Using NATIVE_STRING instead of STRING_32
+					-- output_stream.put_string ("STRING_32")
+					output_stream.put_string ("NATIVE_STRING")
 				else
 					output_stream.put_string ("CHARACTER_32")
 				end
@@ -490,74 +484,69 @@ feature {NONE} -- Generate Eiffel Routine calls
 			elseif attached {EWG_C_AST_ARRAY_TYPE} a_native_member_wrapper.c_declaration.type as l_ast_array then
 				if attached {EWG_C_AST_PRIMITIVE_TYPE} l_ast_array.base as l_base then
 					if a_native_member_wrapper.c_declaration.type.corresponding_eiffel_type.has_substring ("POINTER") then
-						if l_base.is_char_type then
-							output_stream.put_string ( "(create {C_STRING}.make (")
-							output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
-							output_stream.put_string ( ")).item")
-						else
-							output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
-							output_stream.put_string (".area.base_address")
-						end
+						 -- Using now C_STRING or MANAGED_POINTER
+						-- if l_base.is_char_type then
+						--	output_stream.put_string ( "(create {C_STRING}.make (")
+						--	output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
+						--	output_stream.put_string ( ")).item")
+						-- else
+						--	output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
+						--	output_stream.put_string (".area.base_address")
+						--end
+						output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
+						output_stream.put_string (".item")
 					else
+							-- TODO generate a test case to check this.
+							-- CHARACTER?
 						output_stream.put_string (a_native_member_wrapper.mapped_eiffel_name)
 						output_stream.put_string (".code")
 					end
 				elseif attached {EWG_C_AST_POINTER_TYPE} l_ast_array.base as l_base and then attached {EWG_C_AST_PRIMITIVE_TYPE} l_ast_array.skip_const_pointer_and_array_types then
+					-- Using MANAGED_POINTER instead of ARRAY [TYPE]
+					--output_stream.put_string (".area.base_address")
 					output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
-					output_stream.put_string (".area.base_address")
+					output_stream.put_string (".item")
 				elseif attached {EWG_C_AST_ALIAS_TYPE} l_ast_array.skip_const_pointer_and_array_types as l_alias and then
 						attached l_alias.name as l_name and then l_name.has_substring ("wchar")
 				then
 					if a_native_member_wrapper.c_declaration.type.corresponding_eiffel_type.has_substring ("POINTER") then
-						output_stream.put_string ( "(create {NATIVE_STRING}.make (")
+						-- Using NATIVE_STRING instead of STRING_32
+						-- output_stream.put_string ( "(create {NATIVE_STRING}.make (")
+						-- output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
+						-- output_stream.put_string ( ")).item")
 						output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
-						output_stream.put_string ( ")).item")
+						output_stream.put_string (".item")
 					else
+						-- TODO generate a test case to check this.
+						-- CHARACTER_32?
 						output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
 						output_stream.put_string (".code")
 					end
 				elseif attached {EWG_C_AST_PRIMITIVE_TYPE} l_ast_array.skip_const_pointer_and_array_types as l_base  then
+					-- Using MANAGED_POINTER instead of ARRAY [TYPE]
+					--output_stream.put_string (".area.base_address")
 					output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
-					output_stream.put_string (".area.base_address")
+					output_stream.put_string (".item")
 				else
 					output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
 				end
---					if a_native_member_wrapper.c_declaration.type.corresponding_eiffel_type.has_substring ("POINTER") then
---						if l_type.is_char_type then
---							output_stream.put_string ( "(create {C_STRING}.make (")
---							output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
---							output_stream.put_string ( ")).item")
---						else
---							output_stream.put_string (eiffel_parameter_name_from_c_parameter_name(a_native_member_wrapper.mapped_eiffel_name))
---							output_stream.put_string (".area.base_address")
---						end
---					else
---						output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
---						output_stream.put_string (".code")
---					end
---				else
---					output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
---					output_stream.put_string (".area.base_address")
---				end
---			elseif attached {EWG_C_AST_ALIAS_TYPE} a_native_member_wrapper.c_declaration.type as l_ast_alias and then  --char **
---				attached {EWG_C_AST_POINTER_TYPE} l_ast_alias.base as l_base_type and then
---				attached {EWG_C_AST_POINTER_TYPE} l_base_type.base as l_type and then
---				attached {EWG_C_AST_PRIMITIVE_TYPE} l_type.skip_wrapper_irrelevant_types as l_primitive and then
---				l_primitive.is_char_type
---			then
---				output_stream.put_string ("l_")
---				output_stream.put_string (a_native_member_wrapper.mapped_eiffel_name)
---				output_stream.put_string (".item")
 			elseif is_char_pointer_type (a_native_member_wrapper.c_declaration) then
-				output_stream.put_string (" (create {C_STRING}.make (")
+				-- Using C_STRING instead of STRING
+				-- output_stream.put_string (" (create {C_STRING}.make (")
+				-- output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
+				-- output_stream.put_string (")).item")
 				output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
-				output_stream.put_string (")).item")
+				output_stream.put_string (".item")
 			elseif is_unicode_char_pointer_type (a_native_member_wrapper.c_declaration) then
 				if a_native_member_wrapper.c_declaration.type.corresponding_eiffel_type.has_substring ("POINTER") then
-					output_stream.put_string (" (create {NATIVE_STRING}.make (")
+					-- Using NATIVE_STRING instead of STRING_32
+					--output_stream.put_string (" (create {NATIVE_STRING}.make (")
+					--output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
+					--output_stream.put_string (")).item")
 					output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
-					output_stream.put_string (")).item")
+					output_stream.put_string (".item")
 				else
+					-- TODO check CHARACTER_32?
 					output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
 					output_stream.put_string (".code")
 				end

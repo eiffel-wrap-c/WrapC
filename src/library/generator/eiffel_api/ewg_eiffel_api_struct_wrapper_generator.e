@@ -760,7 +760,15 @@ feature -- Generate Eiffel API
 						output_stream.put_string (" detachable ")
 					end
 
-					output_stream.put_string (a_c_declaration.type.corresponding_eiffel_type_api )
+						-- Using C_STRING instead of STRING
+						-- and NATIVE_STRING instead of STRING_32
+					if a_c_declaration.type.corresponding_eiffel_type_api.same_string ("STRING") then
+						output_stream.put_string ("C_STRING" )
+					elseif a_c_declaration.type.corresponding_eiffel_type_api.same_string ("STRING_32")  then
+						output_stream.put_string ("NATIVE_STRING" )
+					else
+						output_stream.put_string (a_c_declaration.type.corresponding_eiffel_type_api )
+					end
 					output_stream.put_new_line
 
 					output_stream.put_string ("%T%T%T-- Access member `")
@@ -776,28 +784,34 @@ feature -- Generate Eiffel API
 						output_stream.put_string ("%T%T%Tif attached c_")
 						output_stream.put_string (eiffel_member_name)
 						output_stream.put_line (" (item) as l_ptr then")
-						output_stream.put_line ("%T%T%T%TResult := (create {C_STRING}.make_by_pointer (l_ptr)).string")
+						-- Using C_STRING instead of STRING
+						--output_stream.put_line ("%T%T%T%TResult := (create {C_STRING}.make_by_pointer (l_ptr)).string")
+						output_stream.put_line ("%T%T%T%Tcreate Result.make_by_pointer (l_ptr)")
 						output_stream.put_line ("%T%T%Tend")
 
 						output_stream.put_line ("%T%Tensure")
 						output_stream.put_string ("%T%T%Tresult_void: Result = Void implies c_")
 						output_stream.put_string (eiffel_member_name)
 						output_stream.put_line (" (item) = default_pointer")
-						output_stream.put_line ("%T%T%Tresult_not_void: attached Result as l_result implies l_result.same_string ((create {C_STRING}.make_by_pointer (item)).string)")
+						--output_stream.put_line ("%T%T%Tresult_not_void: attached Result as l_result implies l_result.same_string ((create {C_STRING}.make_by_pointer (item)).string)")
+						output_stream.put_line ("%T%T%Tresult_not_void: attached Result as l_result implies l_result.string.same_string ((create {C_STRING}.make_by_pointer (item)).string)")
 						output_stream.put_line ("%T%Tend")
 						output_stream.put_new_line
 					elseif is_unicode_char_pointer_type (a_c_declaration) then
 						output_stream.put_string ("%T%T%Tif attached c_")
 						output_stream.put_string (eiffel_member_name)
 						output_stream.put_line (" (item) as l_ptr then")
-						output_stream.put_line ("%T%T%T%TResult := (create {NATIVE_STRING}.make_from_pointer (l_ptr)).string")
+						-- Using NATIVE_STRING instead of STRING_32
+						--output_stream.put_line ("%T%T%T%TResult := (create {NATIVE_STRING}.make_from_pointer (l_ptr)).string")
+						output_stream.put_line ("%T%T%T%Tcreate Result.make_from_pointer (l_ptr)")
 						output_stream.put_line ("%T%T%Tend")
 
 						output_stream.put_line ("%T%Tensure")
 						output_stream.put_string ("%T%T%Tresult_void: Result = Void implies c_")
 						output_stream.put_string (eiffel_member_name)
 						output_stream.put_line (" (item) = default_pointer")
-						output_stream.put_line ("%T%T%Tresult_not_void: attached Result as l_result implies l_result.same_string ((create {NATIVE_STRING}.make_from_pointer (item)).string)")
+						--output_stream.put_line ("%T%T%Tresult_not_void: attached Result as l_result implies l_result.same_string ((create {NATIVE_STRING}.make_from_pointer (item)).string)")
+						output_stream.put_line ("%T%T%Tresult_not_void: attached Result as l_result implies l_result.string.same_string ((create {NATIVE_STRING}.make_from_pointer (item)).string)")
 						output_stream.put_line ("%T%Tend")
 						output_stream.put_new_line
 					else
@@ -818,7 +832,14 @@ feature -- Generate Eiffel API
 						output_stream.put_string ("%Tset_")
 						output_stream.put_string (a_mapped_eiffel_name)
 						output_stream.put_string (" (a_value: ")
-						output_stream.put_string (a_c_declaration.type.corresponding_eiffel_type_api)
+						if a_c_declaration.type.corresponding_eiffel_type_api.same_string ("STRING") then
+							output_stream.put_string ("C_STRING" )
+						elseif a_c_declaration.type.corresponding_eiffel_type_api.same_string ("STRING_32")  then
+							output_stream.put_string ("NATIVE_STRING" )
+						else
+							output_stream.put_string (a_c_declaration.type.corresponding_eiffel_type_api )
+						end
+						--output_stream.put_string (a_c_declaration.type.corresponding_eiffel_type_api)
 						output_stream.put_string (") ")
 						output_stream.put_new_line
 
@@ -835,11 +856,15 @@ feature -- Generate Eiffel API
 						if is_char_pointer_type (a_c_declaration)   then
 							output_stream.put_string ("%T%T%Tset_c_")
 							output_stream.put_string (eiffel_member_name)
-							output_stream.put_line (" (item, (create {C_STRING}.make (a_value)).item )")
+							--Using C_STRING instead of STRING
+							--output_stream.put_line (" (item, (create {C_STRING}.make (a_value)).item )")
+							output_stream.put_line (" (item, a_value.item )")
 						elseif is_unicode_char_pointer_type (a_c_declaration) then
 							output_stream.put_string ("%T%T%Tset_c_")
 							output_stream.put_string (eiffel_member_name)
-							output_stream.put_line (" (item, (create {NATIVE_STRING}.make (a_value)).item )")
+							-- Using NATIVE_STRING instead of STRING_32
+							--output_stream.put_line (" (item, (create {NATIVE_STRING}.make (a_value)).item )")
+							output_stream.put_line (" (item, a_value.item )")
 						else
 							output_stream.put_string ("%T%T%Tset_c_")
 							output_stream.put_string (eiffel_member_name)
