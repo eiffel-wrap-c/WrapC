@@ -61,16 +61,16 @@ feature
 
 			create preferences.make
 			preferences.set_a (8)
-			preferences.set_food ("Pasta")
+			preferences.set_food (create {C_STRING}.make ("Pasta"))
 
 			create person.make
 			person.set_age (30)
-			person.set_name ("Joe")
+			person.set_name (create {C_STRING}.make ("Joe"))
 			person.set_pref (preferences)
 
-			print ("%NPerson Name:" + if attached person.name as l_name then l_name else "" end)
+			print ("%NPerson Name:" + if attached person.name as l_name then l_name.string else "" end)
 			print ("%NPerson Age:"  + person.age.out)
-			print ("%NPerson food preference: " + if attached person.pref as l_pref and then attached l_pref.food as l_food then l_food else "" end)
+			print ("%NPerson food preference: " + if attached person.pref as l_pref and then attached l_pref.food as l_food then l_food.string else "" end)
 			print ("%NPerson value preference: " + if attached person.pref as l_pref then l_pref.a.out else "" end )
 
 		end

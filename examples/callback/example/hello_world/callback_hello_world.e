@@ -55,8 +55,6 @@ feature
 			if attached get_function_table as l_table then
 				create function_table.make_by_pointer (l_table.item)
 					-- Call it using the appropriate caller
-					-- Create
-				anonymous_dispatcher.register_callback_1 (agent sum)
 				i := anonymous_dispatcher.call_int_int_int_anonymous_callback (function_table.callme, 7, 10)
 
 
