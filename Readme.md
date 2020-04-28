@@ -31,5 +31,5 @@ The [Getting started](./doc/Readme.md) lets you discover the `WrapC` tool.
 The [Developer guide](./doc/developer/Readme.md) lets you know how to build `WrapC` tool.
 
 
-### List of WrapC Library
+### WrapC Libraries
 For an up-to-date list of WrapC based wrapper libraries please visit the WrapC Homepage organization.
