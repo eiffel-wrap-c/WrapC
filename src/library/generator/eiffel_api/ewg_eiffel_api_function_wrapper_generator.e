@@ -422,7 +422,14 @@ feature {NONE} -- Generate Eiffel High Level Access
 			else
 				output_stream.put_string (eiffel_parameter_name_from_c_parameter_name (a_native_member_wrapper.mapped_eiffel_name))
 				output_stream.put_string (": ")
-				output_stream.put_string (a_native_member_wrapper.eiffel_type)
+				if attached {EWG_C_AST_POINTER_TYPE} a_native_member_wrapper.c_declaration.type as l_type and then
+				   attached {EWG_C_AST_PRIMITIVE_TYPE} l_type.base as l_base then
+					output_stream.put_string ("TYPED_POINTER [")
+					output_stream.put_string (l_base.corresponding_eiffel_type)
+					output_stream.put_string ("]")
+				else
+					output_stream.put_string (a_native_member_wrapper.eiffel_type)
+				end
 			end
 		end
 
