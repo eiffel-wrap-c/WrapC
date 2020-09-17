@@ -22,6 +22,12 @@ void getFloatValue(float* count );
 // return a value of type double the output parameter `count`.
 void getDoubleValue(double* count );
 
+// return a value of type double the output parameter `count`.
+void getCharValue(char* val );
+
+// return a value of type double the output parameter `count`.
+void getUnsingedCharValue(unsigned char* val );
+
 #endif
 
 // Implementation
@@ -49,8 +55,6 @@ void getUnsignedLongValue(unsigned long* count ){
  	* count = 10;
 }
 
-
-
 void getFloatValue(float* count ){
  	
  		
@@ -61,6 +65,16 @@ void getFloatValue(float* count ){
 void getDoubleValue(double* count ){
  	
  	* count = (double) 3.142857;
+}
+
+void getCharValue(char* val ){
+ 	
+ 	* val = 97;
+}
+
+void getUnsingedCharValue(unsigned char* val ){
+ 	
+ 	* val = 97;
 }
 
 #endif
