@@ -830,7 +830,15 @@ feature {NONE} -- Generate Eiffel to C inline code.
 						parameter_name_generator.generate_new_name
 					end
 					output_stream.put_string (": ")
-					output_stream.put_string (cs.item.type.corresponding_eiffel_type)
+					if attached {EWG_C_AST_POINTER_TYPE} cs.item.type as l_type and then
+					   attached {EWG_C_AST_PRIMITIVE_TYPE} l_type.base as l_base
+					then
+						output_stream.put_string ("TYPED_POINTER [")
+						output_stream.put_string (l_base.corresponding_eiffel_type)
+						output_stream.put_string ("]")
+					else
+						output_stream.put_string (cs.item.type.corresponding_eiffel_type)
+					end
 					if not cs.is_last then
 						output_stream.put_string ("; ")
 					end
