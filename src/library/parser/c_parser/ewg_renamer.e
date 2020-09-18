@@ -355,10 +355,7 @@ feature {NONE} -- Implementation
 			if eiffel_keywords.has (lower) then
 				create Result.make_from_string ("a_")
 				Result.append_string (a_name)
-			else
-				Result := a_name
-			end
-			if any_feature_names.has (lower) then
+			elseif any_feature_names.has (lower) then
 				create Result.make_from_string ("a_")
 				Result.append_string (a_name)
 			else
@@ -386,12 +383,10 @@ feature {NONE} -- Implementation
 			if eiffel_keywords.has (lower) then
 				Result := Result.twin
 				Result.append_string ("_")
-			end
-			if any_feature_names.has (lower) then
+			elseif any_feature_names.has (lower) then
 				Result := Result.twin
 				Result.append_string ("_")
-			end
-			if struct_feature_names.has (lower) then
+			elseif struct_feature_names.has (lower) then
 				Result := Result.twin
 				Result.append_string ("_")
 			end
