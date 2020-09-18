@@ -21,7 +21,6 @@ inherit
 				make_internal
 		end
 
-
 create
 	make
 
