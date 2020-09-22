@@ -42,10 +42,4 @@ feature {NONE} -- Initialization
 		end
 
 
-	c_define
-		external "C inline"
-		alias
-			"#define WRAPC_TESTING_IMPL"
-		end
-
 end
