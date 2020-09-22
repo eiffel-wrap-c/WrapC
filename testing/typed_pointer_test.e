@@ -79,13 +79,6 @@ feature -- Test routines
 			assert ("Expected c = a", c = 'a')
 		end
 
-feature {NONE} -- Implementation
-
-	c_define
-		external "C inline"
-		alias
-			"#define WRAPC_TESTING_IMPL"
-		end
 end
 
 
