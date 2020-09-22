@@ -6,7 +6,7 @@ cp ./manual_wrapper/c/src/*.c  ./generated_wrapper/c/src
 cp ./manual_wrapper/c/include/*.h  ./generated_wrapper/c/include		
 
 #copy Makefile
-#cp Makefile.SH  ./generated_wrapper/c/src
+cp Makefile.SH  ./generated_wrapper/c/src
 
 cd ./generated_wrapper/eiffel
 
