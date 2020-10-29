@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/github/eiffel-wrap-c/WrapC.svg?branch=master)](https://travis-ci.org/github/eiffel-wrap-c/WrapC/)
+[![Build Status](https://travis-ci.org/eiffel-wrap-c/WrapC.svg?branch=master)](https://travis-ci.org/eiffel-wrap-c/WrapC)
 
 
 # WrapC
