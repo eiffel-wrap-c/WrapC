@@ -14,4 +14,4 @@ branches:
 
 script: 
   #compile code  
-  - compile_all -ecb -melt -list_failures -log_verbose -clean -options dotnet=false
+  - compile_all -ecb -melt -list_failures -log_verbose -clean -options dotnet=false -ignore ignore.ini
