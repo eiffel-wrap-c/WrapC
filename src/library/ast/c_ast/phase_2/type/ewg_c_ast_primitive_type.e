@@ -60,7 +60,7 @@ feature
 				if l_name.has_substring ("unsigned") then
 					if Result.same_string ("INTEGER_64") then
 						Result := "NATURAL_64"
-					elseif Result.same_string ("INTEGER") then
+					elseif Result.same_string ("INTEGER") or else Result.same_string ("CHARACTER")then
 						Result := "NATURAL"
 					end
 				end
