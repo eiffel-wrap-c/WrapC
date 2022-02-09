@@ -11,6 +11,13 @@ create
 
 feature -- Initialization
 
+	c_define
+		external "C inline"
+		alias
+			"#define C2EIFFEL_IMPL"
+		end
+
+
 	make
 			-- Run application.
 		do
@@ -84,11 +91,6 @@ feature -- Initialization
 			end
 		end
 
-	c_define
-		external "C inline"
-		alias
-			"#define C2EIFFEL_IMPL"
-		end
 
 note
 	copyright: "Copyright (c) 1984-2019, Eiffel Software and others"
