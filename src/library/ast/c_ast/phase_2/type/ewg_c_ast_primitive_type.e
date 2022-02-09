@@ -46,6 +46,8 @@ feature
 					Result := "REAL_64"
 				elseif l_name.has_substring ("float") then
 					Result := "REAL"
+				elseif l_name.is_case_insensitive_equal ("unsigned") then
+					Result := "NATURAL"  -- unsigned is a short cut for unsigned int.
 				elseif l_name.has_substring ("void") then
 					Result := "WHAT_SHOULD_I_DO_WITH_VOID"
 				else
